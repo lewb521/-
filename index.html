@@ -602,6 +602,7 @@ img{max-width:100%;display:block}
       <h3>其他</h3>
       <div class="set-card">
         <div class="set-row" onclick="showAbout()"><span class="sl">关于软件</span><span class="sv"><span class="arrow">›</span></span></div>
+        <div class="set-row" onclick="showThanks()"><span class="sl">感谢</span><span class="sv"><span class="arrow">›</span></span></div>
       </div>
     </div>
   </div>
@@ -725,6 +726,67 @@ https://github.com/lewb521/-
     </div>
   </div>
 
+  <!-- THANKS MODAL -->
+  <div class="modal" id="modalThanks">
+    <div class="modal-inner">
+      <div class="modal-handle"></div>
+      <div class="about">
+        <h2>感谢</h2>
+        <div class="text">不白背的开发离不开以下优秀项目和资源的支持，在此致以诚挚感谢：
+
+━━━━━━━━━━━━━━━━━━━━━━
+
+📚 词汇数据
+• KyleBing/english-vocabulary
+  github.com/KyleBing/english-vocabulary
+  提供初中/高中/四级/六级/考研/托福/SAT
+  全阶段中英文对照词汇
+
+• kajweb/dict
+  github.com/kajweb/dict
+  原始词库来源
+
+━━━━━━━━━━━━━━━━━━━━━━
+
+💬 励志语录
+• 孔子、老子、荀子、韩愈 等先贤
+• Ludwig Wittgenstein
+• Samuel Johnson
+• Charlemagne
+• Rita Mae Brown
+• Federico Fellini
+• Rudyard Kipling
+• Tomáš Garrigue Masaryk
+• Goethe
+• Roger Bacon
+• Frank Smith
+• Chinese Proverb
+• 《中庸》
+
+━━━━━━━━━━━━━━━━━━━━━━
+
+🔤 字体
+• SF Pro Display
+• PingFang SC
+• Microsoft YaHei
+• BlinkMacSystemFont
+• -apple-system
+
+━━━━━━━━━━━━━━━━━━━━━━
+
+👤 开发者
+• 署名：灵儿万爆
+• 反馈：lewbtxdy@163.com
+• 开源地址：github.com/lewb521/-
+
+━━━━━━━━━━━━━━━━━━━━━━
+
+🙏 特别感谢所有为开源事业
+    做出贡献的开发者们！</div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <script src="words-data.js"></script>
@@ -834,6 +896,7 @@ function onAvatar(e){let f=e.target.files[0];if(!f)return;let r=new FileReader()
 function saveNick(){S.nick=document.getElementById('nickInput').value.trim();saveS()}
 function resetAll(){if(confirm('确定重置所有数据？不可撤销！')){localStorage.removeItem(K);S=defS();saveS();refreshHome();refreshProf();refreshSet()}}
 function showAbout(){openModal('modalAbout')}
+function showThanks(){openModal('modalThanks')}
 
 // ===== LEARNING =====
 function getToday(){return new Date().toLocaleDateString('zh-CN')}
