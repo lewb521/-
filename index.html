@@ -843,15 +843,15 @@ function getAvail(stage){let all=wordLists[stage]||[],l=getLearned(stage);return
 async function startReview(){
   let l=getLearned(S.stage);
   if(!l.length){alert('还没有已学单词，请先前进学习！');return}
+  goPage('learn');
+  document.getElementById('floatExit').classList.add('visible');
+  document.getElementById('learnTitle').textContent='复习';
   showLoading('正在加载单词数据...');
   let words=await fetchWords(l);
   shuffle(words);
   hideLoading();
   S.session={mode:'review',stage:S.stage,words,idx:0,ok:0,wrong:[],qtype:null};
   saveS();
-  document.getElementById('floatExit').classList.add('visible');
-  document.getElementById('learnTitle').textContent='复习';
-  goPage('learn');
   startQ();
 }
 async function startForward(){
@@ -860,15 +860,15 @@ async function startForward(){
   let td=getToday(),tc=S.today[td]?.[S.stage]||0,rem=S.goal-tc;
   if(rem<=0){alert('今日目标已完成！');return}
   let cnt=Math.min(rem,av.length),sel=av.slice(0,cnt);
+  goPage('learn');
+  document.getElementById('floatExit').classList.add('visible');
+  document.getElementById('learnTitle').textContent='前进';
   showLoading('正在加载单词数据...');
   let words=await fetchWords(sel);
   shuffle(words);
   hideLoading();
   S.session={mode:'forward',stage:S.stage,words,idx:0,ok:0,wrong:[],qtype:null};
   saveS();
-  document.getElementById('floatExit').classList.add('visible');
-  document.getElementById('learnTitle').textContent='前进';
-  goPage('learn');
   startQ();
 }
 function showLoading(msg){
@@ -902,19 +902,21 @@ function renderQ(ss){
     inp.addEventListener('keydown',e=>{if(e.key==='Enter')checkSpell()});
   }else if(qt==='choiceDef'){
     let pool=ss.words.filter(x=>x.en!==w.en);
-    if(pool.length<3)qt='spell';else{shuffle(pool);
+    if(pool.length<3){ss.qtype='spell';renderQ(ss);return}
+    shuffle(pool);
     let opts=[w,...pool.slice(0,3)];shuffle(opts);
     area.innerHTML='<div class="q-card" id="qCard"><div class="q-word">'+w.en+'</div><div class="q-phonetic">'+w.ph+'</div><div class="q-prompt">选择正确的释义</div><div class="choices">'+opts.map(o=>'<button class="choice" data-ok="'+(o.en===w.en)+'">'+o.def+'</button>').join('')+'</div></div>';
-    area.querySelectorAll('.choice').forEach(b=>b.addEventListener('click',()=>checkChoice(b)));}
+    area.querySelectorAll('.choice').forEach(b=>b.addEventListener('click',()=>checkChoice(b)));
   }else if(qt==='choiceEn'){
     let pool=ss.words.filter(x=>x.en!==w.en);
-    if(pool.length<3)qt='spell';else{shuffle(pool);
+    if(pool.length<3){ss.qtype='spell';renderQ(ss);return}
+    shuffle(pool);
     let opts=[w,...pool.slice(0,3)];shuffle(opts);
     area.innerHTML='<div class="q-card" id="qCard"><div class="q-word" style="font-size:20px;font-weight:500;line-height:1.5">'+w.def+'</div><div class="q-prompt">选择正确的单词</div><div class="choices">'+opts.map(o=>'<button class="choice" data-ok="'+(o.en===w.en)+'">'+o.en+'</button>').join('')+'</div></div>';
-    area.querySelectorAll('.choice').forEach(b=>b.addEventListener('click',()=>checkChoice(b)));}
+    area.querySelectorAll('.choice').forEach(b=>b.addEventListener('click',()=>checkChoice(b)));
   }else if(qt==='match'){
     let pool=ss.words.filter(x=>x.en!==w.en);
-    if(pool.length<3){qt='choiceDef';return renderQ(ss);}
+    if(pool.length<3){ss.qtype='choiceDef';renderQ(ss);return}
     let others=pool.slice(0,3);shuffle(others);
     let mw=[w,...others];shuffle(mw);
     let enL=[...mw],defL=[...mw];shuffle(defL);
