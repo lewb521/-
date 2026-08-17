@@ -336,8 +336,8 @@ img{max-width:100%;display:block}
   border-radius:var(--radius);
   font-size:16px;
   font-weight:600;
-  color:var(--bg);
-  background:var(--accent);
+  color:var(--accent);
+  background:transparent;
   margin-top:16px;
   transition:all .2s ease;
   border:1.5px solid var(--accent);
@@ -907,7 +907,7 @@ function renderQ(ss){
   fb.className='fb';btn.classList.remove('show');
   let qt=ss.qtype;
   if(qt==='spell'){
-    area.innerHTML='<div class="q-card" id="qCard"><div class="q-prompt">根据释义拼写单词</div><div class="q-word" style="font-size:26px">'+w.zh+'</div><div class="q-phonetic">'+w.pos+'</div><input class="spell-input" id="spellIn" placeholder="输入英文单词..." autocomplete="off" autocorrect="off" autocapitalize="off"><button class="btn-go show" id="spellSubmit" onclick="checkSpell()" style="margin-top:12px;max-width:280px;background:var(--accent);color:var(--bg);border-color:var(--accent)">提交</button></div>';
+    area.innerHTML='<div class="q-card" id="qCard"><div class="q-prompt">根据释义拼写单词</div><div class="q-word" style="font-size:26px">'+w.zh+'</div><div class="q-phonetic">'+w.pos+'</div><input class="spell-input" id="spellIn" placeholder="输入英文单词..." autocomplete="off" autocorrect="off" autocapitalize="off"><button class="btn-go show" id="spellSubmit" onclick="checkSpell()" style="margin-top:12px;max-width:280px;background:transparent;color:var(--accent);border-color:var(--accent)">提交</button></div>';
     let inp=document.getElementById('spellIn');setTimeout(()=>inp.focus(),300);
     inp.addEventListener('keydown',e=>{if(e.key==='Enter')checkSpell()});
   }else if(qt==='choiceDef'){
