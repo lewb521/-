@@ -544,7 +544,7 @@ img{max-width:100%;display:block}
         <span class="btn-hint">巩固已学单词</span>
       </button>
       <button class="btn-main" id="btnForward">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
         <span class="btn-label">前进</span>
         <span class="btn-hint">学习新单词</span>
       </button>
@@ -730,12 +730,18 @@ const wordLists={
 '考研':['abdicate','aberration','abeyance','abhor','abide','abject','abjure','ablaze','abnegate','abode','abolish','abominable','abound','abreast','abridge','abrogate','abrupt','abscond','absolve','abstain','abstemious','abstract','abstruse','absurd','abundance','abut','abysmal','accede','accentuate','acclaim']
 };
 
+// Chinese translations (fallback when API is unavailable)
+const zhTrans={
+'abroad':'在国外;到国外','accept':'接受;同意','accident':'事故;意外','achieve':'达到;实现','active':'积极的;活跃的','advice':'建议;忠告','afford':'负担得起','against':'反对;靠着','allow':'允许;准许','ancient':'古代的;古老的','appear':'出现;显得','arrive':'到达;抵达','attend':'参加;出席','beauty':'美丽;美人','believe':'相信;认为','beyond':'超出;在…之外','brave':'勇敢的','camera':'照相机','capital':'首都;资本','celebrate':'庆祝','chance':'机会;可能性','climate':'气候','collect':'收集','comfortable':'舒适的','communicate':'交流;沟通','compare':'比较','complete':'完成;完整的','connect':'连接;联系','continue':'继续','control':'控制;管理','abandon':'放弃;抛弃','absorb':'吸收;吸引','abstract':'抽象的;摘要','abundant':'丰富的;充裕的','academic':'学术的;学院的','accelerate':'加速;促进','accessible':'可进入的;易接近的','accommodation':'住宿;适应','accompany':'陪伴;伴随','accomplish':'完成;实现','accumulate':'积累;积聚','accurate':'准确的;精确的','acknowledge':'承认;感谢','acquire':'获得;习得','adapt':'适应;改编','adequate':'足够的;适当的','administration':'管理;行政','adolescent':'青少年','advocate':'提倡;倡导者','aggressive':'侵略的;好斗的','allocate':'分配;拨出','alternative':'替代的;选择','ambiguous':'模糊的;含糊的','ambitious':'有雄心的','anticipate':'预期;期望','apparent':'显然的;表面的','appreciate':'欣赏;感激','approach':'接近;方法','appropriate':'适当的;挪用','assess':'评估;评定','absolute':'绝对的;完全的','access':'进入;通道;获取','account':'账户;说明;解释','adjust':'调整;适应','admire':'钦佩;赞赏','adopt':'采纳;收养','advance':'前进;进步','advantage':'优势;有利条件','adventure':'冒险;奇遇','advertise':'做广告;宣传','affect':'影响;感动','abolish':'废除;取消','absurd':'荒谬的;荒唐的','abundance':'丰富;充裕','accessory':'配件;附件;从犯','accommodate':'容纳;提供住宿;适应','acquaint':'使熟悉;使了解','adhere':'黏附;坚持;遵守','adjacent':'邻近的;毗邻的','administer':'管理;执行;给予','advent':'到来;出现','adverse':'不利的;相反的','aerial':'空中的;航空的','aesthetic':'审美的;美学的','affiliate':'使附属;隶属','affirm':'肯定;确认','afflict':'使痛苦;折磨','aggravate':'加重;使恶化','aggregate':'总计;集合体','agitate':'煽动;搅动;使焦虑','agony':'极大的痛苦','allege':'声称;断言','alleviate':'减轻;缓解','alloy':'合金','alternate':'交替的;轮流','amateur':'业余爱好者;外行','ambassador':'大使;代表','amend':'修改;修订','abdicate':'退位;放弃(权力)','aberration':'偏差;反常','abeyance':'搁置;中止','abhor':'憎恶;厌恶','abide':'忍受;遵守','abject':'凄惨的;卑贱的','abjure':'发誓放弃;公开放弃','ablaze':'着火的;闪耀的','abnegate':'克制;放弃','abode':'住所;居住','abominable':'可恶的;极坏的','abound':'大量存在;富于','abreast':'并排;并肩','abridge':'删节;缩短','abrogate':'废除;取消','abrupt':'突然的;生硬的','abscond':'潜逃;逃亡','absolve':'免除;赦免','abstain':'戒绝;弃权','abstemious':'有节制的;节俭的','abstruse':'深奥的;难懂的','abut':'邻接;毗连','abysmal':'极深的;极坏的','accede':'同意;加入;就任','accentuate':'强调;重读','acclaim':'欢呼;称赞'
+};
+
 // ===== API WORD CACHE =====
 const API='https://api.dictionaryapi.dev/api/v2/entries/en/';
 const wordCache={};
 
 async function fetchWord(word){
   if(wordCache[word])return wordCache[word];
+  let zh=zhTrans[word]||'';
   try{
     let r=await fetch(API+word);
     if(!r.ok)throw new Error('not found');
@@ -746,13 +752,13 @@ async function fetchWord(word){
     let def=m?.definitions?.[0]?.definition||'';
     let pos=m?.partOfSpeech||'';
     let ex=m?.definitions?.[0]?.example||'';
-    let data={en:entry.word,ph,def,pos,ex};
+    let data={en:entry.word,ph,def,zh,pos,ex};
     wordCache[word]=data;
     return data;
   }catch(e){
-    let fallback={en:word,ph:'',def:'(definition unavailable)',pos:'',ex:''};
-    wordCache[word]=fallback;
-    return fallback;
+    let data={en:word,ph:'',def:zh,zh,pos:'',ex:''};
+    wordCache[word]=data;
+    return data;
   }
 }
 
@@ -897,7 +903,7 @@ function renderQ(ss){
   fb.className='fb';btn.classList.remove('show');
   let qt=ss.qtype;
   if(qt==='spell'){
-    area.innerHTML='<div class="q-card" id="qCard"><div class="q-prompt">根据释义拼写单词</div><div class="q-word" style="font-size:20px;font-weight:500;line-height:1.5">'+w.def+'</div><div class="q-phonetic">'+w.pos+'</div><input class="spell-input" id="spellIn" placeholder="输入英文单词..." autocomplete="off" autocorrect="off" autocapitalize="off"></div>';
+    area.innerHTML='<div class="q-card" id="qCard"><div class="q-prompt">根据释义拼写单词</div><div class="q-word" style="font-size:26px">'+w.zh+'</div><div class="q-phonetic">'+w.pos+'</div><input class="spell-input" id="spellIn" placeholder="输入英文单词..." autocomplete="off" autocorrect="off" autocapitalize="off"></div>';
     let inp=document.getElementById('spellIn');setTimeout(()=>inp.focus(),300);
     inp.addEventListener('keydown',e=>{if(e.key==='Enter')checkSpell()});
   }else if(qt==='choiceDef'){
@@ -905,22 +911,22 @@ function renderQ(ss){
     if(pool.length<3){ss.qtype='spell';renderQ(ss);return}
     shuffle(pool);
     let opts=[w,...pool.slice(0,3)];shuffle(opts);
-    area.innerHTML='<div class="q-card" id="qCard"><div class="q-word">'+w.en+'</div><div class="q-phonetic">'+w.ph+'</div><div class="q-prompt">选择正确的释义</div><div class="choices">'+opts.map(o=>'<button class="choice" data-ok="'+(o.en===w.en)+'">'+o.def+'</button>').join('')+'</div></div>';
+    area.innerHTML='<div class="q-card" id="qCard"><div class="q-word">'+w.en+'</div><div class="q-phonetic">'+w.ph+'</div><div class="q-prompt">选择正确的中文释义</div><div class="choices">'+opts.map(o=>'<button class="choice" data-ok="'+(o.en===w.en)+'">'+o.zh+'</button>').join('')+'</div></div>';
     area.querySelectorAll('.choice').forEach(b=>b.addEventListener('click',()=>checkChoice(b)));
   }else if(qt==='choiceEn'){
     let pool=ss.words.filter(x=>x.en!==w.en);
     if(pool.length<3){ss.qtype='spell';renderQ(ss);return}
     shuffle(pool);
     let opts=[w,...pool.slice(0,3)];shuffle(opts);
-    area.innerHTML='<div class="q-card" id="qCard"><div class="q-word" style="font-size:20px;font-weight:500;line-height:1.5">'+w.def+'</div><div class="q-prompt">选择正确的单词</div><div class="choices">'+opts.map(o=>'<button class="choice" data-ok="'+(o.en===w.en)+'">'+o.en+'</button>').join('')+'</div></div>';
+    area.innerHTML='<div class="q-card" id="qCard"><div class="q-word" style="font-size:26px">'+w.zh+'</div><div class="q-prompt">选择正确的英文单词</div><div class="choices">'+opts.map(o=>'<button class="choice" data-ok="'+(o.en===w.en)+'">'+o.en+'</button>').join('')+'</div></div>';
     area.querySelectorAll('.choice').forEach(b=>b.addEventListener('click',()=>checkChoice(b)));
   }else if(qt==='match'){
     let pool=ss.words.filter(x=>x.en!==w.en);
     if(pool.length<3){ss.qtype='choiceDef';renderQ(ss);return}
     let others=pool.slice(0,3);shuffle(others);
     let mw=[w,...others];shuffle(mw);
-    let enL=[...mw],defL=[...mw];shuffle(defL);
-    area.innerHTML='<div class="q-card" id="qCard"><div class="q-prompt" style="margin-bottom:16px">连线匹配（先点单词，再点释义）</div><div class="match-wrap"><div class="match-col" id="matchEn">'+enL.map(x=>'<div class="match-it match-en" data-w="'+x.en+'">'+x.en+'</div>').join('')+'</div><div class="match-col" id="matchZh">'+defL.map(x=>'<div class="match-it match-zh" data-w="'+x.en+'">'+x.def+'</div>').join('')+'</div></div></div>';
+    let enL=[...mw],zhL=[...mw];shuffle(zhL);
+    area.innerHTML='<div class="q-card" id="qCard"><div class="q-prompt" style="margin-bottom:16px">连线匹配（先点单词，再点中文释义）</div><div class="match-wrap"><div class="match-col" id="matchEn">'+enL.map(x=>'<div class="match-it match-en" data-w="'+x.en+'">'+x.en+'</div>').join('')+'</div><div class="match-col" id="matchZh">'+zhL.map(x=>'<div class="match-it match-zh" data-w="'+x.en+'">'+x.zh+'</div>').join('')+'</div></div></div>';
     initMatch();
   }
 }
@@ -932,7 +938,7 @@ function checkSpell(){
   let card=document.getElementById('qCard'),fb=document.getElementById('fb'),btn=document.getElementById('btnGo');
   inp.disabled=true;
   if(ok){inp.classList.add('ok');card.classList.add('ok');fb.className='fb show ok';fb.textContent='✓ 正确';ss.ok++;markWord(w)}
-  else{inp.classList.add('err');card.classList.add('err');fb.className='fb show err';fb.innerHTML='✗ 错误，正确答案：<strong>'+w.en+'</strong> ('+w.def+')';ss.wrong.push(w)}
+  else{inp.classList.add('err');card.classList.add('err');fb.className='fb show err';fb.innerHTML='✗ 错误，正确答案：<strong>'+w.en+'</strong>（'+w.zh+'）';ss.wrong.push(w)}
   btn.classList.add('show');saveS();
 }
 function checkChoice(btn){
@@ -941,7 +947,7 @@ function checkChoice(btn){
   let card=document.getElementById('qCard'),fb=document.getElementById('fb'),go=document.getElementById('btnGo');
   document.querySelectorAll('#qArea .choice').forEach(b=>{b.disabled=true;if(b.dataset.ok==='true')b.classList.add('ok');if(b===btn&&!ok)b.classList.add('err')});
   if(ok){card.classList.add('ok');fb.className='fb show ok';fb.textContent='✓ 正确';ss.ok++;markWord(w)}
-  else{card.classList.add('err');fb.className='fb show err';fb.innerHTML='✗ 错误，正确答案：<strong>'+w.en+'</strong> — '+w.def+'';ss.wrong.push(w)}
+  else{card.classList.add('err');fb.className='fb show err';fb.innerHTML='✗ 错误，正确答案：<strong>'+w.en+'</strong> — '+w.zh+'';ss.wrong.push(w)}
   go.classList.add('show');saveS();
 }
 
