@@ -6,1110 +6,686 @@
 <title>白词斩</title>
 <link rel="icon" href="app-icon.jpg">
 <style>
-/* ========== CSS Variables & Theme ========== */
-:root {
-  --bg: #f5f5f7;
-  --bg-card: #ffffff;
-  --bg-input: #f0f0f5;
-  --text: #1d1d1f;
-  --text-secondary: #6e6e73;
-  --text-tertiary: #aeaeb2;
-  --primary: #4A6CF7;
-  --primary-light: #eef1ff;
-  --primary-dark: #3b5de7;
-  --accent: #FF6B6B;
-  --accent-light: #fff0f0;
-  --green: #34C759;
-  --green-light: #e8f8ed;
-  --orange: #FF9500;
-  --orange-light: #fff4e5;
-  --purple: #AF52DE;
-  --purple-light: #f5eeff;
-  --border: #e5e5ea;
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
-  --shadow-md: 0 4px 16px rgba(0,0,0,0.1);
-  --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
-  --radius-sm: 10px;
-  --radius: 16px;
-  --radius-lg: 24px;
-  --radius-xl: 32px;
-  --nav-height: 72px;
-  --safe-bottom: env(safe-area-inset-bottom, 16px);
-  --blur-bg: rgba(255,255,255,0.72);
-  --blur-nav: rgba(255,255,255,0.82);
-  --transition-speed: 0.4s;
-  --font: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+:root{
+  --bg:#fafafa;
+  --card:#fff;
+  --text:#1a1a1a;
+  --text2:#888;
+  --text3:#bbb;
+  --accent:#1a1a1a;
+  --accent2:#555;
+  --line:#e0e0e0;
+  --line2:#eee;
+  --green:#2e7d32;
+  --red:#c62828;
+  --green-bg:#e8f5e9;
+  --red-bg:#ffebee;
+  --radius:12px;
+  --radius2:20px;
+  --nav-h:64px;
+  --safe:env(safe-area-inset-bottom,12px);
+  --font:-apple-system,BlinkMacSystemFont,'SF Pro Display','PingFang SC','Microsoft YaHei',sans-serif;
+}
+[data-theme="dark"]{
+  --bg:#111;
+  --card:#1c1c1c;
+  --text:#eee;
+  --text2:#888;
+  --text3:#555;
+  --accent:#eee;
+  --accent2:#999;
+  --line:#2a2a2a;
+  --line2:#222;
+  --green:#66bb6a;
+  --red:#ef5350;
+  --green-bg:rgba(102,187,106,0.1);
+  --red-bg:rgba(239,83,80,0.1);
 }
 
-[data-theme="dark"] {
-  --bg: #1c1c1e;
-  --bg-card: #2c2c2e;
-  --bg-input: #3a3a3c;
-  --text: #f5f5f7;
-  --text-secondary: #a1a1a6;
-  --text-tertiary: #636366;
-  --border: #38383a;
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
-  --shadow-md: 0 4px 16px rgba(0,0,0,0.4);
-  --shadow-lg: 0 8px 32px rgba(0,0,0,0.5);
-  --blur-bg: rgba(28,28,30,0.72);
-  --blur-nav: rgba(28,28,30,0.82);
-  --primary-light: rgba(74,108,247,0.15);
-  --accent-light: rgba(255,107,107,0.15);
-  --green-light: rgba(52,199,89,0.15);
-  --orange-light: rgba(255,149,0,0.15);
-  --purple-light: rgba(175,82,222,0.15);
-}
-
-/* ========== Reset & Base ========== */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{font-size:16px;-webkit-tap-highlight-color:transparent}
 body{
   font-family:var(--font);
   background:var(--bg);
   color:var(--text);
-  min-height:100vh;
-  min-height:100dvh;
-  overflow-x:hidden;
-  transition:background var(--transition-speed) ease,color var(--transition-speed) ease;
+  min-height:100vh;min-height:100dvh;
+  overflow:hidden;
+  transition:background .35s ease,color .35s ease;
   -webkit-font-smoothing:antialiased;
 }
-input,button,select{font-family:inherit;font-size:inherit;outline:none;border:none}
+input,button{font-family:inherit;font-size:inherit;outline:none;border:none}
 button{cursor:pointer;background:none;-webkit-tap-highlight-color:transparent}
 img{max-width:100%;display:block}
 
-/* ========== App Shell ========== */
-.app-container{
-  max-width:480px;
+.app{
+  max-width:440px;
   margin:0 auto;
-  min-height:100vh;
-  min-height:100dvh;
+  height:100vh;height:100dvh;
   position:relative;
   overflow:hidden;
-  display:flex;
-  flex-direction:column;
 }
 
-/* ========== Page Transitions (Gaussian Blur + Micro Bounce) ========== */
+/* Page transitions */
 .page{
   position:absolute;
-  top:0;left:0;right:0;bottom:0;
-  padding:20px 20px calc(var(--nav-height) + var(--safe-bottom) + 12px);
+  inset:0;
+  padding:24px 28px calc(var(--nav-h) + var(--safe) + 16px);
   overflow-y:auto;
   overflow-x:hidden;
-  transition:opacity var(--transition-speed) cubic-bezier(0.34,1.56,0.64,1),
-             transform var(--transition-speed) cubic-bezier(0.34,1.56,0.64,1),
-             filter var(--transition-speed) ease;
+  transition:opacity .35s ease,transform .35s cubic-bezier(.25,.1,.25,1),filter .35s ease;
   opacity:0;
-  transform:translateY(12px) scale(0.97);
-  filter:blur(8px);
+  transform:translateY(8px);
+  filter:blur(6px);
   pointer-events:none;
-  will-change:opacity,transform,filter;
 }
-.page.active{
-  opacity:1;
-  transform:translateY(0) scale(1);
-  filter:blur(0);
-  pointer-events:auto;
-}
-.page.slide-left{transform:translateX(-30px) scale(0.97);filter:blur(8px);opacity:0}
-.page.slide-right{transform:translateX(30px) scale(0.97);filter:blur(8px);opacity:0}
+.page.active{opacity:1;transform:translateY(0);filter:blur(0);pointer-events:auto}
 
-/* ========== Bottom Navigation (Capsule) ========== */
+/* Bottom nav - capsule */
 .bottom-nav{
   position:fixed;
-  bottom:calc(var(--safe-bottom) + 8px);
+  bottom:calc(var(--safe) + 10px);
   left:50%;
   transform:translateX(-50%);
   z-index:100;
   display:flex;
-  gap:4px;
-  background:var(--blur-nav);
-  backdrop-filter:blur(20px) saturate(180%);
-  -webkit-backdrop-filter:blur(20px) saturate(180%);
-  border:1px solid var(--border);
-  border-radius:var(--radius-xl);
-  padding:6px;
-  box-shadow:var(--shadow-lg);
-  transition:all var(--transition-speed) ease;
+  gap:0;
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:var(--radius2);
+  padding:4px;
+  transition:all .35s ease;
 }
 .nav-item{
   display:flex;
   flex-direction:column;
   align-items:center;
   justify-content:center;
-  gap:3px;
-  padding:8px 18px;
-  border-radius:20px;
-  color:var(--text-tertiary);
-  font-size:11px;
+  gap:2px;
+  padding:8px 20px;
+  border-radius:16px;
+  color:var(--text3);
+  font-size:10px;
   font-weight:500;
-  transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  transition:all .25s ease;
   white-space:nowrap;
-  position:relative;
 }
-.nav-item.active{
-  color:var(--primary);
-  background:var(--primary-light);
-}
-.nav-item svg{width:22px;height:22px;transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1)}
-.nav-item.active svg{transform:scale(1.1)}
-.nav-item:active{transform:scale(0.92)}
+.nav-item.active{color:var(--accent)}
+.nav-item svg{width:20px;height:20px;transition:all .25s ease}
+.nav-item:active{transform:scale(.94)}
 
-/* ========== Floating Exit Button ========== */
+/* Float exit */
 .float-exit{
   position:fixed;
-  top:16px;
-  left:16px;
+  top:18px;left:18px;
   z-index:200;
-  width:40px;
-  height:40px;
+  width:36px;height:36px;
   border-radius:50%;
-  background:var(--blur-bg);
-  backdrop-filter:blur(20px) saturate(180%);
-  -webkit-backdrop-filter:blur(20px) saturate(180%);
-  border:1px solid var(--border);
+  background:var(--card);
+  border:1px solid var(--line);
   display:flex;
   align-items:center;
   justify-content:center;
-  box-shadow:var(--shadow-md);
-  transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  transition:all .3s ease;
   opacity:0;
-  transform:scale(0.5);
+  transform:scale(.6);
   pointer-events:none;
 }
-.float-exit.visible{
-  opacity:1;
-  transform:scale(1);
-  pointer-events:auto;
-}
-.float-exit:active{transform:scale(0.88)}
-.float-exit svg{width:20px;height:20px;color:var(--text)}
+.float-exit.visible{opacity:1;transform:scale(1);pointer-events:auto}
+.float-exit:active{transform:scale(.9)}
+.float-exit svg{width:18px;height:18px;color:var(--text)}
 
-/* ========== Home Page ========== */
-.home-header{
-  padding:16px 0 8px;
+/* ===== HOME PAGE ===== */
+.home-top{
+  padding:32px 0 40px;
   display:flex;
   align-items:center;
-  justify-content:space-between;
+  gap:14px;
 }
-.app-logo{
-  display:flex;
-  align-items:center;
-  gap:10px;
+.home-logo{
+  width:44px;height:44px;
+  border-radius:11px;
+  border:1px solid var(--line);
 }
-.app-logo img{
-  width:40px;
-  height:40px;
-  border-radius:10px;
-  box-shadow:var(--shadow-sm);
-}
-.app-logo h1{
-  font-size:22px;
-  font-weight:700;
-  letter-spacing:-0.3px;
-  background:linear-gradient(135deg,var(--primary),var(--purple));
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-  background-clip:text;
-}
+.home-brand{font-size:26px;font-weight:700;letter-spacing:-.5px}
 
-/* Stage Selector Card */
-.stage-card{
-  background:var(--bg-card);
-  border-radius:var(--radius-lg);
-  padding:18px;
-  margin:8px 0 14px;
-  box-shadow:var(--shadow-sm);
-  border:1px solid var(--border);
-  transition:all var(--transition-speed) ease;
-}
-.stage-card h3{font-size:14px;color:var(--text-secondary);margin-bottom:12px;font-weight:500}
-.stage-options{
-  display:flex;
-  flex-wrap:wrap;
-  gap:8px;
-}
-.stage-chip{
-  padding:8px 16px;
-  border-radius:20px;
-  font-size:13px;
-  font-weight:500;
-  background:var(--bg-input);
-  color:var(--text-secondary);
-  transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);
-  border:1.5px solid transparent;
-}
-.stage-chip.selected{
-  background:var(--primary-light);
-  color:var(--primary);
-  border-color:var(--primary);
-  font-weight:600;
-}
-.stage-chip:active{transform:scale(0.94)}
-
-/* Goal Card */
-.goal-card{
-  background:var(--bg-card);
-  border-radius:var(--radius-lg);
-  padding:18px;
-  margin-bottom:14px;
-  box-shadow:var(--shadow-sm);
-  border:1px solid var(--border);
-}
-.goal-card h3{font-size:14px;color:var(--text-secondary);margin-bottom:12px;font-weight:500}
-.goal-options{
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-}
-.goal-chip{
-  padding:8px 16px;
-  border-radius:20px;
-  font-size:13px;
-  font-weight:500;
-  background:var(--bg-input);
-  color:var(--text-secondary);
-  transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);
-  border:1.5px solid transparent;
-}
-.goal-chip.selected{
-  background:var(--orange-light);
-  color:var(--orange);
-  border-color:var(--orange);
-  font-weight:600;
-}
-.goal-chip:active{transform:scale(0.94)}
-
-/* Main Action Buttons */
-.action-buttons{
+/* Two main buttons */
+.home-actions{
   display:flex;
   gap:12px;
-  margin:20px 0 16px;
+  margin-bottom:36px;
 }
-.btn-action{
+.btn-main{
   flex:1;
-  padding:20px 16px;
+  padding:40px 20px;
   border-radius:var(--radius);
-  font-size:17px;
-  font-weight:700;
-  letter-spacing:-0.2px;
+  border:1.5px solid var(--line);
+  background:var(--card);
   display:flex;
   flex-direction:column;
   align-items:center;
-  gap:8px;
-  transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);
-  box-shadow:var(--shadow-md);
-  position:relative;
-  overflow:hidden;
+  gap:12px;
+  transition:all .25s ease;
+  color:var(--text);
 }
-.btn-action::after{
-  content:'';
-  position:absolute;
-  inset:0;
-  background:rgba(255,255,255,0.1);
-  opacity:0;
-  transition:opacity 0.3s;
-}
-.btn-action:active{transform:scale(0.95)}
-.btn-action:active::after{opacity:1}
-.btn-review{
-  background:linear-gradient(135deg,var(--accent),#ff8e8e);
-  color:#fff;
-}
-.btn-forward{
-  background:linear-gradient(135deg,var(--primary),#6c8cff);
-  color:#fff;
-}
-.btn-action svg{width:32px;height:32px}
-.btn-action .btn-sub{font-size:12px;font-weight:400;opacity:0.85}
+.btn-main:active{transform:scale(.97);border-color:var(--accent2)}
+.btn-main svg{width:36px;height:36px;stroke:currentColor}
+.btn-main .btn-label{font-size:18px;font-weight:600;letter-spacing:-.2px}
+.btn-main .btn-hint{font-size:12px;color:var(--text2);font-weight:400}
 
-/* Progress Stats */
-.progress-card{
-  background:var(--bg-card);
-  border-radius:var(--radius);
-  padding:16px;
-  margin-bottom:14px;
-  box-shadow:var(--shadow-sm);
-  border:1px solid var(--border);
+/* Stats row */
+.home-stats{
   display:flex;
-  justify-content:space-around;
+  justify-content:space-between;
+  padding:20px 0;
+  margin-bottom:28px;
+  border-top:1px solid var(--line2);
+  border-bottom:1px solid var(--line2);
+}
+.stat-item{text-align:center;flex:1}
+.stat-num{font-size:26px;font-weight:700;letter-spacing:-.5px}
+.stat-label{font-size:11px;color:var(--text2);margin-top:2px}
+
+/* Daily quote */
+.daily-quote{
+  padding:24px 0;
   text-align:center;
 }
-.progress-item .progress-num{
-  font-size:28px;
-  font-weight:700;
-  color:var(--primary);
-  letter-spacing:-0.5px;
-}
-.progress-item .progress-label{
-  font-size:12px;
-  color:var(--text-secondary);
-  margin-top:2px;
-}
-
-/* Daily Quote */
-.daily-card{
-  background:var(--bg-card);
-  border-radius:var(--radius);
-  padding:20px;
-  margin-bottom:14px;
-  box-shadow:var(--shadow-sm);
-  border:1px solid var(--border);
-  position:relative;
-  overflow:hidden;
-}
-.daily-card::before{
-  content:'';
-  position:absolute;
-  top:-20px;right:-20px;
-  width:80px;height:80px;
-  border-radius:50%;
-  background:linear-gradient(135deg,var(--primary-light),var(--purple-light));
-  opacity:0.5;
-}
-.daily-card .daily-title{
-  font-size:12px;
-  font-weight:600;
-  color:var(--text-tertiary);
-  text-transform:uppercase;
-  letter-spacing:1px;
-  margin-bottom:8px;
-  position:relative;
-}
-.daily-card .daily-text{
+.daily-quote .dq-text{
   font-size:15px;
-  line-height:1.6;
-  color:var(--text-secondary);
-  position:relative;
+  line-height:1.7;
+  color:var(--text2);
   font-style:italic;
 }
-.daily-card .daily-author{
+.daily-quote .dq-author{
   font-size:12px;
-  color:var(--text-tertiary);
-  margin-top:8px;
-  text-align:right;
-  position:relative;
+  color:var(--text3);
+  margin-top:10px;
 }
 
-/* ========== Learning/Review Page ========== */
+/* ===== LEARNING PAGE ===== */
 .learn-header{
   display:flex;
   align-items:center;
   gap:12px;
-  margin-bottom:20px;
-  padding-top:8px;
-}
-.learn-header .learn-title{
-  font-size:20px;
-  font-weight:700;
-  flex:1;
-}
-.learn-progress-bar{
-  width:100%;
-  height:6px;
-  background:var(--bg-input);
-  border-radius:3px;
   margin-bottom:24px;
+  padding-top:4px;
+}
+.learn-header .learn-title{font-size:20px;font-weight:700;flex:1}
+.learn-bar{
+  width:100%;height:3px;
+  background:var(--line2);
+  border-radius:2px;
+  margin-bottom:20px;
   overflow:hidden;
 }
-.learn-progress-fill{
+.learn-fill{
   height:100%;
-  background:linear-gradient(90deg,var(--primary),var(--purple));
-  border-radius:3px;
-  transition:width 0.5s cubic-bezier(0.34,1.56,0.64,1);
+  background:var(--accent);
+  border-radius:2px;
+  transition:width .4s ease;
 }
-.learn-counter{
-  text-align:center;
-  font-size:13px;
-  color:var(--text-secondary);
-  margin-bottom:20px;
-}
+.learn-counter{text-align:center;font-size:13px;color:var(--text2);margin-bottom:28px}
 
-/* Question Card */
-.question-card{
-  background:var(--bg-card);
-  border-radius:var(--radius-lg);
-  padding:28px 24px;
+/* Question card */
+.q-card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:32px 24px;
   margin-bottom:16px;
-  box-shadow:var(--shadow-md);
-  border:1px solid var(--border);
   text-align:center;
-  min-height:200px;
+  min-height:180px;
   display:flex;
   flex-direction:column;
   align-items:center;
   justify-content:center;
-  transition:all 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  transition:all .3s ease;
 }
-.question-card.correct{
-  border-color:var(--green);
-  background:var(--green-light);
-  animation:bouncePop 0.5s cubic-bezier(0.34,1.56,0.64,1);
-}
-.question-card.wrong{
-  border-color:var(--accent);
-  background:var(--accent-light);
-  animation:shake 0.5s ease;
-}
-.question-word{
-  font-size:36px;
-  font-weight:700;
-  letter-spacing:-0.5px;
-  margin-bottom:8px;
-}
-.question-phonetic{
-  font-size:15px;
-  color:var(--text-tertiary);
-  margin-bottom:4px;
-}
-.question-prompt{
-  font-size:15px;
-  color:var(--text-secondary);
-  margin-top:8px;
-}
+.q-card.ok{border-color:var(--green);background:var(--green-bg)}
+.q-card.err{border-color:var(--red);background:var(--red-bg);animation:shake .4s ease}
+.q-word{font-size:34px;font-weight:700;letter-spacing:-.5px;margin-bottom:6px}
+.q-phonetic{font-size:14px;color:var(--text3);margin-bottom:4px}
+.q-prompt{font-size:14px;color:var(--text2);margin-top:10px}
 
-/* Spelling Input */
+/* Spell input */
 .spell-input{
-  width:100%;
-  max-width:300px;
-  padding:14px 18px;
-  border-radius:var(--radius-sm);
-  font-size:20px;
-  font-weight:500;
+  width:100%;max-width:280px;
+  padding:12px 16px;
+  border-radius:8px;
+  font-size:18px;font-weight:500;
   text-align:center;
-  background:var(--bg-input);
+  background:var(--bg);
   color:var(--text);
-  border:2px solid transparent;
-  transition:all 0.3s ease;
+  border:1.5px solid var(--line);
+  transition:all .25s ease;
   letter-spacing:1px;
 }
-.spell-input:focus{border-color:var(--primary);background:var(--bg-card)}
-.spell-input.correct{border-color:var(--green);background:var(--green-light)}
-.spell-input.wrong{border-color:var(--accent);background:var(--accent-light)}
+.spell-input:focus{border-color:var(--accent);background:var(--card)}
+.spell-input.ok{border-color:var(--green);background:var(--green-bg)}
+.spell-input.err{border-color:var(--red);background:var(--red-bg)}
 
-/* Choice Options */
-.choices-grid{
+/* Choices */
+.choices{
   display:grid;
   grid-template-columns:1fr 1fr;
-  gap:10px;
+  gap:8px;
   width:100%;
-  margin-top:16px;
+  margin-top:18px;
 }
-.choice-btn{
-  padding:16px 12px;
-  border-radius:var(--radius-sm);
-  font-size:15px;
+.choice{
+  padding:14px 10px;
+  border-radius:8px;
+  font-size:14px;
   font-weight:500;
-  background:var(--bg-input);
+  background:var(--bg);
   color:var(--text);
-  border:2px solid transparent;
-  transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  border:1.5px solid var(--line);
+  transition:all .2s ease;
   text-align:center;
   line-height:1.4;
 }
-.choice-btn:active{transform:scale(0.95)}
-.choice-btn.correct-answer{
-  border-color:var(--green);
-  background:var(--green-light);
-  color:var(--green);
-  font-weight:700;
-}
-.choice-btn.wrong-answer{
-  border-color:var(--accent);
-  background:var(--accent-light);
-  color:var(--accent);
-  font-weight:700;
-}
+.choice:active{transform:scale(.96)}
+.choice.ok{border-color:var(--green);background:var(--green-bg);color:var(--green);font-weight:700}
+.choice.err{border-color:var(--red);background:var(--red-bg);color:var(--red);font-weight:700}
 
-/* Matching */
-.match-grid{
+/* Match */
+.match-wrap{
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:16px;
   width:100%;
   margin-top:16px;
 }
-.match-col{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-}
-.match-item{
-  padding:14px 12px;
-  border-radius:var(--radius-sm);
-  font-size:14px;
-  font-weight:500;
+.match-col{display:flex;flex-direction:column;gap:8px}
+.match-it{
+  padding:13px 10px;
+  border-radius:8px;
+  font-size:13px;font-weight:500;
   text-align:center;
-  transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);
-  border:2px solid transparent;
-  min-height:48px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  border:1.5px solid var(--line);
+  transition:all .2s ease;
+  min-height:44px;
+  display:flex;align-items:center;justify-content:center;
   line-height:1.3;
 }
-.match-en{
-  background:var(--primary-light);
-  color:var(--primary);
-  cursor:pointer;
-}
-.match-zh{
-  background:var(--bg-input);
-  color:var(--text-secondary);
-  cursor:pointer;
-}
-.match-en.selected{
-  border-color:var(--primary);
-  box-shadow:0 0 0 3px var(--primary-light);
-  transform:scale(1.03);
-}
-.match-zh.matched{
-  background:var(--green-light);
-  color:var(--green);
-  border-color:var(--green);
-  pointer-events:none;
-}
-.match-en.matched{
-  background:var(--green-light);
-  color:var(--green);
-  border-color:var(--green);
-  pointer-events:none;
-}
-.match-zh.wrong-flash{
-  border-color:var(--accent);
-  background:var(--accent-light);
-  animation:shake 0.4s ease;
-}
+.match-en{background:var(--bg);cursor:pointer;color:var(--text)}
+.match-zh{background:var(--bg);cursor:pointer;color:var(--text2)}
+.match-en.sel{border-color:var(--accent);border-width:2px}
+.match-en.done,.match-zh.done{border-color:var(--green);background:var(--green-bg);color:var(--green);pointer-events:none}
+.match-zh.flash{border-color:var(--red);background:var(--red-bg);animation:shake .35s ease}
 
 /* Feedback */
-.feedback-bar{
+.fb{
   text-align:center;
   padding:12px;
-  border-radius:var(--radius-sm);
+  border-radius:8px;
   font-weight:600;
-  font-size:15px;
+  font-size:14px;
   margin-top:12px;
   display:none;
-  animation:bouncePop 0.4s cubic-bezier(0.34,1.56,0.64,1);
 }
-.feedback-bar.show{display:block}
-.feedback-bar.correct-fb{background:var(--green-light);color:var(--green)}
-.feedback-bar.wrong-fb{background:var(--accent-light);color:var(--accent)}
+.fb.show{display:block;animation:fadeIn .3s ease}
+.fb.ok{background:var(--green-bg);color:var(--green);border:1px solid var(--green)}
+.fb.err{background:var(--red-bg);color:var(--red);border:1px solid var(--red)}
 
-/* Continue Button */
-.btn-continue{
+/* Continue btn */
+.btn-go{
   display:none;
   width:100%;
-  padding:16px;
+  padding:14px;
   border-radius:var(--radius);
-  font-size:17px;
-  font-weight:700;
-  color:#fff;
-  background:linear-gradient(135deg,var(--primary),var(--purple));
+  font-size:16px;
+  font-weight:600;
+  color:var(--bg);
+  background:var(--accent);
   margin-top:16px;
-  transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);
-  box-shadow:var(--shadow-md);
+  transition:all .2s ease;
+  border:1.5px solid var(--accent);
 }
-.btn-continue.show{display:block}
-.btn-continue:active{transform:scale(0.96)}
+.btn-go.show{display:block}
+.btn-go:active{transform:scale(.97);opacity:.9}
 
-/* Session Complete */
-.session-complete{
+/* Complete */
+.done-card{
   text-align:center;
-  padding:40px 20px;
-  animation:bouncePop 0.6s cubic-bezier(0.34,1.56,0.64,1);
+  padding:40px 16px;
 }
-.session-complete .complete-icon{
-  font-size:64px;
-  margin-bottom:16px;
-}
-.session-complete h2{
-  font-size:24px;
-  font-weight:700;
-  margin-bottom:8px;
-}
-.session-complete p{
-  color:var(--text-secondary);
-  margin-bottom:20px;
-  line-height:1.6;
-}
-.session-complete .stats-row{
-  display:flex;
-  justify-content:center;
-  gap:24px;
-  margin-bottom:24px;
-}
-.session-complete .stat-item .stat-num{
-  font-size:32px;
-  font-weight:700;
-  color:var(--primary);
-}
-.session-complete .stat-item .stat-label{
-  font-size:12px;
-  color:var(--text-secondary);
-}
+.done-card .done-icon{font-size:56px;margin-bottom:16px}
+.done-card h2{font-size:22px;font-weight:700;margin-bottom:8px}
+.done-card p{color:var(--text2);margin-bottom:24px;line-height:1.6}
+.done-card .done-stats{display:flex;justify-content:center;gap:32px;margin-bottom:28px}
+.done-card .ds-num{font-size:30px;font-weight:700}
+.done-card .ds-label{font-size:11px;color:var(--text2)}
 
-/* ========== Settings Page ========== */
-.settings-title{
-  font-size:24px;
-  font-weight:700;
-  margin-bottom:20px;
-  padding-top:8px;
-}
-.settings-section{
-  margin-bottom:20px;
-}
-.settings-section h3{
-  font-size:13px;
-  color:var(--text-tertiary);
-  text-transform:uppercase;
-  letter-spacing:0.5px;
-  margin-bottom:8px;
-  padding-left:4px;
-}
-.settings-item{
-  background:var(--bg-card);
+/* ===== SETTINGS PAGE ===== */
+.settings-title{font-size:24px;font-weight:700;margin-bottom:24px;padding-top:4px}
+.set-group{margin-bottom:24px}
+.set-group h3{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;padding-left:2px}
+.set-card{
+  background:var(--card);
+  border:1px solid var(--line);
   border-radius:var(--radius);
-  padding:0 16px;
-  margin-bottom:2px;
-  border:1px solid var(--border);
   overflow:hidden;
 }
-.settings-item:first-of-type{border-radius:var(--radius) var(--radius) 0 0}
-.settings-item:last-of-type{border-radius:0 0 var(--radius) var(--radius);margin-bottom:0}
-.settings-item:only-of-type{border-radius:var(--radius)}
-.settings-row{
+.set-row{
   display:flex;
   align-items:center;
   justify-content:space-between;
-  padding:15px 0;
-  min-height:52px;
+  padding:14px 16px;
+  min-height:48px;
+  cursor:pointer;
+  transition:background .15s ease;
 }
-.settings-row+.settings-row{border-top:1px solid var(--border)}
-.settings-row .s-label{font-size:15px;font-weight:500}
-.settings-row .s-value{font-size:14px;color:var(--text-secondary);display:flex;align-items:center;gap:6px}
-.settings-row .s-arrow{color:var(--text-tertiary)}
+.set-row:active{background:var(--bg)}
+.set-row+.set-row{border-top:1px solid var(--line2)}
+.set-row .sl{font-size:15px;font-weight:500}
+.set-row .sv{font-size:14px;color:var(--text2);display:flex;align-items:center;gap:4px}
+.set-row .arrow{color:var(--text3);font-size:18px}
 
 /* Toggle */
-.toggle-switch{
-  width:51px;height:31px;
-  background:var(--border);
-  border-radius:16px;
+.toggle{
+  width:44px;height:26px;
+  background:var(--line);
+  border-radius:13px;
   position:relative;
-  transition:all 0.3s ease;
+  transition:all .3s ease;
   cursor:pointer;
 }
-.toggle-switch.on{background:var(--green)}
-.toggle-switch::after{
+.toggle.on{background:var(--accent)}
+.toggle::after{
   content:'';
   position:absolute;
-  width:27px;height:27px;
+  width:22px;height:22px;
   background:#fff;
   border-radius:50%;
   top:2px;left:2px;
-  transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);
-  box-shadow:0 2px 4px rgba(0,0,0,0.2);
+  transition:all .3s cubic-bezier(.34,1.56,.64,1);
 }
-.toggle-switch.on::after{transform:translateX(20px)}
+.toggle.on::after{transform:translateX(18px)}
 
 /* Modal */
-.modal-overlay{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.4);
+.modal{
+  position:fixed;inset:0;
   z-index:300;
   display:flex;
   align-items:flex-end;
   justify-content:center;
   opacity:0;
   pointer-events:none;
-  transition:opacity 0.3s ease;
+  transition:opacity .3s ease;
+  background:rgba(0,0,0,.3);
   backdrop-filter:blur(4px);
   -webkit-backdrop-filter:blur(4px);
 }
-.modal-overlay.open{opacity:1;pointer-events:auto}
-.modal-content{
-  background:var(--bg-card);
-  border-radius:var(--radius-lg) var(--radius-lg) 0 0;
+.modal.open{opacity:1;pointer-events:auto}
+.modal-inner{
+  background:var(--card);
+  border-radius:var(--radius) var(--radius) 0 0;
+  border:1px solid var(--line);
+  border-bottom:none;
   width:100%;
-  max-width:480px;
+  max-width:440px;
   max-height:80vh;
   overflow-y:auto;
-  padding:24px 20px calc(var(--safe-bottom) + 20px);
+  padding:24px 24px calc(var(--safe) + 20px);
   transform:translateY(100%);
-  transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  transition:transform .35s cubic-bezier(.34,1.56,.64,1);
 }
-.modal-overlay.open .modal-content{transform:translateY(0)}
-.modal-handle{
-  width:36px;height:5px;
-  background:var(--border);
-  border-radius:3px;
-  margin:0 auto 16px;
-}
+.modal.open .modal-inner{transform:translateY(0)}
+.modal-handle{width:32px;height:4px;background:var(--line);border-radius:2px;margin:0 auto 16px}
 
-/* About Page */
-.about-content{
-  text-align:center;
-  padding:20px 0;
-}
-.about-content .about-logo{
-  width:72px;height:72px;
-  border-radius:18px;
-  margin:0 auto 16px;
-  box-shadow:var(--shadow-md);
-}
-.about-content h2{font-size:22px;font-weight:700;margin-bottom:4px}
-.about-content .about-version{font-size:14px;color:var(--text-tertiary);margin-bottom:24px}
-.about-content .about-text{
+/* About */
+.about{text-align:center;padding:20px 0}
+.about img{width:64px;height:64px;border-radius:14px;border:1px solid var(--line);margin:0 auto 16px}
+.about h2{font-size:20px;font-weight:700;margin-bottom:4px}
+.about .ver{font-size:13px;color:var(--text3);margin-bottom:20px}
+.about .text{
   text-align:left;
-  font-size:14px;
+  font-size:13px;
   line-height:1.8;
-  color:var(--text-secondary);
+  color:var(--text2);
   white-space:pre-line;
-  background:var(--bg-input);
+  background:var(--bg);
+  border:1px solid var(--line);
   border-radius:var(--radius);
-  padding:20px;
-  margin-bottom:16px;
+  padding:18px;
+  margin-bottom:14px;
 }
-.about-content .about-link{
-  color:var(--primary);
-  font-size:14px;
-  word-break:break-all;
-}
+.about .link{color:var(--accent);font-size:13px;word-break:break-all}
 
-/* ========== Profile Page ========== */
-.profile-header{
-  text-align:center;
-  padding:30px 0 20px;
-}
-.avatar-upload{
+/* ===== PROFILE ===== */
+.profile-top{text-align:center;padding:28px 0 20px}
+.avatar-box{
   position:relative;
-  width:88px;height:88px;
-  margin:0 auto 16px;
+  width:80px;height:80px;
+  margin:0 auto 14px;
   cursor:pointer;
 }
-.avatar-upload img{
-  width:88px;height:88px;
+.avatar-box img{
+  width:80px;height:80px;
   border-radius:50%;
   object-fit:cover;
-  box-shadow:var(--shadow-md);
-  border:4px solid var(--bg-card);
+  border:1.5px solid var(--line);
 }
-.avatar-upload .avatar-placeholder{
-  width:88px;height:88px;
+.avatar-box .ph{
+  width:80px;height:80px;
   border-radius:50%;
-  background:var(--primary-light);
+  border:1.5px dashed var(--line);
   display:flex;
   align-items:center;
   justify-content:center;
-  font-size:36px;
-  color:var(--primary);
+  font-size:30px;
+  color:var(--text3);
 }
-.avatar-upload .avatar-edit{
+.avatar-box .edit{
   position:absolute;
   bottom:0;right:0;
-  width:28px;height:28px;
+  width:24px;height:24px;
   border-radius:50%;
-  background:var(--primary);
-  color:#fff;
+  background:var(--accent);
+  color:var(--bg);
   display:flex;
   align-items:center;
   justify-content:center;
-  font-size:14px;
-  box-shadow:var(--shadow-sm);
+  font-size:12px;
+  border:2px solid var(--card);
 }
-.nickname-input{
-  font-size:20px;
+.nick-input{
+  font-size:18px;
   font-weight:600;
   text-align:center;
-  padding:10px;
-  border-radius:var(--radius-sm);
-  background:var(--bg-input);
+  padding:8px 12px;
+  border-radius:8px;
+  background:var(--bg);
   color:var(--text);
-  width:200px;
-  border:2px solid transparent;
-  transition:all 0.3s ease;
+  width:180px;
+  border:1.5px solid var(--line);
+  transition:all .2s ease;
 }
-.nickname-input:focus{border-color:var(--primary);background:var(--bg-card)}
-.profile-stats{
-  display:flex;
-  justify-content:space-around;
-  padding:20px 0;
-}
-.profile-stat{
-  text-align:center;
-}
-.profile-stat .ps-num{font-size:28px;font-weight:700;color:var(--primary)}
-.profile-stat .ps-label{font-size:12px;color:var(--text-secondary)}
+.nick-input:focus{border-color:var(--accent)}
+.profile-stats{display:flex;justify-content:space-around;padding:20px 0}
+.profile-stats .ps{text-align:center}
+.profile-stats .ps-num{font-size:26px;font-weight:700}
+.profile-stats .ps-label{font-size:11px;color:var(--text2)}
 
-/* ========== Animations ========== */
-@keyframes bouncePop{
-  0%{transform:scale(0.8);opacity:0}
-  50%{transform:scale(1.05)}
-  100%{transform:scale(1);opacity:1}
-}
-@keyframes shake{
-  0%,100%{transform:translateX(0)}
-  20%{transform:translateX(-8px)}
-  40%{transform:translateX(8px)}
-  60%{transform:translateX(-6px)}
-  80%{transform:translateX(4px)}
-}
-@keyframes fadeInUp{
-  from{opacity:0;transform:translateY(20px)}
-  to{opacity:1;transform:translateY(0)}
-}
-@keyframes pulse{
-  0%,100%{transform:scale(1)}
-  50%{transform:scale(1.05)}
-}
-@keyframes confetti{
-  0%{transform:translateY(0) rotate(0);opacity:1}
-  100%{transform:translateY(-120px) rotate(720deg);opacity:0}
-}
+/* Animations */
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}50%{transform:translateX(6px)}75%{transform:translateX(-4px)}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pop{0%{transform:scale(.9);opacity:0}60%{transform:scale(1.02)}100%{transform:scale(1);opacity:1}}
 
-/* Confetti */
-.confetti-container{
-  position:fixed;
-  top:50%;left:50%;
-  pointer-events:none;
-  z-index:250;
-}
-.confetti-piece{
+.confetti-box{position:fixed;top:50%;left:50%;pointer-events:none;z-index:250}
+.confetti-box .c{
   position:absolute;
-  width:10px;height:10px;
+  width:8px;height:8px;
   border-radius:2px;
-  animation:confetti 1.5s ease-out forwards;
+  animation:confetti 1.4s ease-out forwards;
 }
+@keyframes confetti{0%{transform:translateY(0) rotate(0);opacity:1}100%{transform:translateY(-100px) rotate(600deg);opacity:0}}
 
-/* Scrollbar */
 .page::-webkit-scrollbar{width:0}
 </style>
 </head>
 <body data-theme="light">
 
-<div class="app-container" id="appContainer">
+<div class="app">
 
-  <!-- ==================== HOME PAGE ==================== -->
+  <!-- HOME -->
   <div class="page active" id="pageHome">
-    <div class="home-header">
-      <div class="app-logo">
-        <img src="app-icon.jpg" alt="白词斩" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-        <div style="display:none;width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#4A6CF7,#AF52DE);align-items:center;justify-content:center;font-size:20px;color:#fff;font-weight:700">白</div>
-        <h1>白词斩</h1>
-      </div>
+    <div class="home-top">
+      <img src="app-icon.jpg" class="home-logo" alt="白词斩" onerror="this.style.display='none'">
+      <div class="home-brand">白词斩</div>
     </div>
 
-    <!-- Stage Selector -->
-    <div class="stage-card">
-      <h3>选择学习阶段</h3>
-      <div class="stage-options" id="stageOptions">
-        <button class="stage-chip" data-stage="中考">中考</button>
-        <button class="stage-chip" data-stage="高考">高考</button>
-        <button class="stage-chip" data-stage="四级">四级</button>
-        <button class="stage-chip" data-stage="六级">六级</button>
-        <button class="stage-chip" data-stage="考研">考研</button>
-      </div>
-    </div>
-
-    <!-- Daily Goal -->
-    <div class="goal-card">
-      <h3>每日目标</h3>
-      <div class="goal-options" id="goalOptions">
-        <button class="goal-chip" data-goal="10">10词/天</button>
-        <button class="goal-chip" data-goal="20">20词/天</button>
-        <button class="goal-chip" data-goal="30">30词/天</button>
-        <button class="goal-chip" data-goal="50">50词/天</button>
-      </div>
-    </div>
-
-    <!-- Action Buttons -->
-    <div class="action-buttons">
-      <button class="btn-action btn-review" id="btnReview">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-        <span>复习</span>
-        <span class="btn-sub">巩固已学单词</span>
+    <div class="home-actions">
+      <button class="btn-main" id="btnReview">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 15 14"/></svg>
+        <span class="btn-label">复习</span>
+        <span class="btn-hint">巩固已学单词</span>
       </button>
-      <button class="btn-action btn-forward" id="btnForward">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
-        <span>前进</span>
-        <span class="btn-sub">学习新单词</span>
+      <button class="btn-main" id="btnForward">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+        <span class="btn-label">前进</span>
+        <span class="btn-hint">学习新单词</span>
       </button>
     </div>
 
-    <!-- Progress -->
-    <div class="progress-card">
-      <div class="progress-item">
-        <div class="progress-num" id="totalLearned">0</div>
-        <div class="progress-label">已学单词</div>
-      </div>
-      <div class="progress-item">
-        <div class="progress-num" id="todayCount">0</div>
-        <div class="progress-label">今日进度</div>
-      </div>
-      <div class="progress-item">
-        <div class="progress-num" id="streakDays">0</div>
-        <div class="progress-label">连续天数</div>
-      </div>
+    <div class="home-stats">
+      <div class="stat-item"><div class="stat-num" id="totalLearned">0</div><div class="stat-label">已学单词</div></div>
+      <div class="stat-item"><div class="stat-num" id="todayCount">0</div><div class="stat-label">今日进度</div></div>
+      <div class="stat-item"><div class="stat-num" id="streakDays">0</div><div class="stat-label">连续天数</div></div>
     </div>
 
-    <!-- Daily Content -->
-    <div class="daily-card" id="dailyCard">
-      <div class="daily-title">每日一言</div>
-      <div class="daily-text" id="dailyQuote"></div>
-      <div class="daily-author" id="dailyAuthor"></div>
+    <div class="daily-quote">
+      <div class="dq-text" id="dailyQuote"></div>
+      <div class="dq-author" id="dailyAuthor"></div>
     </div>
   </div>
 
-  <!-- ==================== LEARNING PAGE ==================== -->
+  <!-- LEARN -->
   <div class="page" id="pageLearn">
-    <div class="learn-header">
-      <h2 class="learn-title" id="learnTitle">学习模式</h2>
-    </div>
-    <div class="learn-progress-bar"><div class="learn-progress-fill" id="learnProgressFill" style="width:0%"></div></div>
+    <div class="learn-header"><h2 class="learn-title" id="learnTitle">学习</h2></div>
+    <div class="learn-bar"><div class="learn-fill" id="learnFill" style="width:0%"></div></div>
     <div class="learn-counter" id="learnCounter"></div>
-    <div id="questionArea"></div>
-    <div class="feedback-bar" id="feedbackBar"></div>
-    <button class="btn-continue" id="btnContinue" onclick="nextQuestion()">继续</button>
-    <div id="sessionComplete" style="display:none"></div>
+    <div id="qArea"></div>
+    <div class="fb" id="fb"></div>
+    <button class="btn-go" id="btnGo" onclick="nextQ()">继续</button>
+    <div id="doneArea" style="display:none"></div>
   </div>
 
-  <!-- ==================== SETTINGS PAGE ==================== -->
+  <!-- SETTINGS -->
   <div class="page" id="pageSettings">
     <h2 class="settings-title">设置</h2>
-
-    <div class="settings-section">
-      <h3>学习设置</h3>
-      <div class="settings-item">
-        <div class="settings-row">
-          <span class="s-label">每日进度</span>
-          <span class="s-value" id="settingsDailyGoal">10词/天 <span class="s-arrow">›</span></span>
+    <div class="set-group">
+      <h3>学习</h3>
+      <div class="set-card">
+        <div class="set-row" onclick="openModal('modalGoal')">
+          <span class="sl">每日目标</span>
+          <span class="sv" id="settingsDailyGoal">10词/天 <span class="arrow">›</span></span>
         </div>
-        <div class="settings-row" style="cursor:pointer" onclick="document.getElementById('modalStage').classList.add('open')">
-          <span class="s-label">学习阶段</span>
-          <span class="s-value" id="settingsStage">中考 <span class="s-arrow">›</span></span>
+        <div class="set-row" onclick="openModal('modalStage')">
+          <span class="sl">学习阶段</span>
+          <span class="sv" id="settingsStage">中考 <span class="arrow">›</span></span>
         </div>
       </div>
     </div>
-
-    <div class="settings-section">
+    <div class="set-group">
       <h3>外观</h3>
-      <div class="settings-item">
-        <div class="settings-row">
-          <span class="s-label">深色模式</span>
-          <div class="toggle-switch" id="darkModeToggle" onclick="toggleDarkMode()"></div>
+      <div class="set-card">
+        <div class="set-row">
+          <span class="sl">深色模式</span>
+          <div class="toggle" id="darkToggle" onclick="toggleDark()"></div>
         </div>
       </div>
     </div>
-
-    <div class="settings-section">
+    <div class="set-group">
       <h3>其他</h3>
-      <div class="settings-item">
-        <div class="settings-row" style="cursor:pointer" onclick="showAbout()">
-          <span class="s-label">关于软件</span>
-          <span class="s-value"><span class="s-arrow">›</span></span>
-        </div>
+      <div class="set-card">
+        <div class="set-row" onclick="showAbout()"><span class="sl">关于软件</span><span class="sv"><span class="arrow">›</span></span></div>
       </div>
     </div>
   </div>
 
-  <!-- ==================== PROFILE PAGE ==================== -->
+  <!-- PROFILE -->
   <div class="page" id="pageProfile">
-    <div class="profile-header">
-      <div class="avatar-upload" onclick="document.getElementById('avatarInput').click()">
-        <img id="avatarImg" src="" alt="头像" style="display:none">
-        <div class="avatar-placeholder" id="avatarPlaceholder">👤</div>
-        <div class="avatar-edit">+</div>
-        <input type="file" id="avatarInput" accept="image/*" style="display:none" onchange="handleAvatarUpload(event)">
+    <div class="profile-top">
+      <div class="avatar-box" onclick="document.getElementById('avatarFile').click()">
+        <img id="avatarImg" src="" alt="" style="display:none">
+        <div class="ph" id="avatarPh">👤</div>
+        <div class="edit">+</div>
+        <input type="file" id="avatarFile" accept="image/*" style="display:none" onchange="onAvatar(event)">
       </div>
-      <input type="text" class="nickname-input" id="nicknameInput" placeholder="输入昵称" maxlength="16" onchange="saveNickname()">
+      <input type="text" class="nick-input" id="nickInput" placeholder="输入昵称" maxlength="16" onchange="saveNick()">
     </div>
     <div class="profile-stats">
-      <div class="profile-stat">
-        <div class="ps-num" id="profileTotalLearned">0</div>
-        <div class="ps-label">累计学习</div>
-      </div>
-      <div class="profile-stat">
-        <div class="ps-num" id="profileStreak">0</div>
-        <div class="ps-label">连续天数</div>
-      </div>
-      <div class="profile-stat">
-        <div class="ps-num" id="profileToday">0</div>
-        <div class="ps-label">今日完成</div>
-      </div>
+      <div class="ps"><div class="ps-num" id="profTotal">0</div><div class="ps-label">累计学习</div></div>
+      <div class="ps"><div class="ps-num" id="profStreak">0</div><div class="ps-label">连续天数</div></div>
+      <div class="ps"><div class="ps-num" id="profToday">0</div><div class="ps-label">今日完成</div></div>
     </div>
-    <div class="settings-section">
+    <div class="set-group">
       <h3>数据</h3>
-      <div class="settings-item">
-        <div class="settings-row" style="cursor:pointer" onclick="resetAllData()">
-          <span class="s-label" style="color:var(--accent)">重置所有数据</span>
-          <span class="s-value"><span class="s-arrow">›</span></span>
-        </div>
+      <div class="set-card">
+        <div class="set-row" onclick="resetAll()"><span class="sl" style="color:var(--red)">重置所有数据</span><span class="sv"><span class="arrow">›</span></span></div>
       </div>
     </div>
   </div>
 
-  <!-- ==================== FLOATING EXIT BUTTON ==================== -->
-  <button class="float-exit" id="floatExit" onclick="exitToHome()">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+  <!-- FLOAT EXIT -->
+  <button class="float-exit" id="floatExit" onclick="exitHome()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
   </button>
 
-  <!-- ==================== BOTTOM NAVIGATION ==================== -->
-  <nav class="bottom-nav" id="bottomNav">
-    <button class="nav-item active" data-page="home" onclick="navigateTo('home')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <button class="nav-item active" data-page="home" onclick="goPage('home')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
       <span>主页</span>
     </button>
-    <button class="nav-item" data-page="settings" onclick="navigateTo('settings')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    <button class="nav-item" data-page="settings" onclick="goPage('settings')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       <span>设置</span>
     </button>
-    <button class="nav-item" data-page="profile" onclick="navigateTo('profile')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    <button class="nav-item" data-page="profile" onclick="goPage('profile')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
       <span>个人</span>
     </button>
   </nav>
 
-  <!-- ==================== MODALS ==================== -->
-  <!-- Daily Goal Modal -->
-  <div class="modal-overlay" id="modalGoal">
-    <div class="modal-content">
+  <!-- MODALS -->
+  <div class="modal" id="modalGoal">
+    <div class="modal-inner">
       <div class="modal-handle"></div>
-      <h3 style="font-size:18px;font-weight:700;margin-bottom:16px">选择每日目标</h3>
+      <h3 style="font-size:18px;font-weight:700;margin-bottom:16px">每日目标</h3>
       <div style="display:flex;flex-direction:column;gap:8px">
-        <button class="choice-btn" onclick="setDailyGoal(10)" style="text-align:left;padding:16px">10 词/天</button>
-        <button class="choice-btn" onclick="setDailyGoal(20)" style="text-align:left;padding:16px">20 词/天</button>
-        <button class="choice-btn" onclick="setDailyGoal(30)" style="text-align:left;padding:16px">30 词/天</button>
-        <button class="choice-btn" onclick="setDailyGoal(50)" style="text-align:left;padding:16px">50 词/天</button>
+        <button class="choice" style="text-align:left;padding:16px" onclick="setGoal(10)">10 词/天</button>
+        <button class="choice" style="text-align:left;padding:16px" onclick="setGoal(20)">20 词/天</button>
+        <button class="choice" style="text-align:left;padding:16px" onclick="setGoal(30)">30 词/天</button>
+        <button class="choice" style="text-align:left;padding:16px" onclick="setGoal(50)">50 词/天</button>
       </div>
     </div>
   </div>
 
-  <!-- Stage Modal -->
-  <div class="modal-overlay" id="modalStage">
-    <div class="modal-content">
+  <div class="modal" id="modalStage">
+    <div class="modal-inner">
       <div class="modal-handle"></div>
-      <h3 style="font-size:18px;font-weight:700;margin-bottom:16px">选择学习阶段</h3>
+      <h3 style="font-size:18px;font-weight:700;margin-bottom:16px">学习阶段</h3>
       <div style="display:flex;flex-direction:column;gap:8px">
-        <button class="choice-btn" onclick="setStage('中考')" style="text-align:left;padding:16px">中考</button>
-        <button class="choice-btn" onclick="setStage('高考')" style="text-align:left;padding:16px">高考</button>
-        <button class="choice-btn" onclick="setStage('四级')" style="text-align:left;padding:16px">四级</button>
-        <button class="choice-btn" onclick="setStage('六级')" style="text-align:left;padding:16px">六级</button>
-        <button class="choice-btn" onclick="setStage('考研')" style="text-align:left;padding:16px">考研</button>
+        <button class="choice" style="text-align:left;padding:16px" onclick="setStage('中考')">中考</button>
+        <button class="choice" style="text-align:left;padding:16px" onclick="setStage('高考')">高考</button>
+        <button class="choice" style="text-align:left;padding:16px" onclick="setStage('四级')">四级</button>
+        <button class="choice" style="text-align:left;padding:16px" onclick="setStage('六级')">六级</button>
+        <button class="choice" style="text-align:left;padding:16px" onclick="setStage('考研')">考研</button>
       </div>
     </div>
   </div>
 
-  <!-- About Modal -->
-  <div class="modal-overlay" id="modalAbout">
-    <div class="modal-content">
+  <div class="modal" id="modalAbout">
+    <div class="modal-inner">
       <div class="modal-handle"></div>
-      <div class="about-content">
-        <img src="app-icon.jpg" class="about-logo" alt="白词斩" onerror="this.style.display='none'">
+      <div class="about">
+        <img src="app-icon.jpg" alt="白词斩" onerror="this.style.display='none'">
         <h2>白词斩</h2>
-        <div class="about-version">BaiCiZhan v1.0.0</div>
-        <div class="about-text">白词斩（BaiCiZhan）
+        <div class="ver">BaiCiZhan v1.0.0</div>
+        <div class="text">白词斩（BaiCiZhan）
 
 版本：v1.0.0
 版权所有 © 2026 lewb521
@@ -1136,777 +712,251 @@ https://github.com/lewb521/-
 
 本软件可能使用了第三方数据，相关许可信息详见本页面。
 主页每日一言来源于公开名言数据，每日随机抽取。</div>
-        <a href="https://github.com/lewb521/-" target="_blank" class="about-link">https://github.com/lewb521/-</a>
+        <a href="https://github.com/lewb521/-" target="_blank" class="link">https://github.com/lewb521/-</a>
       </div>
     </div>
   </div>
 
-</div><!-- /app-container -->
+</div>
 
 <script>
-// ==================== WORD DATABASE ====================
-const wordDB = {
-  '中考': [
-    {en:'abroad',zh:'在国外;到国外',ph:'/əˈbrɔːd/'},{en:'accept',zh:'接受;同意',ph:'/əkˈsept/'},{en:'accident',zh:'事故;意外',ph:'/ˈæksɪdənt/'},{en:'achieve',zh:'达到;实现',ph:'/əˈtʃiːv/'},{en:'active',zh:'积极的;活跃的',ph:'/ˈæktɪv/'},{en:'advice',zh:'建议;忠告',ph:'/ədˈvaɪs/'},{en:'afford',zh:'负担得起',ph:'/əˈfɔːrd/'},{en:'against',zh:'反对;靠着',ph:'/əˈɡenst/'},{en:'allow',zh:'允许;准许',ph:'/əˈlaʊ/'},{en:'ancient',zh:'古代的;古老的',ph:'/ˈeɪnʃənt/'},{en:'appear',zh:'出现;显得',ph:'/əˈpɪr/'},{en:'arrive',zh:'到达;抵达',ph:'/əˈraɪv/'},{en:'attend',zh:'参加;出席',ph:'/əˈtend/'},{en:'beauty',zh:'美丽;美人',ph:'/ˈbjuːti/'},{en:'believe',zh:'相信;认为',ph:'/bɪˈliːv/'},{en:'beyond',zh:'超出;在…之外',ph:'/bɪˈjɑːnd/'},{en:'brave',zh:'勇敢的',ph:'/breɪv/'},{en:'camera',zh:'照相机',ph:'/ˈkæmərə/'},{en:'capital',zh:'首都;资本',ph:'/ˈkæpɪtl/'},{en:'celebrate',zh:'庆祝',ph:'/ˈselɪbreɪt/'},{en:'chance',zh:'机会;可能性',ph:'/tʃæns/'},{en:'climate',zh:'气候',ph:'/ˈklaɪmət/'},{en:'collect',zh:'收集',ph:'/kəˈlekt/'},{en:'comfortable',zh:'舒适的',ph:'/ˈkʌmftəbl/'},{en:'communicate',zh:'交流;沟通',ph:'/kəˈmjuːnɪkeɪt/'},{en:'compare',zh:'比较',ph:'/kəmˈper/'},{en:'complete',zh:'完成;完整的',ph:'/kəmˈpliːt/'},{en:'connect',zh:'连接;联系',ph:'/kəˈnekt/'},{en:'continue',zh:'继续',ph:'/kənˈtɪnjuː/'},{en:'control',zh:'控制;管理',ph:'/kənˈtroʊl/'}
-  ],
-  '高考': [
-    {en:'abandon',zh:'放弃;抛弃',ph:'/əˈbændən/'},{en:'absorb',zh:'吸收;吸引',ph:'/əbˈzɔːrb/'},{en:'abstract',zh:'抽象的;摘要',ph:'/ˈæbstrækt/'},{en:'abundant',zh:'丰富的;充裕的',ph:'/əˈbʌndənt/'},{en:'academic',zh:'学术的;学院的',ph:'/ˌækəˈdemɪk/'},{en:'accelerate',zh:'加速;促进',ph:'/əkˈseləreɪt/'},{en:'accessible',zh:'可进入的;易接近的',ph:'/əkˈsesəbl/'},{en:'accommodation',zh:'住宿;适应',ph:'/əˌkɑːməˈdeɪʃn/'},{en:'accompany',zh:'陪伴;伴随',ph:'/əˈkʌmpəni/'},{en:'accomplish',zh:'完成;实现',ph:'/əˈkɑːmplɪʃ/'},{en:'accumulate',zh:'积累;积聚',ph:'/əˈkjuːmjəleɪt/'},{en:'accurate',zh:'准确的;精确的',ph:'/ˈækjərət/'},{en:'acknowledge',zh:'承认;感谢',ph:'/əkˈnɑːlɪdʒ/'},{en:'acquire',zh:'获得;习得',ph:'/əˈkwaɪər/'},{en:'adapt',zh:'适应;改编',ph:'/əˈdæpt/'},{en:'adequate',zh:'足够的;适当的',ph:'/ˈædɪkwət/'},{en:'administration',zh:'管理;行政',ph:'/ədˌmɪnɪˈstreɪʃn/'},{en:'adolescent',zh:'青少年',ph:'/ˌædəˈlesnt/'},{en:'advocate',zh:'提倡;倡导者',ph:'/ˈædvəkeɪt/'},{en:'aggressive',zh:'侵略的;好斗的',ph:'/əˈɡresɪv/'},{en:'allocate',zh:'分配;拨出',ph:'/ˈæləkeɪt/'},{en:'alternative',zh:'替代的;选择',ph:'/ɔːlˈtɜːrnətɪv/'},{en:'ambiguous',zh:'模糊的;含糊的',ph:'/æmˈbɪɡjuəs/'},{en:'ambitious',zh:'有雄心的',ph:'/æmˈbɪʃəs/'},{en:'anticipate',zh:'预期;期望',ph:'/ænˈtɪsɪpeɪt/'},{en:'apparent',zh:'显然的;表面的',ph:'/əˈpærənt/'},{en:'appreciate',zh:'欣赏;感激',ph:'/əˈpriːʃieɪt/'},{en:'approach',zh:'接近;方法',ph:'/əˈproʊtʃ/'},{en:'appropriate',zh:'适当的;挪用',ph:'/əˈproʊpriət/'},{en:'assess',zh:'评估;评定',ph:'/əˈses/'}
-  ],
-  '四级': [
-    {en:'abandon',zh:'放弃;放纵',ph:'/əˈbændən/'},{en:'absolute',zh:'绝对的;完全的',ph:'/ˈæbsəluːt/'},{en:'absorb',zh:'吸收;吸引',ph:'/əbˈzɔːrb/'},{en:'abstract',zh:'抽象的;摘要',ph:'/ˈæbstrækt/'},{en:'abundant',zh:'丰富的',ph:'/əˈbʌndənt/'},{en:'academic',zh:'学术的',ph:'/ˌækəˈdemɪk/'},{en:'accelerate',zh:'加速',ph:'/əkˈseləreɪt/'},{en:'access',zh:'进入;通道;获取',ph:'/ˈækses/'},{en:'accommodation',zh:'住宿;膳宿',ph:'/əˌkɑːməˈdeɪʃn/'},{en:'accompany',zh:'陪伴;伴奏',ph:'/əˈkʌmpəni/'},{en:'accomplish',zh:'完成;达成',ph:'/əˈkɑːmplɪʃ/'},{en:'account',zh:'账户;说明;解释',ph:'/əˈkaʊnt/'},{en:'accumulate',zh:'积累;积聚',ph:'/əˈkjuːmjəleɪt/'},{en:'accurate',zh:'准确的',ph:'/ˈækjərət/'},{en:'achieve',zh:'实现;获得',ph:'/əˈtʃiːv/'},{en:'acknowledge',zh:'承认;答谢',ph:'/əkˈnɑːlɪdʒ/'},{en:'acquire',zh:'获得;习得',ph:'/əˈkwaɪər/'},{en:'adapt',zh:'适应;改编',ph:'/əˈdæpt/'},{en:'adequate',zh:'充足的;适当的',ph:'/ˈædɪkwət/'},{en:'adjust',zh:'调整;适应',ph:'/əˈdʒʌst/'},{en:'administration',zh:'管理;行政',ph:'/ədˌmɪnɪˈstreɪʃn/'},{en:'admire',zh:'钦佩;赞赏',ph:'/ədˈmaɪər/'},{en:'adopt',zh:'采纳;收养',ph:'/əˈdɑːpt/'},{en:'advance',zh:'前进;进步',ph:'/ədˈvæns/'},{en:'advantage',zh:'优势;有利条件',ph:'/ədˈvæntɪdʒ/'},{en:'adventure',zh:'冒险;奇遇',ph:'/ədˈventʃər/'},{en:'advertise',zh:'做广告;宣传',ph:'/ˈædvərtaɪz/'},{en:'advocate',zh:'提倡;倡导者',ph:'/ˈædvəkeɪt/'},{en:'affect',zh:'影响;感动',ph:'/əˈfekt/'},{en:'afford',zh:'负担得起',ph:'/əˈfɔːrd/'}
-  ],
-  '六级': [
-    {en:'abolish',zh:'废除;取消',ph:'/əˈbɑːlɪʃ/'},{en:'absurd',zh:'荒谬的;荒唐的',ph:'/əbˈsɜːrd/'},{en:'abundance',zh:'丰富;充裕',ph:'/əˈbʌndəns/'},{en:'accessory',zh:'配件;附件;从犯',ph:'/əkˈsesəri/'},{en:'accommodate',zh:'容纳;提供住宿;适应',ph:'/əˈkɑːmədeɪt/'},{en:'acquaint',zh:'使熟悉;使了解',ph:'/əˈkweɪnt/'},{en:'adhere',zh:'黏附;坚持;遵守',ph:'/ədˈhɪr/'},{en:'adjacent',zh:'邻近的;毗邻的',ph:'/əˈdʒeɪsnt/'},{en:'administer',zh:'管理;执行;给予',ph:'/ədˈmɪnɪstər/'},{en:'adolescent',zh:'青少年;青春期的',ph:'/ˌædəˈlesnt/'},{en:'advent',zh:'到来;出现',ph:'/ˈædvent/'},{en:'adverse',zh:'不利的;相反的',ph:'/ˈædvɜːrs/'},{en:'aerial',zh:'空中的;航空的',ph:'/ˈeriəl/'},{en:'aesthetic',zh:'审美的;美学的',ph:'/esˈθetɪk/'},{en:'affiliate',zh:'使附属;隶属',ph:'/əˈfɪlieɪt/'},{en:'affirm',zh:'肯定;确认',ph:'/əˈfɜːrm/'},{en:'afflict',zh:'使痛苦;折磨',ph:'/əˈflɪkt/'},{en:'aggravate',zh:'加重;使恶化',ph:'/ˈæɡrəveɪt/'},{en:'aggregate',zh:'总计;集合体',ph:'/ˈæɡrɪɡət/'},{en:'agitate',zh:'煽动;搅动;使焦虑',ph:'/ˈædʒɪteɪt/'},{en:'agony',zh:'极大的痛苦',ph:'/ˈæɡəni/'},{en:'allege',zh:'声称;断言',ph:'/əˈledʒ/'},{en:'alleviate',zh:'减轻;缓解',ph:'/əˈliːvieɪt/'},{en:'allocate',zh:'分配;拨出',ph:'/ˈæləkeɪt/'},{en:'alloy',zh:'合金',ph:'/ˈælɔɪ/'},{en:'alternate',zh:'交替的;轮流',ph:'/ˈɔːltərneɪt/'},{en:'amateur',zh:'业余爱好者;外行',ph:'/ˈæmətər/'},{en:'ambassador',zh:'大使;代表',ph:'/æmˈbæsədər/'},{en:'ambiguous',zh:'模棱两可的',ph:'/æmˈbɪɡjuəs/'},{en:'amend',zh:'修改;修订',ph:'/əˈmend/'}
-  ],
-  '考研': [
-    {en:'abdicate',zh:'退位;放弃(权力)',ph:'/ˈæbdɪkeɪt/'},{en:'aberration',zh:'偏差;反常',ph:'/ˌæbəˈreɪʃn/'},{en:'abeyance',zh:'搁置;中止',ph:'/əˈbeɪəns/'},{en:'abhor',zh:'憎恶;厌恶',ph:'/əbˈhɔːr/'},{en:'abide',zh:'忍受;遵守',ph:'/əˈbaɪd/'},{en:'abject',zh:'凄惨的;卑贱的',ph:'/ˈæbdʒekt/'},{en:'abjure',zh:'发誓放弃;公开放弃',ph:'/əbˈdʒʊr/'},{en:'ablaze',zh:'着火的;闪耀的',ph:'/əˈbleɪz/'},{en:'abnegate',zh:'克制;放弃',ph:'/ˈæbnɪɡeɪt/'},{en:'abode',zh:'住所;居住',ph:'/əˈboʊd/'},{en:'abolish',zh:'废除;取消',ph:'/əˈbɑːlɪʃ/'},{en:'abominable',zh:'可恶的;极坏的',ph:'/əˈbɑːmɪnəbl/'},{en:'abound',zh:'大量存在;富于',ph:'/əˈbaʊnd/'},{en:'abreast',zh:'并排;并肩',ph:'/əˈbrest/'},{en:'abridge',zh:'删节;缩短',ph:'/əˈbrɪdʒ/'},{en:'abrogate',zh:'废除;取消',ph:'/ˈæbrəɡeɪt/'},{en:'abrupt',zh:'突然的;生硬的',ph:'/əˈbrʌpt/'},{en:'abscond',zh:'潜逃;逃亡',ph:'/əbˈskɑːnd/'},{en:'absolve',zh:'免除;赦免',ph:'/əbˈzɑːlv/'},{en:'abstain',zh:'戒绝;弃权',ph:'/əbˈsteɪn/'},{en:'abstemious',zh:'有节制的;节俭的',ph:'/əbˈstiːmiəs/'},{en:'abstract',zh:'抽象的;提取',ph:'/ˈæbstrækt/'},{en:'abstruse',zh:'深奥的;难懂的',ph:'/əbˈstruːs/'},{en:'absurd',zh:'荒谬的',ph:'/əbˈsɜːrd/'},{en:'abundance',zh:'丰富;充裕',ph:'/əˈbʌndəns/'},{en:'abut',zh:'邻接;毗连',ph:'/əˈbʌt/'},{en:'abysmal',zh:'极深的;极坏的',ph:'/əˈbɪzməl/'},{en:'accede',zh:'同意;加入;就任',ph:'/əkˈsiːd/'},{en:'accentuate',zh:'强调;重读',ph:'/əkˈsentʃueɪt/'},{en:'acclaim',zh:'欢呼;称赞',ph:'/əˈkleɪm/'}
-  ]
+// ===== WORD DB =====
+const wordDB={
+'中考':[{en:'abroad',zh:'在国外;到国外',ph:'/əˈbrɔːd/'},{en:'accept',zh:'接受;同意',ph:'/əkˈsept/'},{en:'accident',zh:'事故;意外',ph:'/ˈæksɪdənt/'},{en:'achieve',zh:'达到;实现',ph:'/əˈtʃiːv/'},{en:'active',zh:'积极的;活跃的',ph:'/ˈæktɪv/'},{en:'advice',zh:'建议;忠告',ph:'/ədˈvaɪs/'},{en:'afford',zh:'负担得起',ph:'/əˈfɔːrd/'},{en:'against',zh:'反对;靠着',ph:'/əˈɡenst/'},{en:'allow',zh:'允许;准许',ph:'/əˈlaʊ/'},{en:'ancient',zh:'古代的;古老的',ph:'/ˈeɪnʃənt/'},{en:'appear',zh:'出现;显得',ph:'/əˈpɪr/'},{en:'arrive',zh:'到达;抵达',ph:'/əˈraɪv/'},{en:'attend',zh:'参加;出席',ph:'/əˈtend/'},{en:'beauty',zh:'美丽;美人',ph:'/ˈbjuːti/'},{en:'believe',zh:'相信;认为',ph:'/bɪˈliːv/'},{en:'beyond',zh:'超出;在…之外',ph:'/bɪˈjɑːnd/'},{en:'brave',zh:'勇敢的',ph:'/breɪv/'},{en:'camera',zh:'照相机',ph:'/ˈkæmərə/'},{en:'capital',zh:'首都;资本',ph:'/ˈkæpɪtl/'},{en:'celebrate',zh:'庆祝',ph:'/ˈselɪbreɪt/'},{en:'chance',zh:'机会;可能性',ph:'/tʃæns/'},{en:'climate',zh:'气候',ph:'/ˈklaɪmət/'},{en:'collect',zh:'收集',ph:'/kəˈlekt/'},{en:'comfortable',zh:'舒适的',ph:'/ˈkʌmftəbl/'},{en:'communicate',zh:'交流;沟通',ph:'/kəˈmjuːnɪkeɪt/'},{en:'compare',zh:'比较',ph:'/kəmˈper/'},{en:'complete',zh:'完成;完整的',ph:'/kəmˈpliːt/'},{en:'connect',zh:'连接;联系',ph:'/kəˈnekt/'},{en:'continue',zh:'继续',ph:'/kənˈtɪnjuː/'},{en:'control',zh:'控制;管理',ph:'/kənˈtroʊl/'}],
+'高考':[{en:'abandon',zh:'放弃;抛弃',ph:'/əˈbændən/'},{en:'absorb',zh:'吸收;吸引',ph:'/əbˈzɔːrb/'},{en:'abstract',zh:'抽象的;摘要',ph:'/ˈæbstrækt/'},{en:'abundant',zh:'丰富的;充裕的',ph:'/əˈbʌndənt/'},{en:'academic',zh:'学术的;学院的',ph:'/ˌækəˈdemɪk/'},{en:'accelerate',zh:'加速;促进',ph:'/əkˈseləreɪt/'},{en:'accessible',zh:'可进入的;易接近的',ph:'/əkˈsesəbl/'},{en:'accommodation',zh:'住宿;适应',ph:'/əˌkɑːməˈdeɪʃn/'},{en:'accompany',zh:'陪伴;伴随',ph:'/əˈkʌmpəni/'},{en:'accomplish',zh:'完成;实现',ph:'/əˈkɑːmplɪʃ/'},{en:'accumulate',zh:'积累;积聚',ph:'/əˈkjuːmjəleɪt/'},{en:'accurate',zh:'准确的;精确的',ph:'/ˈækjərət/'},{en:'acknowledge',zh:'承认;感谢',ph:'/əkˈnɑːlɪdʒ/'},{en:'acquire',zh:'获得;习得',ph:'/əˈkwaɪər/'},{en:'adapt',zh:'适应;改编',ph:'/əˈdæpt/'},{en:'adequate',zh:'足够的;适当的',ph:'/ˈædɪkwət/'},{en:'administration',zh:'管理;行政',ph:'/ədˌmɪnɪˈstreɪʃn/'},{en:'adolescent',zh:'青少年',ph:'/ˌædəˈlesnt/'},{en:'advocate',zh:'提倡;倡导者',ph:'/ˈædvəkeɪt/'},{en:'aggressive',zh:'侵略的;好斗的',ph:'/əˈɡresɪv/'},{en:'allocate',zh:'分配;拨出',ph:'/ˈæləkeɪt/'},{en:'alternative',zh:'替代的;选择',ph:'/ɔːlˈtɜːrnətɪv/'},{en:'ambiguous',zh:'模糊的;含糊的',ph:'/æmˈbɪɡjuəs/'},{en:'ambitious',zh:'有雄心的',ph:'/æmˈbɪʃəs/'},{en:'anticipate',zh:'预期;期望',ph:'/ænˈtɪsɪpeɪt/'},{en:'apparent',zh:'显然的;表面的',ph:'/əˈpærənt/'},{en:'appreciate',zh:'欣赏;感激',ph:'/əˈpriːʃieɪt/'},{en:'approach',zh:'接近;方法',ph:'/əˈproʊtʃ/'},{en:'appropriate',zh:'适当的;挪用',ph:'/əˈproʊpriət/'},{en:'assess',zh:'评估;评定',ph:'/əˈses/'}],
+'四级':[{en:'abandon',zh:'放弃;放纵',ph:'/əˈbændən/'},{en:'absolute',zh:'绝对的;完全的',ph:'/ˈæbsəluːt/'},{en:'absorb',zh:'吸收;吸引',ph:'/əbˈzɔːrb/'},{en:'abstract',zh:'抽象的;摘要',ph:'/ˈæbstrækt/'},{en:'abundant',zh:'丰富的',ph:'/əˈbʌndənt/'},{en:'academic',zh:'学术的',ph:'/ˌækəˈdemɪk/'},{en:'accelerate',zh:'加速',ph:'/əkˈseləreɪt/'},{en:'access',zh:'进入;通道;获取',ph:'/ˈækses/'},{en:'accommodation',zh:'住宿;膳宿',ph:'/əˌkɑːməˈdeɪʃn/'},{en:'accompany',zh:'陪伴;伴奏',ph:'/əˈkʌmpəni/'},{en:'accomplish',zh:'完成;达成',ph:'/əˈkɑːmplɪʃ/'},{en:'account',zh:'账户;说明;解释',ph:'/əˈkaʊnt/'},{en:'accumulate',zh:'积累;积聚',ph:'/əˈkjuːmjəleɪt/'},{en:'accurate',zh:'准确的',ph:'/ˈækjərət/'},{en:'achieve',zh:'实现;获得',ph:'/əˈtʃiːv/'},{en:'acknowledge',zh:'承认;答谢',ph:'/əkˈnɑːlɪdʒ/'},{en:'acquire',zh:'获得;习得',ph:'/əˈkwaɪər/'},{en:'adapt',zh:'适应;改编',ph:'/əˈdæpt/'},{en:'adequate',zh:'充足的;适当的',ph:'/ˈædɪkwət/'},{en:'adjust',zh:'调整;适应',ph:'/əˈdʒʌst/'},{en:'administration',zh:'管理;行政',ph:'/ədˌmɪnɪˈstreɪʃn/'},{en:'admire',zh:'钦佩;赞赏',ph:'/ədˈmaɪər/'},{en:'adopt',zh:'采纳;收养',ph:'/əˈdɑːpt/'},{en:'advance',zh:'前进;进步',ph:'/ədˈvæns/'},{en:'advantage',zh:'优势;有利条件',ph:'/ədˈvæntɪdʒ/'},{en:'adventure',zh:'冒险;奇遇',ph:'/ədˈventʃər/'},{en:'advertise',zh:'做广告;宣传',ph:'/ˈædvərtaɪz/'},{en:'advocate',zh:'提倡;倡导者',ph:'/ˈædvəkeɪt/'},{en:'affect',zh:'影响;感动',ph:'/əˈfekt/'},{en:'afford',zh:'负担得起',ph:'/əˈfɔːrd/'}],
+'六级':[{en:'abolish',zh:'废除;取消',ph:'/əˈbɑːlɪʃ/'},{en:'absurd',zh:'荒谬的;荒唐的',ph:'/əbˈsɜːrd/'},{en:'abundance',zh:'丰富;充裕',ph:'/əˈbʌndəns/'},{en:'accessory',zh:'配件;附件;从犯',ph:'/əkˈsesəri/'},{en:'accommodate',zh:'容纳;提供住宿;适应',ph:'/əˈkɑːmədeɪt/'},{en:'acquaint',zh:'使熟悉;使了解',ph:'/əˈkweɪnt/'},{en:'adhere',zh:'黏附;坚持;遵守',ph:'/ədˈhɪr/'},{en:'adjacent',zh:'邻近的;毗邻的',ph:'/əˈdʒeɪsnt/'},{en:'administer',zh:'管理;执行;给予',ph:'/ədˈmɪnɪstər/'},{en:'adolescent',zh:'青少年;青春期的',ph:'/ˌædəˈlesnt/'},{en:'advent',zh:'到来;出现',ph:'/ˈædvent/'},{en:'adverse',zh:'不利的;相反的',ph:'/ˈædvɜːrs/'},{en:'aerial',zh:'空中的;航空的',ph:'/ˈeriəl/'},{en:'aesthetic',zh:'审美的;美学的',ph:'/esˈθetɪk/'},{en:'affiliate',zh:'使附属;隶属',ph:'/əˈfɪlieɪt/'},{en:'affirm',zh:'肯定;确认',ph:'/əˈfɜːrm/'},{en:'afflict',zh:'使痛苦;折磨',ph:'/əˈflɪkt/'},{en:'aggravate',zh:'加重;使恶化',ph:'/ˈæɡrəveɪt/'},{en:'aggregate',zh:'总计;集合体',ph:'/ˈæɡrɪɡət/'},{en:'agitate',zh:'煽动;搅动;使焦虑',ph:'/ˈædʒɪteɪt/'},{en:'agony',zh:'极大的痛苦',ph:'/ˈæɡəni/'},{en:'allege',zh:'声称;断言',ph:'/əˈledʒ/'},{en:'alleviate',zh:'减轻;缓解',ph:'/əˈliːvieɪt/'},{en:'allocate',zh:'分配;拨出',ph:'/ˈæləkeɪt/'},{en:'alloy',zh:'合金',ph:'/ˈælɔɪ/'},{en:'alternate',zh:'交替的;轮流',ph:'/ˈɔːltərneɪt/'},{en:'amateur',zh:'业余爱好者;外行',ph:'/ˈæmətər/'},{en:'ambassador',zh:'大使;代表',ph:'/æmˈbæsədər/'},{en:'ambiguous',zh:'模棱两可的',ph:'/æmˈbɪɡjuəs/'},{en:'amend',zh:'修改;修订',ph:'/əˈmend/'}],
+'考研':[{en:'abdicate',zh:'退位;放弃(权力)',ph:'/ˈæbdɪkeɪt/'},{en:'aberration',zh:'偏差;反常',ph:'/ˌæbəˈreɪʃn/'},{en:'abeyance',zh:'搁置;中止',ph:'/əˈbeɪəns/'},{en:'abhor',zh:'憎恶;厌恶',ph:'/əbˈhɔːr/'},{en:'abide',zh:'忍受;遵守',ph:'/əˈbaɪd/'},{en:'abject',zh:'凄惨的;卑贱的',ph:'/ˈæbdʒekt/'},{en:'abjure',zh:'发誓放弃;公开放弃',ph:'/əbˈdʒʊr/'},{en:'ablaze',zh:'着火的;闪耀的',ph:'/əˈbleɪz/'},{en:'abnegate',zh:'克制;放弃',ph:'/ˈæbnɪɡeɪt/'},{en:'abode',zh:'住所;居住',ph:'/əˈboʊd/'},{en:'abolish',zh:'废除;取消',ph:'/əˈbɑːlɪʃ/'},{en:'abominable',zh:'可恶的;极坏的',ph:'/əˈbɑːmɪnəbl/'},{en:'abound',zh:'大量存在;富于',ph:'/əˈbaʊnd/'},{en:'abreast',zh:'并排;并肩',ph:'/əˈbrest/'},{en:'abridge',zh:'删节;缩短',ph:'/əˈbrɪdʒ/'},{en:'abrogate',zh:'废除;取消',ph:'/ˈæbrəɡeɪt/'},{en:'abrupt',zh:'突然的;生硬的',ph:'/əˈbrʌpt/'},{en:'abscond',zh:'潜逃;逃亡',ph:'/əbˈskɑːnd/'},{en:'absolve',zh:'免除;赦免',ph:'/əbˈzɑːlv/'},{en:'abstain',zh:'戒绝;弃权',ph:'/əbˈsteɪn/'},{en:'abstemious',zh:'有节制的;节俭的',ph:'/əbˈstiːmiəs/'},{en:'abstract',zh:'抽象的;提取',ph:'/ˈæbstrækt/'},{en:'abstruse',zh:'深奥的;难懂的',ph:'/əbˈstruːs/'},{en:'absurd',zh:'荒谬的',ph:'/əbˈsɜːrd/'},{en:'abundance',zh:'丰富;充裕',ph:'/əˈbʌndəns/'},{en:'abut',zh:'邻接;毗连',ph:'/əˈbʌt/'},{en:'abysmal',zh:'极深的;极坏的',ph:'/əˈbɪzməl/'},{en:'accede',zh:'同意;加入;就任',ph:'/əkˈsiːd/'},{en:'accentuate',zh:'强调;重读',ph:'/əkˈsentʃueɪt/'},{en:'acclaim',zh:'欢呼;称赞',ph:'/əˈkleɪm/'}]
 };
 
-// ==================== DAILY QUOTES ====================
-const dailyQuotes = [
-  {text:'学而不思则罔，思而不学则殆。',author:'孔子'},
-  {text:'The limits of my language mean the limits of my world.',author:'Ludwig Wittgenstein'},
-  {text:'语言是思想的外衣。',author:'Samuel Johnson'},
-  {text:'To have another language is to possess a second soul.',author:'Charlemagne'},
-  {text:'千里之行，始于足下。',author:'老子'},
-  {text:'Language is the road map of a culture.',author:'Rita Mae Brown'},
-  {text:'不积跬步，无以至千里。',author:'荀子'},
-  {text:'A different language is a different vision of life.',author:'Federico Fellini'},
-  {text:'博学之，审问之，慎思之，明辨之，笃行之。',author:'《中庸》'},
-  {text:'Learning is a treasure that will follow its owner everywhere.',author:'Chinese Proverb'},
-  {text:'业精于勤，荒于嬉。',author:'韩愈'},
-  {text:'One language sets you in a corridor for life. Two languages open every door along the way.',author:'Frank Smith'},
-  {text:'温故而知新，可以为师矣。',author:'孔子'},
-  {text:'Words are, of course, the most powerful drug used by mankind.',author:'Rudyard Kipling'},
-  {text:'书山有路勤为径，学海无涯苦作舟。',author:'韩愈'},
-  {text:'The more languages you know, the more you are human.',author:'Tomáš Garrigue Masaryk'},
-  {text:'敏而好学，不耻下问。',author:'孔子'},
-  {text:'He who knows no foreign languages knows nothing of his own.',author:'Goethe'},
-  {text:'锲而不舍，金石可镂。',author:'荀子'},
-  {text:'Knowledge of languages is the doorway to wisdom.',author:'Roger Bacon'},
+const quotes=[
+{text:'学而不思则罔，思而不学则殆。',author:'孔子'},{text:'The limits of my language mean the limits of my world.',author:'Ludwig Wittgenstein'},{text:'语言是思想的外衣。',author:'Samuel Johnson'},{text:'To have another language is to possess a second soul.',author:'Charlemagne'},{text:'千里之行，始于足下。',author:'老子'},{text:'Language is the road map of a culture.',author:'Rita Mae Brown'},{text:'不积跬步，无以至千里。',author:'荀子'},{text:'A different language is a different vision of life.',author:'Federico Fellini'},{text:'博学之，审问之，慎思之，明辨之，笃行之。',author:'《中庸》'},{text:'Learning is a treasure that will follow its owner everywhere.',author:'Chinese Proverb'},{text:'业精于勤，荒于嬉。',author:'韩愈'},{text:'One language sets you in a corridor for life. Two languages open every door along the way.',author:'Frank Smith'},{text:'温故而知新，可以为师矣。',author:'孔子'},{text:'Words are, of course, the most powerful drug used by mankind.',author:'Rudyard Kipling'},{text:'书山有路勤为径，学海无涯苦作舟。',author:'韩愈'},{text:'The more languages you know, the more you are human.',author:'Tomáš Garrigue Masaryk'},{text:'敏而好学，不耻下问。',author:'孔子'},{text:'He who knows no foreign languages knows nothing of his own.',author:'Goethe'},{text:'锲而不舍，金石可镂。',author:'荀子'},{text:'Knowledge of languages is the doorway to wisdom.',author:'Roger Bacon'}
 ];
 
-// ==================== APP STATE ====================
-const APP_KEY = 'baicizhan_data';
-const state = loadState();
+// ===== STATE =====
+const K='bcz_data';
+let S=loadS();
+function defS(){return{stage:'中考',goal:10,learned:{},today:{},streak:{last:'',n:0},theme:'light',nick:'',avatar:'',session:null}}
+function loadS(){try{let r=localStorage.getItem(K);if(r)return{...defS(),...JSON.parse(r)}}catch(e){}return defS()}
+function saveS(){localStorage.setItem(K,JSON.stringify(S))}
 
-function defaultState() {
-  return {
-    stage: '中考',
-    dailyGoal: 10,
-    learnedWords: {}, // { stage: { word: timestamp } }
-    todayProgress: {}, // { date: { stage: count } }
-    streak: { lastDate: '', count: 0 },
-    theme: 'light',
-    nickname: '',
-    avatar: '',
-    reviewQueue: [],
-    currentSession: null, // { mode, stage, words, currentIndex, correctCount, wrongWords, questionType }
-  };
+// ===== NAV =====
+let curPage='home';
+function goPage(p){
+  if(curPage===p)return;
+  if(S.session&&p!=='home'){if(!confirm('确定退出当前学习？'))return;S.session=null;saveS()}
+  let old=document.getElementById('page'+curPage.charAt(0).toUpperCase()+curPage.slice(1));
+  let nw=document.getElementById('page'+p.charAt(0).toUpperCase()+p.slice(1));
+  if(!old||!nw)return;
+  old.classList.remove('active');
+  setTimeout(()=>nw.classList.add('active'),50);
+  curPage=p;
+  document.querySelectorAll('.nav-item').forEach(e=>e.classList.toggle('active',e.dataset.page===p));
+  let fe=document.getElementById('floatExit');
+  if(p==='home'||p==='settings'||p==='profile'){fe.classList.remove('visible');if(S.session){S.session=null;saveS()}}
+  if(p==='home')refreshHome();
+  if(p==='profile')refreshProf();
+  if(p==='settings')refreshSet();
+  setTimeout(()=>nw.scrollTop=0,100);
+}
+function exitHome(){if(S.session){S.session=null;saveS()}document.getElementById('floatExit').classList.remove('visible');goPage('home');refreshHome()}
+
+// ===== HOME =====
+function refreshHome(){
+  let tl=Object.values(S.learned).reduce((s,w)=>s+Object.keys(w).length,0);
+  let td=getToday();
+  let tc=S.today[td]?.[S.stage]||0;
+  document.getElementById('totalLearned').textContent=tl;
+  document.getElementById('todayCount').textContent=tc+'/'+S.goal;
+  document.getElementById('streakDays').textContent=S.streak.n;
+  let qi=new Date().getDate()%quotes.length;
+  document.getElementById('dailyQuote').textContent='"'+quotes[qi].text+'"';
+  document.getElementById('dailyAuthor').textContent='— '+quotes[qi].author;
 }
 
-function loadState() {
-  try {
-    const raw = localStorage.getItem(APP_KEY);
-    if (raw) {
-      const s = JSON.parse(raw);
-      return { ...defaultState(), ...s };
-    }
-  } catch (e) {}
-  return defaultState();
+// ===== SETTINGS =====
+function refreshSet(){
+  document.getElementById('settingsDailyGoal').innerHTML=S.goal+'词/天 <span class="arrow">›</span>';
+  document.getElementById('settingsStage').innerHTML=S.stage+' <span class="arrow">›</span>';
+  document.getElementById('darkToggle').classList.toggle('on',S.theme==='dark');
 }
+function setStage(st){S.stage=st;saveS();refreshHome();refreshSet();closeModal('modalStage')}
+function setGoal(g){S.goal=g;saveS();refreshHome();refreshSet();closeModal('modalGoal')}
+function toggleDark(){S.theme=S.theme==='dark'?'light':'dark';document.body.dataset.theme=S.theme;saveS();refreshSet()}
+function openModal(id){document.getElementById(id).classList.add('open')}
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+document.querySelectorAll('.modal').forEach(m=>m.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open')}));
 
-function saveState() {
-  localStorage.setItem(APP_KEY, JSON.stringify(state));
+// ===== PROFILE =====
+function refreshProf(){
+  document.getElementById('nickInput').value=S.nick||'';
+  let ai=document.getElementById('avatarImg'),ap=document.getElementById('avatarPh');
+  if(S.avatar){ai.src=S.avatar;ai.style.display='block';ap.style.display='none'}else{ai.style.display='none';ap.style.display='flex'}
+  let tl=Object.values(S.learned).reduce((s,w)=>s+Object.keys(w).length,0);
+  let td=getToday(),tc=S.today[td]?.[S.stage]||0;
+  document.getElementById('profTotal').textContent=tl;
+  document.getElementById('profStreak').textContent=S.streak.n;
+  document.getElementById('profToday').textContent=tc+'/'+S.goal;
 }
+function onAvatar(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=function(ev){S.avatar=ev.target.result;saveS();refreshProf()};r.readAsDataURL(f)}
+function saveNick(){S.nick=document.getElementById('nickInput').value.trim();saveS()}
+function resetAll(){if(confirm('确定重置所有数据？不可撤销！')){localStorage.removeItem(K);S=defS();saveS();refreshHome();refreshProf();refreshSet()}}
+function showAbout(){openModal('modalAbout')}
 
-// ==================== NAVIGATION ====================
-let currentPage = 'home';
+// ===== LEARNING =====
+function getToday(){return new Date().toLocaleDateString('zh-CN')}
+function getLearned(stage){return Object.keys(S.learned[stage]||{})}
+function getAvail(stage){let all=wordDB[stage]||[],l=getLearned(stage);return all.filter(w=>!l.includes(w.en))}
 
-function navigateTo(page) {
-  if (currentPage === page) return;
-  if (state.currentSession && page !== 'home') {
-    if (!confirm('确定要退出当前学习吗？')) return;
-    state.currentSession = null;
-    saveState();
-  }
-  const oldPage = document.getElementById('page' + currentPage.charAt(0).toUpperCase() + currentPage.slice(1));
-  const newPage = document.getElementById('page' + page.charAt(0).toUpperCase() + page.slice(1));
-  if (!oldPage || !newPage) return;
-  
-  // Determine slide direction
-  const pageOrder = ['home','learn','settings','profile'];
-  const oldIdx = pageOrder.indexOf(currentPage);
-  const newIdx = pageOrder.indexOf(page);
-  
-  oldPage.classList.remove('active');
-  if (oldIdx < newIdx) oldPage.classList.add('slide-left');
-  else oldPage.classList.add('slide-right');
-  
-  setTimeout(() => {
-    oldPage.classList.remove('slide-left','slide-right');
-    newPage.classList.add('active');
-  }, 50);
-  
-  currentPage = page;
-  
-  // Update nav
-  document.querySelectorAll('.nav-item').forEach(el => {
-    el.classList.toggle('active', el.dataset.page === page);
-  });
-  
-  // Float exit button
-  const floatExit = document.getElementById('floatExit');
-  if (page === 'home' || page === 'settings' || page === 'profile') {
-    floatExit.classList.remove('visible');
-    if (state.currentSession) {
-      state.currentSession = null;
-      saveState();
-    }
-  }
-  
-  // Refresh page content
-  if (page === 'home') refreshHome();
-  if (page === 'profile') refreshProfile();
-  if (page === 'settings') refreshSettings();
-  
-  // Scroll to top
-  setTimeout(() => newPage.scrollTop = 0, 100);
-}
-
-function exitToHome() {
-  if (state.currentSession) {
-    state.currentSession = null;
-    saveState();
-  }
-  document.getElementById('floatExit').classList.remove('visible');
-  navigateTo('home');
-  refreshHome();
-}
-
-// ==================== HOME PAGE ====================
-function refreshHome() {
-  // Stage
-  document.querySelectorAll('#stageOptions .stage-chip').forEach(el => {
-    el.classList.toggle('selected', el.dataset.stage === state.stage);
-  });
-  
-  // Goal
-  document.querySelectorAll('#goalOptions .goal-chip').forEach(el => {
-    el.classList.toggle('selected', parseInt(el.dataset.goal) === state.dailyGoal);
-  });
-  
-  // Stats
-  const totalLearned = Object.values(state.learnedWords).reduce((sum, words) => sum + Object.keys(words).length, 0);
-  const today = getToday();
-  const todayCount = state.todayProgress[today]?.[state.stage] || 0;
-  document.getElementById('totalLearned').textContent = totalLearned;
-  document.getElementById('todayCount').textContent = `${todayCount}/${state.dailyGoal}`;
-  document.getElementById('streakDays').textContent = state.streak.count;
-  
-  // Daily quote
-  const dayIdx = new Date().getDate() % dailyQuotes.length;
-  const quote = dailyQuotes[dayIdx];
-  document.getElementById('dailyQuote').textContent = `"${quote.text}"`;
-  document.getElementById('dailyAuthor').textContent = `— ${quote.author}`;
-}
-
-// ==================== STAGE & GOAL ====================
-document.getElementById('stageOptions').addEventListener('click', (e) => {
-  const chip = e.target.closest('.stage-chip');
-  if (!chip) return;
-  setStage(chip.dataset.stage);
-});
-
-document.getElementById('goalOptions').addEventListener('click', (e) => {
-  const chip = e.target.closest('.goal-chip');
-  if (!chip) return;
-  setDailyGoal(parseInt(chip.dataset.goal));
-});
-
-function setStage(stage) {
-  state.stage = stage;
-  saveState();
-  refreshHome();
-  refreshSettings();
-  document.getElementById('modalStage').classList.remove('open');
-}
-
-function setDailyGoal(goal) {
-  state.dailyGoal = goal;
-  saveState();
-  refreshHome();
-  refreshSettings();
-  document.getElementById('modalGoal').classList.remove('open');
-}
-
-// ==================== SETTINGS ====================
-function refreshSettings() {
-  document.getElementById('settingsDailyGoal').innerHTML = `${state.dailyGoal}词/天 <span class="s-arrow">›</span>`;
-  document.getElementById('settingsStage').innerHTML = `${state.stage} <span class="s-arrow">›</span>`;
-  const darkToggle = document.getElementById('darkModeToggle');
-  darkToggle.classList.toggle('on', state.theme === 'dark');
-}
-
-// Goal modal
-document.querySelector('#pageSettings .settings-row').addEventListener('click', function(e) {
-  if (this.querySelector('.s-label').textContent === '每日进度') {
-    document.getElementById('modalGoal').classList.add('open');
-  }
-});
-
-// Close modals
-document.querySelectorAll('.modal-overlay').forEach(overlay => {
-  overlay.addEventListener('click', function(e) {
-    if (e.target === this) this.classList.remove('open');
-  });
-});
-
-// Dark mode
-function toggleDarkMode() {
-  state.theme = state.theme === 'dark' ? 'light' : 'dark';
-  document.body.dataset.theme = state.theme;
-  saveState();
-  refreshSettings();
-}
-
-// ==================== PROFILE ====================
-function refreshProfile() {
-  document.getElementById('nicknameInput').value = state.nickname || '';
-  const avatarImg = document.getElementById('avatarImg');
-  const avatarPlaceholder = document.getElementById('avatarPlaceholder');
-  if (state.avatar) {
-    avatarImg.src = state.avatar;
-    avatarImg.style.display = 'block';
-    avatarPlaceholder.style.display = 'none';
-  } else {
-    avatarImg.style.display = 'none';
-    avatarPlaceholder.style.display = 'flex';
-  }
-  const totalLearned = Object.values(state.learnedWords).reduce((sum, words) => sum + Object.keys(words).length, 0);
-  const today = getToday();
-  const todayCount = state.todayProgress[today]?.[state.stage] || 0;
-  document.getElementById('profileTotalLearned').textContent = totalLearned;
-  document.getElementById('profileStreak').textContent = state.streak.count;
-  document.getElementById('profileToday').textContent = `${todayCount}/${state.dailyGoal}`;
-}
-
-function handleAvatarUpload(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = function(ev) {
-    state.avatar = ev.target.result;
-    saveState();
-    refreshProfile();
-  };
-  reader.readAsDataURL(file);
-}
-
-function saveNickname() {
-  state.nickname = document.getElementById('nicknameInput').value.trim();
-  saveState();
-}
-
-function resetAllData() {
-  if (confirm('确定要重置所有数据吗？此操作不可撤销！')) {
-    localStorage.removeItem(APP_KEY);
-    Object.assign(state, defaultState());
-    saveState();
-    refreshHome();
-    refreshProfile();
-    refreshSettings();
-  }
-}
-
-// ==================== ABOUT ====================
-function showAbout() {
-  document.getElementById('modalAbout').classList.add('open');
-}
-
-// ==================== LEARNING ENGINE ====================
-function getToday() {
-  return new Date().toLocaleDateString('zh-CN');
-}
-
-function getLearnedWordsForStage(stage) {
-  return Object.keys(state.learnedWords[stage] || {});
-}
-
-function getAvailableNewWords(stage) {
-  const all = wordDB[stage] || [];
-  const learned = getLearnedWordsForStage(stage);
-  return all.filter(w => !learned.includes(w.en));
-}
-
-function startReview() {
-  const learned = getLearnedWordsForStage(state.stage);
-  if (learned.length === 0) {
-    alert('还没有已学单词，请先前进学习新单词！');
-    return;
-  }
-  const allWords = wordDB[state.stage];
-  const reviewWords = learned.map(w => allWords.find(x => x.en === w)).filter(Boolean);
-  // Shuffle
-  shuffleArray(reviewWords);
-  state.currentSession = {
-    mode: 'review',
-    stage: state.stage,
-    words: reviewWords,
-    currentIndex: 0,
-    correctCount: 0,
-    wrongWords: [],
-    questionType: null,
-  };
-  saveState();
+function startReview(){
+  let l=getLearned(S.stage);
+  if(!l.length){alert('还没有已学单词，请先前进学习！');return}
+  let all=wordDB[S.stage],rw=l.map(w=>all.find(x=>x.en===w)).filter(Boolean);
+  shuffle(rw);
+  S.session={mode:'review',stage:S.stage,words:rw,idx:0,ok:0,wrong:[],qtype:null};
+  saveS();
   document.getElementById('floatExit').classList.add('visible');
-  document.getElementById('learnTitle').textContent = '复习模式';
-  navigateTo('learn');
-  startQuestion();
+  document.getElementById('learnTitle').textContent='复习';
+  goPage('learn');
+  startQ();
 }
-
-function startForward() {
-  const available = getAvailableNewWords(state.stage);
-  if (available.length === 0) {
-    alert('当前阶段所有单词已学完！请切换阶段或重置数据。');
-    return;
-  }
-  const today = getToday();
-  const todayCount = state.todayProgress[today]?.[state.stage] || 0;
-  const remaining = state.dailyGoal - todayCount;
-  if (remaining <= 0) {
-    alert('今日目标已完成！可以复习或明日再来学习新单词。');
-    return;
-  }
-  const count = Math.min(remaining, available.length);
-  const selected = available.slice(0, count);
-  state.currentSession = {
-    mode: 'forward',
-    stage: state.stage,
-    words: selected,
-    currentIndex: 0,
-    correctCount: 0,
-    wrongWords: [],
-    questionType: null,
-  };
-  saveState();
+function startForward(){
+  let av=getAvail(S.stage);
+  if(!av.length){alert('当前阶段单词已学完！');return}
+  let td=getToday(),tc=S.today[td]?.[S.stage]||0,rem=S.goal-tc;
+  if(rem<=0){alert('今日目标已完成！');return}
+  let cnt=Math.min(rem,av.length),sel=av.slice(0,cnt);
+  S.session={mode:'forward',stage:S.stage,words:sel,idx:0,ok:0,wrong:[],qtype:null};
+  saveS();
   document.getElementById('floatExit').classList.add('visible');
-  document.getElementById('learnTitle').textContent = '前进模式';
-  navigateTo('learn');
-  startQuestion();
+  document.getElementById('learnTitle').textContent='前进';
+  goPage('learn');
+  startQ();
 }
 
-function startQuestion() {
-  const session = state.currentSession;
-  if (!session) return;
-  
-  // Determine which word to test
-  let word;
-  if (session.wrongWords.length > 0 && session.mode === 'review') {
-    // In review mode, re-test wrong words
-    word = session.wrongWords.shift();
-  } else if (session.currentIndex < session.words.length) {
-    word = session.words[session.currentIndex];
-  } else {
-    // Session complete
-    finishSession();
-    return;
-  }
-  
-  session.currentWord = word;
-  
-  // Pick question type
-  const types = ['spell', 'choiceZh', 'choiceEn', 'match'];
-  session.questionType = types[Math.floor(Math.random() * types.length)];
-  
-  // For matching, we need at least 4 words
-  if (session.questionType === 'match') {
-    const pool = wordDB[session.stage];
-    if (pool.length < 4) {
-      session.questionType = 'choiceZh';
-    }
-  }
-  
-  renderQuestion(session);
-  updateProgress();
-  saveState();
+function startQ(){
+  let ss=S.session;if(!ss)return;
+  let w;
+  if(ss.wrong.length>0&&ss.mode==='review'){w=ss.wrong.shift()}
+  else if(ss.idx<ss.words.length){w=ss.words[ss.idx]}
+  else{finishS();return}
+  ss.curWord=w;
+  let types=['spell','choiceZh','choiceEn','match'];
+  ss.qtype=types[Math.floor(Math.random()*types.length)];
+  if(ss.qtype==='match'&&wordDB[ss.stage].length<4)ss.qtype='choiceZh';
+  renderQ(ss);
+  updateBar();
+  saveS();
 }
 
-function renderQuestion(session) {
-  const word = session.currentWord;
-  const area = document.getElementById('questionArea');
-  const fb = document.getElementById('feedbackBar');
-  const btn = document.getElementById('btnContinue');
-  fb.className = 'feedback-bar';
-  btn.classList.remove('show');
-  
-  const qType = session.questionType;
-  
-  if (qType === 'spell') {
-    area.innerHTML = `
-      <div class="question-card" id="questionCard">
-        <div class="question-prompt">请拼写以下单词</div>
-        <div class="question-word" style="font-size:28px">${word.zh}</div>
-        <input type="text" class="spell-input" id="spellInput" placeholder="输入英文单词..." autocomplete="off" autocorrect="off" autocapitalize="off">
-      </div>
-    `;
-    const input = document.getElementById('spellInput');
-    setTimeout(() => input.focus(), 300);
-    input.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') checkSpellAnswer();
-    });
-  } else if (qType === 'choiceZh') {
-    // Show English, pick Chinese
-    const pool = wordDB[session.stage];
-    const wrongs = pool.filter(w => w.en !== word.en);
-    shuffleArray(wrongs);
-    const options = [word, ...wrongs.slice(0, 3)];
-    shuffleArray(options);
-    area.innerHTML = `
-      <div class="question-card" id="questionCard">
-        <div class="question-word">${word.en}</div>
-        <div class="question-phonetic">${word.ph}</div>
-        <div class="question-prompt">选择正确的中文释义</div>
-        <div class="choices-grid">
-          ${options.map((o,i) => `<button class="choice-btn" data-idx="${i}" data-answer="${o.en === word.en}">${o.zh}</button>`).join('')}
-        </div>
-      </div>
-    `;
-    area.querySelectorAll('.choice-btn').forEach(btn => {
-      btn.addEventListener('click', () => checkChoiceAnswer(btn));
-    });
-  } else if (qType === 'choiceEn') {
-    // Show Chinese, pick English
-    const pool = wordDB[session.stage];
-    const wrongs = pool.filter(w => w.en !== word.en);
-    shuffleArray(wrongs);
-    const options = [word, ...wrongs.slice(0, 3)];
-    shuffleArray(options);
-    area.innerHTML = `
-      <div class="question-card" id="questionCard">
-        <div class="question-word" style="font-size:28px">${word.zh}</div>
-        <div class="question-prompt">选择正确的英文单词</div>
-        <div class="choices-grid">
-          ${options.map((o,i) => `<button class="choice-btn" data-idx="${i}" data-answer="${o.en === word.en}">${o.en}</button>`).join('')}
-        </div>
-      </div>
-    `;
-    area.querySelectorAll('.choice-btn').forEach(btn => {
-      btn.addEventListener('click', () => checkChoiceAnswer(btn));
-    });
-  } else if (qType === 'match') {
-    // Matching: 4 English words with 4 Chinese translations
-    const pool = wordDB[session.stage];
-    const others = pool.filter(w => w.en !== word.en);
-    shuffleArray(others);
-    const matchWords = [word, ...others.slice(0, 3)];
-    shuffleArray(matchWords);
-    const enList = [...matchWords];
-    const zhList = [...matchWords];
-    shuffleArray(zhList);
-    
-    area.innerHTML = `
-      <div class="question-card" id="questionCard">
-        <div class="question-prompt" style="margin-bottom:16px">连线匹配单词与释义（先点英文，再点中文）</div>
-        <div class="match-grid">
-          <div class="match-col" id="matchEnCol">
-            ${enList.map((w,i) => `<div class="match-item match-en" data-word="${w.en}" data-idx="${i}">${w.en}</div>`).join('')}
-          </div>
-          <div class="match-col" id="matchZhCol">
-            ${zhList.map((w,i) => `<div class="match-item match-zh" data-word="${w.en}" data-idx="${i}">${w.zh}</div>`).join('')}
-          </div>
-        </div>
-      </div>
-    `;
-    initMatching();
+function renderQ(ss){
+  let w=ss.curWord,area=document.getElementById('qArea'),fb=document.getElementById('fb'),btn=document.getElementById('btnGo');
+  fb.className='fb';btn.classList.remove('show');
+  let qt=ss.qtype;
+  if(qt==='spell'){
+    area.innerHTML='<div class="q-card" id="qCard"><div class="q-prompt">请拼写以下单词</div><div class="q-word" style="font-size:26px">'+w.zh+'</div><input class="spell-input" id="spellIn" placeholder="输入英文..." autocomplete="off" autocorrect="off" autocapitalize="off"></div>';
+    let inp=document.getElementById('spellIn');setTimeout(()=>inp.focus(),300);
+    inp.addEventListener('keydown',e=>{if(e.key==='Enter')checkSpell()});
+  }else if(qt==='choiceZh'){
+    let pool=wordDB[ss.stage],wrongs=pool.filter(x=>x.en!==w.en);shuffle(wrongs);
+    let opts=[w,...wrongs.slice(0,3)];shuffle(opts);
+    area.innerHTML='<div class="q-card" id="qCard"><div class="q-word">'+w.en+'</div><div class="q-phonetic">'+w.ph+'</div><div class="q-prompt">选择正确的中文释义</div><div class="choices">'+opts.map((o,i)=>'<button class="choice" data-ok="'+(o.en===w.en)+'">'+o.zh+'</button>').join('')+'</div></div>';
+    area.querySelectorAll('.choice').forEach(b=>b.addEventListener('click',()=>checkChoice(b)));
+  }else if(qt==='choiceEn'){
+    let pool=wordDB[ss.stage],wrongs=pool.filter(x=>x.en!==w.en);shuffle(wrongs);
+    let opts=[w,...wrongs.slice(0,3)];shuffle(opts);
+    area.innerHTML='<div class="q-card" id="qCard"><div class="q-word" style="font-size:26px">'+w.zh+'</div><div class="q-prompt">选择正确的英文单词</div><div class="choices">'+opts.map((o,i)=>'<button class="choice" data-ok="'+(o.en===w.en)+'">'+o.en+'</button>').join('')+'</div></div>';
+    area.querySelectorAll('.choice').forEach(b=>b.addEventListener('click',()=>checkChoice(b)));
+  }else if(qt==='match'){
+    let pool=wordDB[ss.stage],others=pool.filter(x=>x.en!==w.en);shuffle(others);
+    let mw=[w,...others.slice(0,3)];shuffle(mw);
+    let enL=[...mw],zhL=[...mw];shuffle(zhL);
+    area.innerHTML='<div class="q-card" id="qCard"><div class="q-prompt" style="margin-bottom:16px">连线匹配（先点英文，再点中文）</div><div class="match-wrap"><div class="match-col" id="matchEn">'+enL.map((x,i)=>'<div class="match-it match-en" data-w="'+x.en+'">'+x.en+'</div>').join('')+'</div><div class="match-col" id="matchZh">'+zhL.map((x,i)=>'<div class="match-it match-zh" data-w="'+x.en+'">'+x.zh+'</div>').join('')+'</div></div></div>';
+    initMatch();
   }
 }
 
-// ==================== SPELL CHECK ====================
-function checkSpellAnswer() {
-  const input = document.getElementById('spellInput');
-  if (!input) return;
-  const session = state.currentSession;
-  if (!session) return;
-  const word = session.currentWord;
-  const userAnswer = input.value.trim().toLowerCase();
-  const correct = userAnswer === word.en.toLowerCase();
-  
-  const card = document.getElementById('questionCard');
-  const fb = document.getElementById('feedbackBar');
-  const btn = document.getElementById('btnContinue');
-  
-  input.disabled = true;
-  
-  if (correct) {
-    input.classList.add('correct');
-    card.classList.add('correct');
-    fb.className = 'feedback-bar show correct-fb';
-    fb.textContent = '✓ 正确！';
-    session.correctCount++;
-    markWordLearned(word);
-  } else {
-    input.classList.add('wrong');
-    card.classList.add('wrong');
-    fb.className = 'feedback-bar show wrong-fb';
-    fb.innerHTML = `✗ 错误！正确答案：<strong>${word.en}</strong>`;
-    session.wrongWords.push(word);
-  }
-  btn.classList.add('show');
-  saveState();
+function checkSpell(){
+  let inp=document.getElementById('spellIn');if(!inp)return;
+  let ss=S.session;if(!ss)return;let w=ss.curWord;
+  let ok=inp.value.trim().toLowerCase()===w.en.toLowerCase();
+  let card=document.getElementById('qCard'),fb=document.getElementById('fb'),btn=document.getElementById('btnGo');
+  inp.disabled=true;
+  if(ok){inp.classList.add('ok');card.classList.add('ok');fb.className='fb show ok';fb.textContent='✓ 正确';ss.ok++;markWord(w)}
+  else{inp.classList.add('err');card.classList.add('err');fb.className='fb show err';fb.innerHTML='✗ 错误，正确答案：<strong>'+w.en+'</strong>';ss.wrong.push(w)}
+  btn.classList.add('show');saveS();
+}
+function checkChoice(btn){
+  let ss=S.session;if(!ss)return;let w=ss.curWord;
+  let ok=btn.dataset.ok==='true';
+  let card=document.getElementById('qCard'),fb=document.getElementById('fb'),go=document.getElementById('btnGo');
+  document.querySelectorAll('#qArea .choice').forEach(b=>{b.disabled=true;if(b.dataset.ok==='true')b.classList.add('ok');if(b===btn&&!ok)b.classList.add('err')});
+  if(ok){card.classList.add('ok');fb.className='fb show ok';fb.textContent='✓ 正确';ss.ok++;markWord(w)}
+  else{card.classList.add('err');fb.className='fb show err';fb.innerHTML='✗ 错误，正确答案：<strong>'+w.en+' — '+w.zh+'</strong>';ss.wrong.push(w)}
+  go.classList.add('show');saveS();
 }
 
-// ==================== CHOICE CHECK ====================
-function checkChoiceAnswer(clickedBtn) {
-  const session = state.currentSession;
-  if (!session) return;
-  const word = session.currentWord;
-  const isCorrect = clickedBtn.dataset.answer === 'true';
-  
-  const card = document.getElementById('questionCard');
-  const fb = document.getElementById('feedbackBar');
-  const btn = document.getElementById('btnContinue');
-  
-  // Disable all buttons and highlight correct/wrong
-  document.querySelectorAll('#questionArea .choice-btn').forEach(b => {
-    b.disabled = true;
-    if (b.dataset.answer === 'true') b.classList.add('correct-answer');
-    if (b === clickedBtn && !isCorrect) b.classList.add('wrong-answer');
-  });
-  
-  if (isCorrect) {
-    card.classList.add('correct');
-    fb.className = 'feedback-bar show correct-fb';
-    fb.textContent = '✓ 正确！';
-    session.correctCount++;
-    markWordLearned(word);
-  } else {
-    card.classList.add('wrong');
-    fb.className = 'feedback-bar show wrong-fb';
-    fb.innerHTML = `✗ 错误！正确答案：<strong>${word.en} — ${word.zh}</strong>`;
-    session.wrongWords.push(word);
-  }
-  btn.classList.add('show');
-  saveState();
+let mState={sel:null,matched:0,total:4,wrongs:0};
+function initMatch(){
+  mState={sel:null,matched:0,total:4,wrongs:0};
+  document.querySelectorAll('.match-en').forEach(e=>e.addEventListener('click',()=>{if(e.classList.contains('done'))return;document.querySelectorAll('.match-en').forEach(x=>x.classList.remove('sel'));e.classList.add('sel');mState.sel=e}));
+  document.querySelectorAll('.match-zh').forEach(e=>e.addEventListener('click',()=>{if(e.classList.contains('done')||!mState.sel)return;let en=mState.sel;
+    if(en.dataset.w===e.dataset.w){en.classList.add('done');en.classList.remove('sel');e.classList.add('done');mState.matched++;mState.sel=null;if(mState.matched>=mState.total)finishMatch(true)}
+    else{e.classList.add('flash');setTimeout(()=>e.classList.remove('flash'),350);mState.wrongs++;en.classList.remove('sel');mState.sel=null}
+  }));
+}
+function finishMatch(allOk){
+  let ss=S.session;if(!ss)return;let w=ss.curWord;
+  let card=document.getElementById('qCard'),fb=document.getElementById('fb'),go=document.getElementById('btnGo');
+  let ok=mState.wrongs===0;
+  if(ok){card.classList.add('ok');fb.className='fb show ok';fb.textContent='✓ 全部正确';ss.ok++;markWord(w)}
+  else{card.classList.add('err');fb.className='fb show err';fb.textContent='✗ 有'+mState.wrongs+'次错误';ss.wrong.push(w)}
+  go.classList.add('show');saveS();
 }
 
-// ==================== MATCHING ====================
-let matchState = { selectedEn: null, matched: 0, total: 4, wrongAttempts: 0 };
-
-function initMatching() {
-  matchState = { selectedEn: null, matched: 0, total: 4, wrongAttempts: 0 };
-  
-  document.querySelectorAll('.match-en').forEach(el => {
-    el.addEventListener('click', () => {
-      if (el.classList.contains('matched')) return;
-      document.querySelectorAll('.match-en').forEach(e => e.classList.remove('selected'));
-      el.classList.add('selected');
-      matchState.selectedEn = el;
-    });
-  });
-  
-  document.querySelectorAll('.match-zh').forEach(el => {
-    el.addEventListener('click', () => {
-      if (el.classList.contains('matched') || !matchState.selectedEn) return;
-      const enEl = matchState.selectedEn;
-      if (enEl.dataset.word === el.dataset.word) {
-        // Correct match
-        enEl.classList.add('matched');
-        enEl.classList.remove('selected');
-        el.classList.add('matched');
-        matchState.matched++;
-        matchState.selectedEn = null;
-        
-        if (matchState.matched >= matchState.total) {
-          finishMatch(true);
-        }
-      } else {
-        // Wrong match
-        el.classList.add('wrong-flash');
-        setTimeout(() => el.classList.remove('wrong-flash'), 400);
-        matchState.wrongAttempts++;
-        enEl.classList.remove('selected');
-        matchState.selectedEn = null;
-      }
-    });
-  });
+function nextQ(){
+  let ss=S.session;if(!ss)return;
+  ss.idx++;
+  startQ();
 }
 
-function finishMatch(allCorrect) {
-  const session = state.currentSession;
-  if (!session) return;
-  const word = session.currentWord;
-  const card = document.getElementById('questionCard');
-  const fb = document.getElementById('feedbackBar');
-  const btn = document.getElementById('btnContinue');
-  
-  const correct = matchState.wrongAttempts === 0;
-  
-  if (correct) {
-    card.classList.add('correct');
-    fb.className = 'feedback-bar show correct-fb';
-    fb.textContent = '✓ 全部匹配正确！';
-    session.correctCount++;
-    markWordLearned(word);
-  } else {
-    card.classList.add('wrong');
-    fb.className = 'feedback-bar show wrong-fb';
-    fb.textContent = `✗ 有 ${matchState.wrongAttempts} 次匹配错误，请再试一次`;
-    session.wrongWords.push(word);
-  }
-  btn.classList.add('show');
-  saveState();
-}
-
-// ==================== NEXT QUESTION ====================
-function nextQuestion() {
-  const session = state.currentSession;
-  if (!session) return;
-  
-  // If we just had a wrong answer in review mode, the word is already in wrongWords
-  // Move to next word
-  if (session.wrongWords.length > 0 && session.mode === 'review') {
-    // Already handled in startQuestion - wrongWords are retested
-  } else {
-    session.currentIndex++;
-  }
-  
-  startQuestion();
-}
-
-// ==================== SESSION COMPLETE ====================
-function finishSession() {
-  const session = state.currentSession;
-  if (!session) return;
-  
-  // Check if there are remaining wrong words
-  if (session.wrongWords.length > 0 && session.mode === 'review') {
-    const word = session.wrongWords.shift();
-    session.currentWord = word;
-    session.questionType = ['spell', 'choiceZh', 'choiceEn'][Math.floor(Math.random() * 3)];
-    renderQuestion(session);
-    updateProgress();
-    saveState();
-    return;
-  }
-  
-  const total = session.words.length + (session.mode === 'review' ? session.wrongWords.length : 0);
-  const correct = session.correctCount;
-  
-  document.getElementById('questionArea').innerHTML = '';
-  document.getElementById('feedbackBar').className = 'feedback-bar';
-  document.getElementById('btnContinue').classList.remove('show');
-  
-  const completeDiv = document.getElementById('sessionComplete');
-  completeDiv.style.display = 'block';
-  completeDiv.innerHTML = `
-    <div class="session-complete">
-      <div class="complete-icon">${correct >= total * 0.8 ? '🎉' : '💪'}</div>
-      <h2>${session.mode === 'review' ? '复习完成！' : '学习完成！'}</h2>
-      <p>${correct >= total * 0.8 ? '太棒了！你做得非常好！' : '继续加油，坚持就是胜利！'}</p>
-      <div class="stats-row">
-        <div class="stat-item"><div class="stat-num">${correct}</div><div class="stat-label">正确</div></div>
-        <div class="stat-item"><div class="stat-num">${total - correct}</div><div class="stat-label">需加强</div></div>
-      </div>
-      <button class="btn-continue show" onclick="exitToHome()" style="background:linear-gradient(135deg,var(--primary),var(--purple))">返回主页</button>
-    </div>
-  `;
-  
+function finishS(){
+  let ss=S.session;if(!ss)return;
+  if(ss.wrong.length>0&&ss.mode==='review'){let w=ss.wrong.shift();ss.curWord=w;ss.qtype=['spell','choiceZh','choiceEn'][Math.floor(Math.random()*3)];renderQ(ss);updateBar();saveS();return}
+  let total=ss.words.length,ok=ss.ok;
+  document.getElementById('qArea').innerHTML='';document.getElementById('fb').className='fb';document.getElementById('btnGo').classList.remove('show');
+  let da=document.getElementById('doneArea');da.style.display='block';
+  da.innerHTML='<div class="done-card"><div class="done-icon">'+(ok>=total*.8?'🎉':'💪')+'</div><h2>'+(ss.mode==='review'?'复习完成！':'学习完成！')+'</h2><p>'+(ok>=total*.8?'太棒了！':'继续加油，坚持就是胜利！')+'</p><div class="done-stats"><div><div class="ds-num">'+ok+'</div><div class="ds-label">正确</div></div><div><div class="ds-num">'+(total-ok)+'</div><div class="ds-label">需加强</div></div></div><button class="btn-go show" onclick="exitHome()" style="background:var(--accent);color:var(--bg);border-color:var(--accent)">返回主页</button></div>';
   spawnConfetti();
-  
-  // Update streak
-  const today = getToday();
-  if (state.streak.lastDate !== today) {
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
-    const yesterdayStr = yesterday.toLocaleDateString('zh-CN');
-    if (state.streak.lastDate === yesterdayStr) {
-      state.streak.count++;
-    } else {
-      state.streak.count = 1;
-    }
-    state.streak.lastDate = today;
-  }
-  
-  saveState();
+  let td=getToday();
+  if(S.streak.last!==td){let y=new Date();y.setDate(y.getDate()-1);let ys=y.toLocaleDateString('zh-CN');S.streak.n=S.streak.last===ys?S.streak.n+1:1;S.streak.last=td}
+  saveS();
 }
 
-function markWordLearned(word) {
-  if (!state.learnedWords[state.stage]) state.learnedWords[state.stage] = {};
-  state.learnedWords[state.stage][word.en] = Date.now();
-  
-  const today = getToday();
-  if (!state.todayProgress[today]) state.todayProgress[today] = {};
-  if (!state.todayProgress[today][state.stage]) state.todayProgress[today][state.stage] = 0;
-  state.todayProgress[today][state.stage]++;
+function markWord(w){if(!S.learned[S.stage])S.learned[S.stage]={};S.learned[S.stage][w.en]=Date.now();let td=getToday();if(!S.today[td])S.today[td]={};if(!S.today[td][S.stage])S.today[td][S.stage]=0;S.today[td][S.stage]++}
+function updateBar(){let ss=S.session;if(!ss)return;let pct=Math.min(Math.round((ss.idx/ss.words.length)*100),100);document.getElementById('learnFill').style.width=pct+'%';document.getElementById('learnCounter').textContent=(ss.idx+1)+' / '+ss.words.length}
+
+function spawnConfetti(){
+  let c=document.createElement('div');c.className='confetti-box';document.body.appendChild(c);
+  let cols=['#c62828','#1a1a1a','#2e7d32','#888','#bbb'];
+  for(let i=0;i<25;i++){let p=document.createElement('div');p.className='c';p.style.background=cols[Math.floor(Math.random()*cols.length)];p.style.left=(Math.random()*100-50)+'px';p.style.top=(Math.random()*-20)+'px';p.style.animationDelay=Math.random()*.4+'s';p.style.animationDuration=(1+Math.random()*1.2)+'s';c.appendChild(p)}
+  setTimeout(()=>c.remove(),2000);
 }
 
-function updateProgress() {
-  const session = state.currentSession;
-  if (!session) return;
-  const total = session.words.length;
-  const done = session.currentIndex;
-  const pct = Math.min(Math.round((done / total) * 100), 100);
-  document.getElementById('learnProgressFill').style.width = pct + '%';
-  document.getElementById('learnCounter').textContent = `${done + 1} / ${total}`;
-}
+function shuffle(a){for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}}
 
-// ==================== CONFETTI ====================
-function spawnConfetti() {
-  const container = document.createElement('div');
-  container.className = 'confetti-container';
-  document.body.appendChild(container);
-  const colors = ['#FF6B6B','#4A6CF7','#34C759','#FF9500','#AF52DE','#FFD60A','#5AC8FA'];
-  for (let i = 0; i < 30; i++) {
-    const piece = document.createElement('div');
-    piece.className = 'confetti-piece';
-    piece.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-    piece.style.left = (Math.random() * 100 - 50) + 'px';
-    piece.style.top = (Math.random() * -20) + 'px';
-    piece.style.animationDelay = Math.random() * 0.5 + 's';
-    piece.style.animationDuration = (1 + Math.random() * 1.5) + 's';
-    container.appendChild(piece);
-  }
-  setTimeout(() => container.remove(), 2500);
-}
+// Events
+document.getElementById('btnReview').addEventListener('click',startReview);
+document.getElementById('btnForward').addEventListener('click',startForward);
 
-// ==================== HELPERS ====================
-function shuffleArray(arr) {
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-}
-
-// ==================== EVENT LISTENERS ====================
-document.getElementById('btnReview').addEventListener('click', startReview);
-document.getElementById('btnForward').addEventListener('click', startForward);
-
-// ==================== INIT ====================
-function init() {
-  // Apply theme
-  document.body.dataset.theme = state.theme;
-  
-  // Refresh all pages
-  refreshHome();
-  refreshSettings();
-  refreshProfile();
-  
-  // Check streak
-  const today = getToday();
-  if (state.streak.lastDate && state.streak.lastDate !== today) {
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
-    const yesterdayStr = yesterday.toLocaleDateString('zh-CN');
-    if (state.streak.lastDate !== yesterdayStr) {
-      state.streak.count = 0;
-    }
-  }
-  saveState();
-}
-
-init();
+// Init
+(function(){
+  document.body.dataset.theme=S.theme;
+  refreshHome();refreshSet();refreshProf();
+  let td=getToday();
+  if(S.streak.last&&S.streak.last!==td){let y=new Date();y.setDate(y.getDate()-1);if(S.streak.last!==y.toLocaleDateString('zh-CN'))S.streak.n=0}
+  saveS();
+})();
 </script>
 </body>
 </html>
