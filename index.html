@@ -856,7 +856,7 @@ async function startReview(){
   let words=await fetchWords(l);
   shuffle(words);
   hideLoading();
-  S.session={mode:'review',stage:S.stage,words,idx:0,ok:0,wrong:[],qtype:null};
+  S.session={mode:'review',stage:S.stage,words,remaining:[...words],idx:0,ok:0,wrong:[],qtype:null};
   saveS();
   startQ();
 }
@@ -873,7 +873,7 @@ async function startForward(){
   let words=await fetchWords(sel);
   shuffle(words);
   hideLoading();
-  S.session={mode:'forward',stage:S.stage,words,idx:0,ok:0,wrong:[],qtype:null};
+  S.session={mode:'forward',stage:S.stage,words,remaining:[...words],idx:0,ok:0,wrong:[],qtype:null};
   saveS();
   startQ();
 }
@@ -887,7 +887,11 @@ function startQ(){
   let ss=S.session;if(!ss)return;
   let w;
   if(ss.wrong.length>0&&ss.mode==='review'){w=ss.wrong.shift()}
-  else if(ss.idx<ss.words.length){w=ss.words[ss.idx]}
+  else if(ss.remaining.length>0){
+    let ri=Math.floor(Math.random()*ss.remaining.length);
+    w=ss.remaining.splice(ri,1)[0];
+    ss.idx++;
+  }
   else{finishS();return}
   ss.curWord=w;
   let types=['spell','choiceDef','choiceEn','match'];
@@ -903,7 +907,7 @@ function renderQ(ss){
   fb.className='fb';btn.classList.remove('show');
   let qt=ss.qtype;
   if(qt==='spell'){
-    area.innerHTML='<div class="q-card" id="qCard"><div class="q-prompt">根据释义拼写单词</div><div class="q-word" style="font-size:26px">'+w.zh+'</div><div class="q-phonetic">'+w.pos+'</div><input class="spell-input" id="spellIn" placeholder="输入英文单词..." autocomplete="off" autocorrect="off" autocapitalize="off"></div>';
+    area.innerHTML='<div class="q-card" id="qCard"><div class="q-prompt">根据释义拼写单词</div><div class="q-word" style="font-size:26px">'+w.zh+'</div><div class="q-phonetic">'+w.pos+'</div><input class="spell-input" id="spellIn" placeholder="输入英文单词..." autocomplete="off" autocorrect="off" autocapitalize="off"><button class="btn-go show" id="spellSubmit" onclick="checkSpell()" style="margin-top:12px;max-width:280px;background:var(--accent);color:var(--bg);border-color:var(--accent)">提交</button></div>';
     let inp=document.getElementById('spellIn');setTimeout(()=>inp.focus(),300);
     inp.addEventListener('keydown',e=>{if(e.key==='Enter')checkSpell()});
   }else if(qt==='choiceDef'){
