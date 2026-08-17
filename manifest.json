@@ -1,0 +1,17 @@
+{
+  "name": "不白背",
+  "short_name": "不白背",
+  "description": "开源免费英语词汇学习工具",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#fafafa",
+  "theme_color": "#fafafa",
+  "icons": [
+    {
+      "src": "appIcon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
