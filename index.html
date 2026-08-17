@@ -521,6 +521,7 @@ img{max-width:100%;display:block}
   animation:confetti 1.4s ease-out forwards;
 }
 @keyframes confetti{0%{transform:translateY(0) rotate(0);opacity:1}100%{transform:translateY(-100px) rotate(600deg);opacity:0}}
+@keyframes dotPulse{0%,100%{opacity:.3;transform:scale(.8)}50%{opacity:1;transform:scale(1.2)}}
 
 .page::-webkit-scrollbar{width:0}
 </style>
@@ -720,14 +721,45 @@ https://github.com/lewb521/-
 </div>
 
 <script>
-// ===== WORD DB =====
-const wordDB={
-'中考':[{en:'abroad',zh:'在国外;到国外',ph:'/əˈbrɔːd/'},{en:'accept',zh:'接受;同意',ph:'/əkˈsept/'},{en:'accident',zh:'事故;意外',ph:'/ˈæksɪdənt/'},{en:'achieve',zh:'达到;实现',ph:'/əˈtʃiːv/'},{en:'active',zh:'积极的;活跃的',ph:'/ˈæktɪv/'},{en:'advice',zh:'建议;忠告',ph:'/ədˈvaɪs/'},{en:'afford',zh:'负担得起',ph:'/əˈfɔːrd/'},{en:'against',zh:'反对;靠着',ph:'/əˈɡenst/'},{en:'allow',zh:'允许;准许',ph:'/əˈlaʊ/'},{en:'ancient',zh:'古代的;古老的',ph:'/ˈeɪnʃənt/'},{en:'appear',zh:'出现;显得',ph:'/əˈpɪr/'},{en:'arrive',zh:'到达;抵达',ph:'/əˈraɪv/'},{en:'attend',zh:'参加;出席',ph:'/əˈtend/'},{en:'beauty',zh:'美丽;美人',ph:'/ˈbjuːti/'},{en:'believe',zh:'相信;认为',ph:'/bɪˈliːv/'},{en:'beyond',zh:'超出;在…之外',ph:'/bɪˈjɑːnd/'},{en:'brave',zh:'勇敢的',ph:'/breɪv/'},{en:'camera',zh:'照相机',ph:'/ˈkæmərə/'},{en:'capital',zh:'首都;资本',ph:'/ˈkæpɪtl/'},{en:'celebrate',zh:'庆祝',ph:'/ˈselɪbreɪt/'},{en:'chance',zh:'机会;可能性',ph:'/tʃæns/'},{en:'climate',zh:'气候',ph:'/ˈklaɪmət/'},{en:'collect',zh:'收集',ph:'/kəˈlekt/'},{en:'comfortable',zh:'舒适的',ph:'/ˈkʌmftəbl/'},{en:'communicate',zh:'交流;沟通',ph:'/kəˈmjuːnɪkeɪt/'},{en:'compare',zh:'比较',ph:'/kəmˈper/'},{en:'complete',zh:'完成;完整的',ph:'/kəmˈpliːt/'},{en:'connect',zh:'连接;联系',ph:'/kəˈnekt/'},{en:'continue',zh:'继续',ph:'/kənˈtɪnjuː/'},{en:'control',zh:'控制;管理',ph:'/kənˈtroʊl/'}],
-'高考':[{en:'abandon',zh:'放弃;抛弃',ph:'/əˈbændən/'},{en:'absorb',zh:'吸收;吸引',ph:'/əbˈzɔːrb/'},{en:'abstract',zh:'抽象的;摘要',ph:'/ˈæbstrækt/'},{en:'abundant',zh:'丰富的;充裕的',ph:'/əˈbʌndənt/'},{en:'academic',zh:'学术的;学院的',ph:'/ˌækəˈdemɪk/'},{en:'accelerate',zh:'加速;促进',ph:'/əkˈseləreɪt/'},{en:'accessible',zh:'可进入的;易接近的',ph:'/əkˈsesəbl/'},{en:'accommodation',zh:'住宿;适应',ph:'/əˌkɑːməˈdeɪʃn/'},{en:'accompany',zh:'陪伴;伴随',ph:'/əˈkʌmpəni/'},{en:'accomplish',zh:'完成;实现',ph:'/əˈkɑːmplɪʃ/'},{en:'accumulate',zh:'积累;积聚',ph:'/əˈkjuːmjəleɪt/'},{en:'accurate',zh:'准确的;精确的',ph:'/ˈækjərət/'},{en:'acknowledge',zh:'承认;感谢',ph:'/əkˈnɑːlɪdʒ/'},{en:'acquire',zh:'获得;习得',ph:'/əˈkwaɪər/'},{en:'adapt',zh:'适应;改编',ph:'/əˈdæpt/'},{en:'adequate',zh:'足够的;适当的',ph:'/ˈædɪkwət/'},{en:'administration',zh:'管理;行政',ph:'/ədˌmɪnɪˈstreɪʃn/'},{en:'adolescent',zh:'青少年',ph:'/ˌædəˈlesnt/'},{en:'advocate',zh:'提倡;倡导者',ph:'/ˈædvəkeɪt/'},{en:'aggressive',zh:'侵略的;好斗的',ph:'/əˈɡresɪv/'},{en:'allocate',zh:'分配;拨出',ph:'/ˈæləkeɪt/'},{en:'alternative',zh:'替代的;选择',ph:'/ɔːlˈtɜːrnətɪv/'},{en:'ambiguous',zh:'模糊的;含糊的',ph:'/æmˈbɪɡjuəs/'},{en:'ambitious',zh:'有雄心的',ph:'/æmˈbɪʃəs/'},{en:'anticipate',zh:'预期;期望',ph:'/ænˈtɪsɪpeɪt/'},{en:'apparent',zh:'显然的;表面的',ph:'/əˈpærənt/'},{en:'appreciate',zh:'欣赏;感激',ph:'/əˈpriːʃieɪt/'},{en:'approach',zh:'接近;方法',ph:'/əˈproʊtʃ/'},{en:'appropriate',zh:'适当的;挪用',ph:'/əˈproʊpriət/'},{en:'assess',zh:'评估;评定',ph:'/əˈses/'}],
-'四级':[{en:'abandon',zh:'放弃;放纵',ph:'/əˈbændən/'},{en:'absolute',zh:'绝对的;完全的',ph:'/ˈæbsəluːt/'},{en:'absorb',zh:'吸收;吸引',ph:'/əbˈzɔːrb/'},{en:'abstract',zh:'抽象的;摘要',ph:'/ˈæbstrækt/'},{en:'abundant',zh:'丰富的',ph:'/əˈbʌndənt/'},{en:'academic',zh:'学术的',ph:'/ˌækəˈdemɪk/'},{en:'accelerate',zh:'加速',ph:'/əkˈseləreɪt/'},{en:'access',zh:'进入;通道;获取',ph:'/ˈækses/'},{en:'accommodation',zh:'住宿;膳宿',ph:'/əˌkɑːməˈdeɪʃn/'},{en:'accompany',zh:'陪伴;伴奏',ph:'/əˈkʌmpəni/'},{en:'accomplish',zh:'完成;达成',ph:'/əˈkɑːmplɪʃ/'},{en:'account',zh:'账户;说明;解释',ph:'/əˈkaʊnt/'},{en:'accumulate',zh:'积累;积聚',ph:'/əˈkjuːmjəleɪt/'},{en:'accurate',zh:'准确的',ph:'/ˈækjərət/'},{en:'achieve',zh:'实现;获得',ph:'/əˈtʃiːv/'},{en:'acknowledge',zh:'承认;答谢',ph:'/əkˈnɑːlɪdʒ/'},{en:'acquire',zh:'获得;习得',ph:'/əˈkwaɪər/'},{en:'adapt',zh:'适应;改编',ph:'/əˈdæpt/'},{en:'adequate',zh:'充足的;适当的',ph:'/ˈædɪkwət/'},{en:'adjust',zh:'调整;适应',ph:'/əˈdʒʌst/'},{en:'administration',zh:'管理;行政',ph:'/ədˌmɪnɪˈstreɪʃn/'},{en:'admire',zh:'钦佩;赞赏',ph:'/ədˈmaɪər/'},{en:'adopt',zh:'采纳;收养',ph:'/əˈdɑːpt/'},{en:'advance',zh:'前进;进步',ph:'/ədˈvæns/'},{en:'advantage',zh:'优势;有利条件',ph:'/ədˈvæntɪdʒ/'},{en:'adventure',zh:'冒险;奇遇',ph:'/ədˈventʃər/'},{en:'advertise',zh:'做广告;宣传',ph:'/ˈædvərtaɪz/'},{en:'advocate',zh:'提倡;倡导者',ph:'/ˈædvəkeɪt/'},{en:'affect',zh:'影响;感动',ph:'/əˈfekt/'},{en:'afford',zh:'负担得起',ph:'/əˈfɔːrd/'}],
-'六级':[{en:'abolish',zh:'废除;取消',ph:'/əˈbɑːlɪʃ/'},{en:'absurd',zh:'荒谬的;荒唐的',ph:'/əbˈsɜːrd/'},{en:'abundance',zh:'丰富;充裕',ph:'/əˈbʌndəns/'},{en:'accessory',zh:'配件;附件;从犯',ph:'/əkˈsesəri/'},{en:'accommodate',zh:'容纳;提供住宿;适应',ph:'/əˈkɑːmədeɪt/'},{en:'acquaint',zh:'使熟悉;使了解',ph:'/əˈkweɪnt/'},{en:'adhere',zh:'黏附;坚持;遵守',ph:'/ədˈhɪr/'},{en:'adjacent',zh:'邻近的;毗邻的',ph:'/əˈdʒeɪsnt/'},{en:'administer',zh:'管理;执行;给予',ph:'/ədˈmɪnɪstər/'},{en:'adolescent',zh:'青少年;青春期的',ph:'/ˌædəˈlesnt/'},{en:'advent',zh:'到来;出现',ph:'/ˈædvent/'},{en:'adverse',zh:'不利的;相反的',ph:'/ˈædvɜːrs/'},{en:'aerial',zh:'空中的;航空的',ph:'/ˈeriəl/'},{en:'aesthetic',zh:'审美的;美学的',ph:'/esˈθetɪk/'},{en:'affiliate',zh:'使附属;隶属',ph:'/əˈfɪlieɪt/'},{en:'affirm',zh:'肯定;确认',ph:'/əˈfɜːrm/'},{en:'afflict',zh:'使痛苦;折磨',ph:'/əˈflɪkt/'},{en:'aggravate',zh:'加重;使恶化',ph:'/ˈæɡrəveɪt/'},{en:'aggregate',zh:'总计;集合体',ph:'/ˈæɡrɪɡət/'},{en:'agitate',zh:'煽动;搅动;使焦虑',ph:'/ˈædʒɪteɪt/'},{en:'agony',zh:'极大的痛苦',ph:'/ˈæɡəni/'},{en:'allege',zh:'声称;断言',ph:'/əˈledʒ/'},{en:'alleviate',zh:'减轻;缓解',ph:'/əˈliːvieɪt/'},{en:'allocate',zh:'分配;拨出',ph:'/ˈæləkeɪt/'},{en:'alloy',zh:'合金',ph:'/ˈælɔɪ/'},{en:'alternate',zh:'交替的;轮流',ph:'/ˈɔːltərneɪt/'},{en:'amateur',zh:'业余爱好者;外行',ph:'/ˈæmətər/'},{en:'ambassador',zh:'大使;代表',ph:'/æmˈbæsədər/'},{en:'ambiguous',zh:'模棱两可的',ph:'/æmˈbɪɡjuəs/'},{en:'amend',zh:'修改;修订',ph:'/əˈmend/'}],
-'考研':[{en:'abdicate',zh:'退位;放弃(权力)',ph:'/ˈæbdɪkeɪt/'},{en:'aberration',zh:'偏差;反常',ph:'/ˌæbəˈreɪʃn/'},{en:'abeyance',zh:'搁置;中止',ph:'/əˈbeɪəns/'},{en:'abhor',zh:'憎恶;厌恶',ph:'/əbˈhɔːr/'},{en:'abide',zh:'忍受;遵守',ph:'/əˈbaɪd/'},{en:'abject',zh:'凄惨的;卑贱的',ph:'/ˈæbdʒekt/'},{en:'abjure',zh:'发誓放弃;公开放弃',ph:'/əbˈdʒʊr/'},{en:'ablaze',zh:'着火的;闪耀的',ph:'/əˈbleɪz/'},{en:'abnegate',zh:'克制;放弃',ph:'/ˈæbnɪɡeɪt/'},{en:'abode',zh:'住所;居住',ph:'/əˈboʊd/'},{en:'abolish',zh:'废除;取消',ph:'/əˈbɑːlɪʃ/'},{en:'abominable',zh:'可恶的;极坏的',ph:'/əˈbɑːmɪnəbl/'},{en:'abound',zh:'大量存在;富于',ph:'/əˈbaʊnd/'},{en:'abreast',zh:'并排;并肩',ph:'/əˈbrest/'},{en:'abridge',zh:'删节;缩短',ph:'/əˈbrɪdʒ/'},{en:'abrogate',zh:'废除;取消',ph:'/ˈæbrəɡeɪt/'},{en:'abrupt',zh:'突然的;生硬的',ph:'/əˈbrʌpt/'},{en:'abscond',zh:'潜逃;逃亡',ph:'/əbˈskɑːnd/'},{en:'absolve',zh:'免除;赦免',ph:'/əbˈzɑːlv/'},{en:'abstain',zh:'戒绝;弃权',ph:'/əbˈsteɪn/'},{en:'abstemious',zh:'有节制的;节俭的',ph:'/əbˈstiːmiəs/'},{en:'abstract',zh:'抽象的;提取',ph:'/ˈæbstrækt/'},{en:'abstruse',zh:'深奥的;难懂的',ph:'/əbˈstruːs/'},{en:'absurd',zh:'荒谬的',ph:'/əbˈsɜːrd/'},{en:'abundance',zh:'丰富;充裕',ph:'/əˈbʌndəns/'},{en:'abut',zh:'邻接;毗连',ph:'/əˈbʌt/'},{en:'abysmal',zh:'极深的;极坏的',ph:'/əˈbɪzməl/'},{en:'accede',zh:'同意;加入;就任',ph:'/əkˈsiːd/'},{en:'accentuate',zh:'强调;重读',ph:'/əkˈsentʃueɪt/'},{en:'acclaim',zh:'欢呼;称赞',ph:'/əˈkleɪm/'}]
+// ===== WORD LISTS =====
+const wordLists={
+'中考':['abroad','accept','accident','achieve','active','advice','afford','against','allow','ancient','appear','arrive','attend','beauty','believe','beyond','brave','camera','capital','celebrate','chance','climate','collect','comfortable','communicate','compare','complete','connect','continue','control'],
+'高考':['abandon','absorb','abstract','abundant','academic','accelerate','accessible','accommodation','accompany','accomplish','accumulate','accurate','acknowledge','acquire','adapt','adequate','administration','adolescent','advocate','aggressive','allocate','alternative','ambiguous','ambitious','anticipate','apparent','appreciate','approach','appropriate','assess'],
+'四级':['abandon','absolute','absorb','abstract','abundant','academic','accelerate','access','accommodation','accompany','accomplish','account','accumulate','accurate','achieve','acknowledge','acquire','adapt','adequate','adjust','administration','admire','adopt','advance','advantage','adventure','advertise','advocate','affect','afford'],
+'六级':['abolish','absurd','abundance','accessory','accommodate','acquaint','adhere','adjacent','administer','adolescent','advent','adverse','aerial','aesthetic','affiliate','affirm','afflict','aggravate','aggregate','agitate','agony','allege','alleviate','allocate','alloy','alternate','amateur','ambassador','ambiguous','amend'],
+'考研':['abdicate','aberration','abeyance','abhor','abide','abject','abjure','ablaze','abnegate','abode','abolish','abominable','abound','abreast','abridge','abrogate','abrupt','abscond','absolve','abstain','abstemious','abstract','abstruse','absurd','abundance','abut','abysmal','accede','accentuate','acclaim']
 };
+
+// ===== API WORD CACHE =====
+const API='https://api.dictionaryapi.dev/api/v2/entries/en/';
+const wordCache={};
+
+async function fetchWord(word){
+  if(wordCache[word])return wordCache[word];
+  try{
+    let r=await fetch(API+word);
+    if(!r.ok)throw new Error('not found');
+    let d=await r.json();
+    let entry=d[0];
+    let ph=entry.phonetics?.find(p=>p.text)?.text||'';
+    let m=entry.meanings?.[0];
+    let def=m?.definitions?.[0]?.definition||'';
+    let pos=m?.partOfSpeech||'';
+    let ex=m?.definitions?.[0]?.example||'';
+    let data={en:entry.word,ph,def,pos,ex};
+    wordCache[word]=data;
+    return data;
+  }catch(e){
+    let fallback={en:word,ph:'',def:'(definition unavailable)',pos:'',ex:''};
+    wordCache[word]=fallback;
+    return fallback;
+  }
+}
+
+async function fetchWords(words){
+  let res=await Promise.all(words.map(w=>fetchWord(w)));
+  return res;
+}
 
 const quotes=[
 {text:'学而不思则罔，思而不学则殆。',author:'孔子'},{text:'The limits of my language mean the limits of my world.',author:'Ludwig Wittgenstein'},{text:'语言是思想的外衣。',author:'Samuel Johnson'},{text:'To have another language is to possess a second soul.',author:'Charlemagne'},{text:'千里之行，始于足下。',author:'老子'},{text:'Language is the road map of a culture.',author:'Rita Mae Brown'},{text:'不积跬步，无以至千里。',author:'荀子'},{text:'A different language is a different vision of life.',author:'Federico Fellini'},{text:'博学之，审问之，慎思之，明辨之，笃行之。',author:'《中庸》'},{text:'Learning is a treasure that will follow its owner everywhere.',author:'Chinese Proverb'},{text:'业精于勤，荒于嬉。',author:'韩愈'},{text:'One language sets you in a corridor for life. Two languages open every door along the way.',author:'Frank Smith'},{text:'温故而知新，可以为师矣。',author:'孔子'},{text:'Words are, of course, the most powerful drug used by mankind.',author:'Rudyard Kipling'},{text:'书山有路勤为径，学海无涯苦作舟。',author:'韩愈'},{text:'The more languages you know, the more you are human.',author:'Tomáš Garrigue Masaryk'},{text:'敏而好学，不耻下问。',author:'孔子'},{text:'He who knows no foreign languages knows nothing of his own.',author:'Goethe'},{text:'锲而不舍，金石可镂。',author:'荀子'},{text:'Knowledge of languages is the doorway to wisdom.',author:'Roger Bacon'}
@@ -806,33 +838,44 @@ function showAbout(){openModal('modalAbout')}
 // ===== LEARNING =====
 function getToday(){return new Date().toLocaleDateString('zh-CN')}
 function getLearned(stage){return Object.keys(S.learned[stage]||{})}
-function getAvail(stage){let all=wordDB[stage]||[],l=getLearned(stage);return all.filter(w=>!l.includes(w.en))}
+function getAvail(stage){let all=wordLists[stage]||[],l=getLearned(stage);return all.filter(w=>!l.includes(w))}
 
-function startReview(){
+async function startReview(){
   let l=getLearned(S.stage);
   if(!l.length){alert('还没有已学单词，请先前进学习！');return}
-  let all=wordDB[S.stage],rw=l.map(w=>all.find(x=>x.en===w)).filter(Boolean);
-  shuffle(rw);
-  S.session={mode:'review',stage:S.stage,words:rw,idx:0,ok:0,wrong:[],qtype:null};
+  showLoading('正在加载单词数据...');
+  let words=await fetchWords(l);
+  shuffle(words);
+  hideLoading();
+  S.session={mode:'review',stage:S.stage,words,idx:0,ok:0,wrong:[],qtype:null};
   saveS();
   document.getElementById('floatExit').classList.add('visible');
   document.getElementById('learnTitle').textContent='复习';
   goPage('learn');
   startQ();
 }
-function startForward(){
+async function startForward(){
   let av=getAvail(S.stage);
   if(!av.length){alert('当前阶段单词已学完！');return}
   let td=getToday(),tc=S.today[td]?.[S.stage]||0,rem=S.goal-tc;
   if(rem<=0){alert('今日目标已完成！');return}
   let cnt=Math.min(rem,av.length),sel=av.slice(0,cnt);
-  S.session={mode:'forward',stage:S.stage,words:sel,idx:0,ok:0,wrong:[],qtype:null};
+  showLoading('正在加载单词数据...');
+  let words=await fetchWords(sel);
+  shuffle(words);
+  hideLoading();
+  S.session={mode:'forward',stage:S.stage,words,idx:0,ok:0,wrong:[],qtype:null};
   saveS();
   document.getElementById('floatExit').classList.add('visible');
   document.getElementById('learnTitle').textContent='前进';
   goPage('learn');
   startQ();
 }
+function showLoading(msg){
+  let a=document.getElementById('qArea');
+  a.innerHTML='<div class="q-card" style="gap:20px"><div class="q-prompt">'+msg+'</div><div style="display:flex;gap:6px;justify-content:center"><div style="width:8px;height:8px;border-radius:50%;background:var(--text3);animation:dotPulse 1.2s ease infinite"></div><div style="width:8px;height:8px;border-radius:50%;background:var(--text3);animation:dotPulse 1.2s ease .2s infinite"></div><div style="width:8px;height:8px;border-radius:50%;background:var(--text3);animation:dotPulse 1.2s ease .4s infinite"></div></div></div>';
+}
+function hideLoading(){document.getElementById('qArea').innerHTML=''}
 
 function startQ(){
   let ss=S.session;if(!ss)return;
@@ -841,9 +884,9 @@ function startQ(){
   else if(ss.idx<ss.words.length){w=ss.words[ss.idx]}
   else{finishS();return}
   ss.curWord=w;
-  let types=['spell','choiceZh','choiceEn','match'];
+  let types=['spell','choiceDef','choiceEn','match'];
   ss.qtype=types[Math.floor(Math.random()*types.length)];
-  if(ss.qtype==='match'&&wordDB[ss.stage].length<4)ss.qtype='choiceZh';
+  if(ss.qtype==='match'&&ss.words.length<4)ss.qtype='choiceDef';
   renderQ(ss);
   updateBar();
   saveS();
@@ -854,24 +897,28 @@ function renderQ(ss){
   fb.className='fb';btn.classList.remove('show');
   let qt=ss.qtype;
   if(qt==='spell'){
-    area.innerHTML='<div class="q-card" id="qCard"><div class="q-prompt">请拼写以下单词</div><div class="q-word" style="font-size:26px">'+w.zh+'</div><input class="spell-input" id="spellIn" placeholder="输入英文..." autocomplete="off" autocorrect="off" autocapitalize="off"></div>';
+    area.innerHTML='<div class="q-card" id="qCard"><div class="q-prompt">根据释义拼写单词</div><div class="q-word" style="font-size:20px;font-weight:500;line-height:1.5">'+w.def+'</div><div class="q-phonetic">'+w.pos+'</div><input class="spell-input" id="spellIn" placeholder="输入英文单词..." autocomplete="off" autocorrect="off" autocapitalize="off"></div>';
     let inp=document.getElementById('spellIn');setTimeout(()=>inp.focus(),300);
     inp.addEventListener('keydown',e=>{if(e.key==='Enter')checkSpell()});
-  }else if(qt==='choiceZh'){
-    let pool=wordDB[ss.stage],wrongs=pool.filter(x=>x.en!==w.en);shuffle(wrongs);
-    let opts=[w,...wrongs.slice(0,3)];shuffle(opts);
-    area.innerHTML='<div class="q-card" id="qCard"><div class="q-word">'+w.en+'</div><div class="q-phonetic">'+w.ph+'</div><div class="q-prompt">选择正确的中文释义</div><div class="choices">'+opts.map((o,i)=>'<button class="choice" data-ok="'+(o.en===w.en)+'">'+o.zh+'</button>').join('')+'</div></div>';
-    area.querySelectorAll('.choice').forEach(b=>b.addEventListener('click',()=>checkChoice(b)));
+  }else if(qt==='choiceDef'){
+    let pool=ss.words.filter(x=>x.en!==w.en);
+    if(pool.length<3)qt='spell';else{shuffle(pool);
+    let opts=[w,...pool.slice(0,3)];shuffle(opts);
+    area.innerHTML='<div class="q-card" id="qCard"><div class="q-word">'+w.en+'</div><div class="q-phonetic">'+w.ph+'</div><div class="q-prompt">选择正确的释义</div><div class="choices">'+opts.map(o=>'<button class="choice" data-ok="'+(o.en===w.en)+'">'+o.def+'</button>').join('')+'</div></div>';
+    area.querySelectorAll('.choice').forEach(b=>b.addEventListener('click',()=>checkChoice(b)));}
   }else if(qt==='choiceEn'){
-    let pool=wordDB[ss.stage],wrongs=pool.filter(x=>x.en!==w.en);shuffle(wrongs);
-    let opts=[w,...wrongs.slice(0,3)];shuffle(opts);
-    area.innerHTML='<div class="q-card" id="qCard"><div class="q-word" style="font-size:26px">'+w.zh+'</div><div class="q-prompt">选择正确的英文单词</div><div class="choices">'+opts.map((o,i)=>'<button class="choice" data-ok="'+(o.en===w.en)+'">'+o.en+'</button>').join('')+'</div></div>';
-    area.querySelectorAll('.choice').forEach(b=>b.addEventListener('click',()=>checkChoice(b)));
+    let pool=ss.words.filter(x=>x.en!==w.en);
+    if(pool.length<3)qt='spell';else{shuffle(pool);
+    let opts=[w,...pool.slice(0,3)];shuffle(opts);
+    area.innerHTML='<div class="q-card" id="qCard"><div class="q-word" style="font-size:20px;font-weight:500;line-height:1.5">'+w.def+'</div><div class="q-prompt">选择正确的单词</div><div class="choices">'+opts.map(o=>'<button class="choice" data-ok="'+(o.en===w.en)+'">'+o.en+'</button>').join('')+'</div></div>';
+    area.querySelectorAll('.choice').forEach(b=>b.addEventListener('click',()=>checkChoice(b)));}
   }else if(qt==='match'){
-    let pool=wordDB[ss.stage],others=pool.filter(x=>x.en!==w.en);shuffle(others);
-    let mw=[w,...others.slice(0,3)];shuffle(mw);
-    let enL=[...mw],zhL=[...mw];shuffle(zhL);
-    area.innerHTML='<div class="q-card" id="qCard"><div class="q-prompt" style="margin-bottom:16px">连线匹配（先点英文，再点中文）</div><div class="match-wrap"><div class="match-col" id="matchEn">'+enL.map((x,i)=>'<div class="match-it match-en" data-w="'+x.en+'">'+x.en+'</div>').join('')+'</div><div class="match-col" id="matchZh">'+zhL.map((x,i)=>'<div class="match-it match-zh" data-w="'+x.en+'">'+x.zh+'</div>').join('')+'</div></div></div>';
+    let pool=ss.words.filter(x=>x.en!==w.en);
+    if(pool.length<3){qt='choiceDef';return renderQ(ss);}
+    let others=pool.slice(0,3);shuffle(others);
+    let mw=[w,...others];shuffle(mw);
+    let enL=[...mw],defL=[...mw];shuffle(defL);
+    area.innerHTML='<div class="q-card" id="qCard"><div class="q-prompt" style="margin-bottom:16px">连线匹配（先点单词，再点释义）</div><div class="match-wrap"><div class="match-col" id="matchEn">'+enL.map(x=>'<div class="match-it match-en" data-w="'+x.en+'">'+x.en+'</div>').join('')+'</div><div class="match-col" id="matchZh">'+defL.map(x=>'<div class="match-it match-zh" data-w="'+x.en+'">'+x.def+'</div>').join('')+'</div></div></div>';
     initMatch();
   }
 }
@@ -883,7 +930,7 @@ function checkSpell(){
   let card=document.getElementById('qCard'),fb=document.getElementById('fb'),btn=document.getElementById('btnGo');
   inp.disabled=true;
   if(ok){inp.classList.add('ok');card.classList.add('ok');fb.className='fb show ok';fb.textContent='✓ 正确';ss.ok++;markWord(w)}
-  else{inp.classList.add('err');card.classList.add('err');fb.className='fb show err';fb.innerHTML='✗ 错误，正确答案：<strong>'+w.en+'</strong>';ss.wrong.push(w)}
+  else{inp.classList.add('err');card.classList.add('err');fb.className='fb show err';fb.innerHTML='✗ 错误，正确答案：<strong>'+w.en+'</strong> ('+w.def+')';ss.wrong.push(w)}
   btn.classList.add('show');saveS();
 }
 function checkChoice(btn){
@@ -892,7 +939,7 @@ function checkChoice(btn){
   let card=document.getElementById('qCard'),fb=document.getElementById('fb'),go=document.getElementById('btnGo');
   document.querySelectorAll('#qArea .choice').forEach(b=>{b.disabled=true;if(b.dataset.ok==='true')b.classList.add('ok');if(b===btn&&!ok)b.classList.add('err')});
   if(ok){card.classList.add('ok');fb.className='fb show ok';fb.textContent='✓ 正确';ss.ok++;markWord(w)}
-  else{card.classList.add('err');fb.className='fb show err';fb.innerHTML='✗ 错误，正确答案：<strong>'+w.en+' — '+w.zh+'</strong>';ss.wrong.push(w)}
+  else{card.classList.add('err');fb.className='fb show err';fb.innerHTML='✗ 错误，正确答案：<strong>'+w.en+'</strong> — '+w.def+'';ss.wrong.push(w)}
   go.classList.add('show');saveS();
 }
 
