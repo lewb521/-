@@ -4,8 +4,10 @@ import json, time, sys, os
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import requests
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 # Read wordlist
-with open('/workspace/wordlist.txt', 'r') as f:
+with open(os.path.join(BASE_DIR, 'wordlist.txt'), 'r') as f:
     all_words = [line.strip().lower() for line in f if line.strip() and len(line.strip()) >= 2]
 
 # Remove duplicates while preserving order
@@ -40,7 +42,7 @@ for stage_name, size in stage_sizes:
 print(f"Stage counts: { {k: len(v) for k, v in stages.items()} }", file=sys.stderr)
 
 # Check for existing translations cache
-cache_file = '/workspace/trans_cache.json'
+cache_file = os.path.join(BASE_DIR, 'trans_cache.json')
 cache = {}
 if os.path.exists(cache_file):
     with open(cache_file, 'r', encoding='utf-8') as f:
@@ -110,8 +112,12 @@ for stage_name, word_list in stages.items():
 
 print(f"Final translations: {len(output['translations'])}", file=sys.stderr)
 
-# Write to JSON
-with open('/workspace/words-data.json', 'w', encoding='utf-8') as f:
-    json.dump(output, f, ensure_ascii=False, indent=2)
+# Write to JS bundle loaded by index.html
+js_path = os.path.join(BASE_DIR, 'words-data.js')
+with open(js_path, 'w', encoding='utf-8') as f:
+    f.write('// 不白背 - 词汇库 (数据来源: KyleBing/english-vocabulary)\n')
+    f.write('// Auto-generated, do not edit\n')
+    f.write('const wordLists=' + json.dumps(output['stages'], ensure_ascii=False) + ';\n')
+    f.write('const zhTrans=' + json.dumps(output['translations'], ensure_ascii=False) + ';\n')
 
-print("DONE - Saved to words-data.json", file=sys.stderr)
+print("DONE - Saved to words-data.js", file=sys.stderr)
