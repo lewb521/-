@@ -263,18 +263,6 @@ img{max-width:100%;display:block}
 .layer .wtext{font-size:clamp(44px,13vw,78px);font-weight:900;letter-spacing:-1.5px;line-height:1.04;color:var(--text);font-family:var(--word-font);text-align:center;padding:0 6px}
 .layer .wsub{font-size:13px;color:var(--text2);position:relative;z-index:2;text-align:center;max-width:90%;line-height:1.5;font-weight:500;margin-top:2px}
 
-/* 紧贴单词本体的小边框环：仅退出时灰色微扩散，不铺满屏幕 */
-.layer .wtext::after,.layer .q-word::after{
-  content:'';position:absolute;inset:-13px -15px;border-radius:18px;
-  pointer-events:none;opacity:0;z-index:1;
-}
-/* 退出：灰色边框环，微小扩散 */
-.layer.out-next .wtext::after,.layer.out-next .q-word::after,
-.layer.out-prev .wtext::after,.layer.out-prev .q-word::after{
-  border:3px solid #9aa0a6;
-  animation:borderDiffuse .6s ease-out both;
-}
-
 .layer.in-init{animation:popIn .46s cubic-bezier(.22,1,.36,1) both}
 .layer.in-next{animation:flyInL .6s cubic-bezier(.22,1,.36,1) both}
 .layer.in-prev{animation:flyInR .6s cubic-bezier(.22,1,.36,1) both}
@@ -286,8 +274,6 @@ img{max-width:100%;display:block}
 @keyframes flyInR{from{transform:translateX(62%);opacity:0;filter:blur(28px)}to{transform:translateX(0);opacity:1;filter:blur(0)}}
 @keyframes flyOutL{from{transform:translateX(0);opacity:1;filter:blur(0)}to{transform:translateX(-74%);opacity:0;filter:blur(46px)}}
 @keyframes flyOutR{from{transform:translateX(0);opacity:1;filter:blur(0)}to{transform:translateX(74%);opacity:0;filter:blur(46px)}}
-/* 单词边框环的微小扩散：仅轻微放大+轻模糊后消失 */
-@keyframes borderDiffuse{0%{opacity:.95;transform:scale(1);filter:blur(2px)}60%{opacity:.5}100%{opacity:0;transform:scale(1.07);filter:blur(6px)}}
 @keyframes popIn{from{transform:scale(.82);opacity:0;filter:blur(20px)}to{transform:scale(1);opacity:1;filter:blur(0)}}
 @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
@@ -298,35 +284,42 @@ img{max-width:100%;display:block}
 @keyframes ripple{from{transform:scale(0);opacity:.5}to{transform:scale(2.6);opacity:0}}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* ===== BOTTOM NAV (iOS concentric + flowing blur) ===== */
+/* ===== BOTTOM NAV (粗笔简体线描 hand-drawn line style) ===== */
+.brush-filter{position:absolute;width:0;height:0;overflow:hidden}
 .nav{
   position:fixed;bottom:calc(var(--safe) + 16px);left:50%;transform:translateX(-50%);
-  z-index:200;display:flex;gap:4px;padding:9px 11px;border-radius:34px;
-  background:var(--glass);border:1px solid var(--line);
-  box-shadow:0 10px 34px rgba(0,0,0,.14);
-  backdrop-filter:blur(22px) saturate(170%);-webkit-backdrop-filter:blur(22px) saturate(170%);
-  overflow:hidden;transition:transform .3s ease,opacity .3s ease;
+  z-index:200;display:flex;gap:6px;padding:10px 14px;
+  background:var(--glass);
+  box-shadow:0 12px 32px rgba(0,0,0,.12);
+  backdrop-filter:blur(18px) saturate(150%);-webkit-backdrop-filter:blur(18px) saturate(150%);
+  overflow:visible;transition:transform .3s ease,opacity .3s ease;
 }
+/* 流动柔光（中性） */
 .nav::before{
-  content:'';position:absolute;inset:-60%;z-index:-1;
-  background:conic-gradient(from 0deg, rgba(150,158,175,.22), rgba(205,210,220,.10), rgba(150,158,175,.22));
-  filter:blur(28px);opacity:.5;animation:spin 18s linear infinite;
+  content:'';position:absolute;inset:-50%;z-index:-1;border-radius:40px;
+  background:conic-gradient(from 0deg, rgba(150,158,175,.20), rgba(205,210,220,.08), rgba(150,158,175,.20));
+  filter:blur(30px);opacity:.5;animation:spin 20s linear infinite;pointer-events:none;
 }
-[data-theme="dark"] .nav::before{opacity:.55}
+/* 粗笔手绘外框 */
+.nav::after{
+  content:'';position:absolute;inset:0;z-index:0;pointer-events:none;
+  border:3px solid var(--accent);border-radius:22px 26px 18px 27px / 26px 18px 27px 22px;
+  filter:url(#brush);opacity:.9;
+}
+[data-theme="dark"] .nav::after{opacity:1}
 .nav-item{
-  position:relative;width:54px;height:54px;border-radius:50%;
+  position:relative;z-index:1;width:56px;height:56px;border-radius:50%;
   display:flex;align-items:center;justify-content:center;
   color:var(--text3);transition:color .25s ease,transform .2s ease;
 }
-.nav-item svg{width:25px;height:25px;position:relative;z-index:2;transition:transform .25s ease}
+.nav-item svg.ic{width:26px;height:26px;position:relative;z-index:2;transition:transform .25s ease;overflow:visible;filter:url(#brush)}
 .nav-item.active{color:var(--accent)}
-.nav-item.active svg{transform:translateY(-1px) scale(1.04)}
-.nav-item .ring{position:absolute;inset:0;border-radius:50%;border:2px solid transparent;opacity:0;transform:scale(.5);transition:opacity .3s ease,transform .35s cubic-bezier(.34,1.56,.64,1);z-index:1}
-.nav-item.active .ring{opacity:1;border-color:var(--accent);transform:scale(1);animation:ringIn .35s cubic-bezier(.34,1.56,.64,1) both}
-.nav-item.active .ring::after{content:'';position:absolute;inset:7px;border-radius:50%;border:1.5px solid var(--accent);opacity:.4;animation:ringIn .45s .05s cubic-bezier(.34,1.56,.64,1) both}
+.nav-item.active svg.ic{transform:translateY(-1px) scale(1.06)}
+.nav-item .ring{position:absolute;inset:0;width:100%;height:100%;z-index:1;opacity:0;transform:scale(.5);transition:opacity .3s ease,transform .35s cubic-bezier(.34,1.56,.64,1);filter:url(#brush)}
+.nav-item.active .ring{opacity:1;transform:scale(1);animation:ringIn .35s cubic-bezier(.34,1.56,.64,1) both}
 .nav-item.tap{animation:tapBounce .32s ease}
-.nav-item .ripple{position:absolute;width:40px;height:40px;border-radius:50%;background:var(--accent);opacity:.18;pointer-events:none;z-index:0;animation:ripple .5s ease-out forwards}
-.nav.hidden{opacity:0;transform:transl(-50%,20px);pointer-events:none}
+.nav-item .ripple{position:absolute;width:40px;height:40px;border-radius:50%;border:2.5px solid var(--accent);background:transparent;opacity:0;pointer-events:none;z-index:0;animation:ripple .5s ease-out forwards}
+.nav.hidden{opacity:0;transform:translateX(-50%) translateY(20px);pointer-events:none}
 
 /* ===== MODAL ===== */
 .modal{position:fixed;inset:0;z-index:300;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s ease;background:rgba(0,0,0,.32);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
@@ -493,19 +486,22 @@ img{max-width:100%;display:block}
     <div id="doneArea" style="display:none"></div>
   </div>
 
+  <!-- 手绘笔触滤镜（粗笔线描） -->
+  <svg class="brush-filter" width="0" height="0" aria-hidden="true"><defs><filter id="brush" x="-20%" y="-20%" width="140%" height="140%"><feTurbulence type="fractalNoise" baseFrequency="0.02 0.025" numOctaves="2" seed="6" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="3.4" xChannelSelector="R" yChannelSelector="G"/></filter></defs></svg>
+
   <!-- BOTTOM NAV -->
   <nav class="nav" id="nav">
     <button class="nav-item active" data-page="home" onclick="navTap(this,'home')">
-      <span class="ring"></span>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 9.5 12 3l9 6.5V20a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 20z"/><polyline points="9 21 9 12 15 12 15 21" stroke-linejoin="round"/></svg>
+      <svg class="ring" viewBox="0 0 56 56"><path d="M28 5 C41 5 51 14 51 28 C51 42 41 51 28 51 C15 51 5 41 5 28 C5 15 15 6 28 6" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 12 3l9 6.5V20a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 20z"/><polyline points="9 21 9 12 15 12 15 21"/></svg>
     </button>
     <button class="nav-item" data-page="settings" onclick="navTap(this,'settings')">
-      <span class="ring"></span>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      <svg class="ring" viewBox="0 0 56 56"><path d="M28 5 C41 5 51 14 51 28 C51 42 41 51 28 51 C15 51 5 41 5 28 C5 15 15 6 28 6" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
     </button>
     <button class="nav-item" data-page="profile" onclick="navTap(this,'profile')">
-      <span class="ring"></span>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <svg class="ring" viewBox="0 0 56 56"><path d="M28 5 C41 5 51 14 51 28 C51 42 41 51 28 51 C15 51 5 41 5 28 C5 15 15 6 28 6" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
     </button>
   </nav>
 
