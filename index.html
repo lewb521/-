@@ -263,18 +263,13 @@ img{max-width:100%;display:block}
 .layer .wtext{font-size:clamp(44px,13vw,78px);font-weight:900;letter-spacing:-1.5px;line-height:1.04;color:var(--text);font-family:var(--word-font);text-align:center;padding:0 6px}
 .layer .wsub{font-size:13px;color:var(--text2);position:relative;z-index:2;text-align:center;max-width:90%;line-height:1.5;font-weight:500;margin-top:2px}
 
-.layer.in-init{animation:popIn .46s cubic-bezier(.22,1,.36,1) both}
-.layer.in-next{animation:flyInL .6s cubic-bezier(.22,1,.36,1) both}
-.layer.in-prev{animation:flyInR .6s cubic-bezier(.22,1,.36,1) both}
-.layer.out-next{animation:flyOutL .6s cubic-bezier(.22,1,.36,1) both}
-.layer.out-prev{animation:flyOutR .6s cubic-bezier(.22,1,.36,1) both}
+.layer.in-init{animation:blurIn .5s cubic-bezier(.22,1,.36,1) both}
+.layer.blur-out{animation:blurOut .36s ease-in both}
+.layer.blur-in{animation:blurIn .46s cubic-bezier(.22,1,.36,1) both}
 
-/* 高浓度动态模糊：单词在进出过程中重模糊 */
-@keyframes flyInL{from{transform:translateX(-62%);opacity:0;filter:blur(28px)}to{transform:translateX(0);opacity:1;filter:blur(0)}}
-@keyframes flyInR{from{transform:translateX(62%);opacity:0;filter:blur(28px)}to{transform:translateX(0);opacity:1;filter:blur(0)}}
-@keyframes flyOutL{from{transform:translateX(0);opacity:1;filter:blur(0)}to{transform:translateX(-74%);opacity:0;filter:blur(46px)}}
-@keyframes flyOutR{from{transform:translateX(0);opacity:1;filter:blur(0)}to{transform:translateX(74%);opacity:0;filter:blur(46px)}}
-@keyframes popIn{from{transform:scale(.82);opacity:0;filter:blur(20px)}to{transform:scale(1);opacity:1;filter:blur(0)}}
+/* 高浓度动态模糊切换：当前单词逐渐虚化，模糊到顶后就地换为下一单词（无左右滑动） */
+@keyframes blurOut{0%{filter:blur(0);opacity:1}100%{filter:blur(40px);opacity:.4}}
+@keyframes blurIn{0%{filter:blur(40px);opacity:.4}100%{filter:blur(0);opacity:1}}
 @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}50%{transform:translateX(6px)}75%{transform:translateX(-4px)}}
@@ -282,43 +277,37 @@ img{max-width:100%;display:block}
 @keyframes tapBounce{0%{transform:scale(1)}40%{transform:scale(.82)}100%{transform:scale(1)}}
 @keyframes ringIn{from{opacity:0;transform:scale(.4)}to{opacity:1;transform:scale(1)}}
 @keyframes ripple{from{transform:scale(0);opacity:.5}to{transform:scale(2.6);opacity:0}}
+
+/* 降级：用户偏好减少动态时，切换为瞬时换词，不做模糊 */
+@media (prefers-reduced-motion: reduce){
+  .layer.in-init,.layer.blur-out,.layer.blur-in{animation:none!important;filter:none!important;opacity:1!important}
+}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* ===== BOTTOM NAV (粗笔简体线描 hand-drawn line style) ===== */
+/* ===== BOTTOM NAV (粗笔简体线描 · 融入应用背景) ===== */
 .brush-filter{position:absolute;width:0;height:0;overflow:hidden}
 .nav{
-  position:fixed;bottom:calc(var(--safe) + 16px);left:50%;transform:translateX(-50%);
-  z-index:200;display:flex;gap:6px;padding:10px 14px;
-  background:var(--glass);
-  box-shadow:0 12px 32px rgba(0,0,0,.12);
-  backdrop-filter:blur(18px) saturate(150%);-webkit-backdrop-filter:blur(18px) saturate(150%);
-  overflow:visible;transition:transform .3s ease,opacity .3s ease;
+  position:fixed;bottom:calc(var(--safe) + 14px);left:50%;transform:translateX(-50%);
+  z-index:200;display:flex;gap:14px;padding:8px 14px;
+  background:transparent;box-shadow:none;
+  backdrop-filter:none;-webkit-backdrop-filter:none;border:none;border-radius:0;
+  transition:transform .3s ease,opacity .3s ease;
 }
-/* 流动柔光（中性） */
-.nav::before{
-  content:'';position:absolute;inset:-50%;z-index:-1;border-radius:40px;
-  background:conic-gradient(from 0deg, rgba(150,158,175,.20), rgba(205,210,220,.08), rgba(150,158,175,.20));
-  filter:blur(30px);opacity:.5;animation:spin 20s linear infinite;pointer-events:none;
-}
-/* 粗笔手绘外框 */
-.nav::after{
-  content:'';position:absolute;inset:0;z-index:0;pointer-events:none;
-  border:3px solid var(--accent);border-radius:22px 26px 18px 27px / 26px 18px 27px 22px;
-  filter:url(#brush);opacity:.9;
-}
-[data-theme="dark"] .nav::after{opacity:1}
 .nav-item{
-  position:relative;z-index:1;width:56px;height:56px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
+  position:relative;z-index:1;width:58px;height:58px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;background:transparent;
   color:var(--text3);transition:color .25s ease,transform .2s ease;
 }
-.nav-item svg.ic{width:26px;height:26px;position:relative;z-index:2;transition:transform .25s ease;overflow:visible;filter:url(#brush)}
+/* 手绘圆形底环：直接画在应用背景上，常态淡墨、激活转为强调色 */
+.nav-item .ring{position:absolute;inset:0;width:100%;height:100%;z-index:0;opacity:.5;
+  filter:url(#brush);transition:opacity .28s ease,transform .35s cubic-bezier(.34,1.56,.64,1)}
+.nav-item.active .ring{opacity:1;animation:ringIn .4s cubic-bezier(.34,1.56,.64,1) both}
+.nav-item svg.ic{width:25px;height:25px;position:relative;z-index:2;overflow:visible;filter:url(#brush);
+  transition:transform .25s cubic-bezier(.22,1,.36,1)}
 .nav-item.active{color:var(--accent)}
-.nav-item.active svg.ic{transform:translateY(-1px) scale(1.06)}
-.nav-item .ring{position:absolute;inset:0;width:100%;height:100%;z-index:1;opacity:0;transform:scale(.5);transition:opacity .3s ease,transform .35s cubic-bezier(.34,1.56,.64,1);filter:url(#brush)}
-.nav-item.active .ring{opacity:1;transform:scale(1);animation:ringIn .35s cubic-bezier(.34,1.56,.64,1) both}
+.nav-item.active svg.ic{transform:translateY(-2px) scale(1.08)}
 .nav-item.tap{animation:tapBounce .32s ease}
-.nav-item .ripple{position:absolute;width:40px;height:40px;border-radius:50%;border:2.5px solid var(--accent);background:transparent;opacity:0;pointer-events:none;z-index:0;animation:ripple .5s ease-out forwards}
+.nav-item .ripple{position:absolute;width:42px;height:42px;border-radius:50%;border:2.5px solid var(--accent);background:transparent;opacity:0;pointer-events:none;z-index:3;animation:ripple .5s ease-out forwards}
 .nav.hidden{opacity:0;transform:translateX(-50%) translateY(20px);pointer-events:none}
 
 /* ===== MODAL ===== */
@@ -687,18 +676,35 @@ function onAvatar(e){let f=e.target.files[0];if(!f)return;let r=new FileReader()
 function saveNick(){S.nick=document.getElementById('nickInput').value.trim();saveS()}
 function resetAll(){if(confirm('确定重置所有数据？不可撤销！')){localStorage.removeItem(K);S=defS();saveS();refreshHome();refreshProf();refreshSet();toast('已重置')}}
 
-// ===================== LAYER TRANSITION =====================
+// ===================== LAYER TRANSITION (动态模糊置换，无滑动) =====================
 function mountLayer(stageEl,html,dir){
-  let old=stageEl.querySelector('.layer:not(.leaving)');
-  if(old){
-    old.classList.add('leaving',dir==='prev'?'out-prev':'out-next');
-    setTimeout(()=>{if(old.parentNode)old.parentNode.removeChild(old)},720);
+  let layer=stageEl.querySelector('.layer');
+  if(!layer){ // 首次：就地创建并清晰浮现
+    layer=document.createElement('div');
+    layer.className='layer in-init';
+    layer.innerHTML=html;
+    stageEl.appendChild(layer);
+    return layer;
   }
-  let el=document.createElement('div');
-  el.className='layer '+(dir==='prev'?'in-prev':(dir==='init'?'in-init':'in-next'));
-  el.innerHTML=html;
-  stageEl.appendChild(el);
-  return el;
+  // 切换中：缓存最后一次请求，避免快速连点错乱
+  if(stageEl.dataset.swap==='1'){ stageEl.dataset.pending=html; return layer; }
+  stageEl.dataset.swap='1';
+  layer.classList.remove('in-init','blur-in');
+  layer.classList.add('blur-out');           // 当前单词高浓度模糊
+  setTimeout(()=>{
+    layer.innerHTML=html;                    // 模糊到顶后就地换词
+    layer.classList.remove('blur-out');
+    layer.classList.add('blur-in');          // 新单词由模糊逐渐清晰
+    setTimeout(()=>{
+      layer.classList.remove('blur-in');
+      stageEl.dataset.swap='0';
+      if(stageEl.dataset.pending){           // 处理切换期间积压的请求
+        const p=stageEl.dataset.pending; stageEl.dataset.pending='';
+        mountLayer(stageEl,p,dir);
+      }
+    },460);
+  },360);
+  return layer;
 }
 function clearStage(stageEl){stageEl.innerHTML=''}
 
