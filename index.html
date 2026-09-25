@@ -259,31 +259,46 @@ img{max-width:100%;display:block}
 
 /* ===== LAYER (animated word transitions) ===== */
 .layer{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;will-change:transform,opacity,filter}
-.layer .wtext{font-size:clamp(44px,13vw,78px);font-weight:900;letter-spacing:-1.5px;line-height:1.04;color:var(--text);position:relative;z-index:2;font-family:var(--word-font);text-align:center;padding:0 6px}
-.layer .wsub{font-size:13px;color:var(--text2);position:relative;z-index:2;text-align:center;max-width:90%;line-height:1.5;font-weight:500}
-.layer .wglow{position:absolute;left:50%;top:50%;width:122%;height:155%;transform:translate(-50%,-50%);border-radius:30px;z-index:1;pointer-events:none;opacity:0;border-radius:34px}
-.layer .wglow.rainbow{background:conic-gradient(from 0deg,#ff4d4f,#ffa940,#ffec3d,#52c41a,#1890ff,#722ed1,#eb2f96,#ff4d4f)}
-.layer .wglow.gray{background:#9aa0a6}
+.layer .wtext,.layer .q-word{position:relative;z-index:2}
+.layer .wtext{font-size:clamp(44px,13vw,78px);font-weight:900;letter-spacing:-1.5px;line-height:1.04;color:var(--text);font-family:var(--word-font);text-align:center;padding:0 6px}
+.layer .wsub{font-size:13px;color:var(--text2);position:relative;z-index:2;text-align:center;max-width:90%;line-height:1.5;font-weight:500;margin-top:2px}
 
-.layer.in-init{animation:popIn .42s cubic-bezier(.22,1,.36,1) both}
-.layer.in-init .wglow.rainbow{animation:glowFade .6s ease-out both}
-.layer.in-next{animation:flyInL .56s cubic-bezier(.22,1,.36,1) both}
-.layer.in-next .wglow.rainbow{animation:glowFade .62s ease-out both}
-.layer.in-prev{animation:flyInR .56s cubic-bezier(.22,1,.36,1) both}
-.layer.in-prev .wglow.rainbow{animation:glowFade .62s ease-out both}
-.layer.out-next{animation:flyOutL .56s cubic-bezier(.22,1,.36,1) both}
-.layer.out-next .wglow.gray{animation:glowFade .62s ease-out both}
-.layer.out-next .wglow.rainbow{opacity:0}
-.layer.out-prev{animation:flyOutR .56s cubic-bezier(.22,1,.36,1) both}
-.layer.out-prev .wglow.gray{animation:glowFade .62s ease-out both}
-.layer.out-prev .wglow.rainbow{opacity:0}
+/* 紧贴单词本体的小边框环：彩虹(进入)/灰色(退出)，仅微小扩散，不铺满屏幕 */
+.layer .wtext::after,.layer .q-word::after{
+  content:'';position:absolute;inset:-13px -15px;border-radius:18px;
+  pointer-events:none;opacity:0;z-index:1;
+}
+/* 进入：彩虹边框环，微小扩散 */
+.layer.in-init .wtext::after,.layer.in-init .q-word::after,
+.layer.in-next .wtext::after,.layer.in-next .q-word::after,
+.layer.in-prev .wtext::after,.layer.in-prev .q-word::after{
+  border:3px solid transparent;
+  background:conic-gradient(from 0deg,#ff4d4f,#ffa940,#ffec3d,#52c41a,#1890ff,#722ed1,#eb2f96,#ff4d4f) border-box;
+  -webkit-mask:linear-gradient(#000 0 0) padding-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;mask-composite:exclude;
+  animation:borderDiffuse .6s ease-out both;
+}
+/* 退出：灰色边框环，微小扩散 */
+.layer.out-next .wtext::after,.layer.out-next .q-word::after,
+.layer.out-prev .wtext::after,.layer.out-prev .q-word::after{
+  border:3px solid #9aa0a6;
+  animation:borderDiffuse .6s ease-out both;
+}
 
-@keyframes flyInL{from{transform:translateX(-58%);opacity:0;filter:blur(9px)}to{transform:translateX(0);opacity:1;filter:blur(0)}}
-@keyframes flyInR{from{transform:translateX(58%);opacity:0;filter:blur(9px)}to{transform:translateX(0);opacity:1;filter:blur(0)}}
-@keyframes flyOutL{from{transform:translateX(0);opacity:1;filter:blur(0)}to{transform:translateX(-66%);opacity:0;filter:blur(15px)}}
-@keyframes flyOutR{from{transform:translateX(0);opacity:1;filter:blur(0)}to{transform:translateX(66%);opacity:0;filter:blur(15px)}}
-@keyframes glowFade{0%{opacity:.92;filter:blur(7px)}100%{opacity:0;filter:blur(26px)}}
-@keyframes popIn{from{transform:scale(.9);opacity:0;filter:blur(4px)}to{transform:scale(1);opacity:1;filter:blur(0)}}
+.layer.in-init{animation:popIn .46s cubic-bezier(.22,1,.36,1) both}
+.layer.in-next{animation:flyInL .6s cubic-bezier(.22,1,.36,1) both}
+.layer.in-prev{animation:flyInR .6s cubic-bezier(.22,1,.36,1) both}
+.layer.out-next{animation:flyOutL .6s cubic-bezier(.22,1,.36,1) both}
+.layer.out-prev{animation:flyOutR .6s cubic-bezier(.22,1,.36,1) both}
+
+/* 高浓度动态模糊：单词在进出过程中重模糊 */
+@keyframes flyInL{from{transform:translateX(-62%);opacity:0;filter:blur(28px)}to{transform:translateX(0);opacity:1;filter:blur(0)}}
+@keyframes flyInR{from{transform:translateX(62%);opacity:0;filter:blur(28px)}to{transform:translateX(0);opacity:1;filter:blur(0)}}
+@keyframes flyOutL{from{transform:translateX(0);opacity:1;filter:blur(0)}to{transform:translateX(-74%);opacity:0;filter:blur(46px)}}
+@keyframes flyOutR{from{transform:translateX(0);opacity:1;filter:blur(0)}to{transform:translateX(74%);opacity:0;filter:blur(46px)}}
+/* 单词边框环的微小扩散：仅轻微放大+轻模糊后消失 */
+@keyframes borderDiffuse{0%{opacity:.95;transform:scale(1);filter:blur(2px)}60%{opacity:.5}100%{opacity:0;transform:scale(1.07);filter:blur(6px)}}
+@keyframes popIn{from{transform:scale(.82);opacity:0;filter:blur(20px)}to{transform:scale(1);opacity:1;filter:blur(0)}}
 @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}50%{transform:translateX(6px)}75%{transform:translateX(-4px)}}
@@ -304,10 +319,10 @@ img{max-width:100%;display:block}
 }
 .nav::before{
   content:'';position:absolute;inset:-60%;z-index:-1;
-  background:conic-gradient(from 0deg,#ff7eb3,#ff9a8b,#feb47b,#86a8e7,#7f7fd5,#b06ab3,#ff7eb3);
-  filter:blur(26px);opacity:.4;animation:spin 14s linear infinite;
+  background:conic-gradient(from 0deg, rgba(150,158,175,.22), rgba(205,210,220,.10), rgba(150,158,175,.22));
+  filter:blur(28px);opacity:.5;animation:spin 18s linear infinite;
 }
-[data-theme="dark"] .nav::before{opacity:.5}
+[data-theme="dark"] .nav::before{opacity:.55}
 .nav-item{
   position:relative;width:54px;height:54px;border-radius:50%;
   display:flex;align-items:center;justify-content:center;
@@ -695,7 +710,7 @@ function mountLayer(stageEl,html,dir){
   }
   let el=document.createElement('div');
   el.className='layer '+(dir==='prev'?'in-prev':(dir==='init'?'in-init':'in-next'));
-  el.innerHTML='<div class="wglow rainbow"></div><div class="wglow gray"></div>'+html;
+  el.innerHTML=html;
   stageEl.appendChild(el);
   return el;
 }
