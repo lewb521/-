@@ -82,10 +82,10 @@ img{max-width:100%;display:block}
   position:absolute;inset:-30%;
   z-index:0;
   background:
-    radial-gradient(38% 38% at 18% 22%, rgba(114,46,209,.30), transparent 70%),
-    radial-gradient(34% 34% at 82% 18%, rgba(24,144,255,.26), transparent 70%),
-    radial-gradient(40% 40% at 75% 82%, rgba(255,77,79,.22), transparent 70%),
-    radial-gradient(36% 36% at 22% 80%, rgba(82,196,26,.20), transparent 70%);
+    radial-gradient(38% 38% at 18% 22%, rgba(150,158,175,.22), transparent 70%),
+    radial-gradient(34% 34% at 82% 18%, rgba(190,196,206,.16), transparent 70%),
+    radial-gradient(40% 40% at 75% 82%, rgba(120,130,148,.18), transparent 70%),
+    radial-gradient(36% 36% at 22% 80%, rgba(205,210,218,.14), transparent 70%);
   filter:blur(70px) saturate(140%);
   opacity:.55;
   animation:flow 22s ease-in-out infinite alternate;
@@ -263,20 +263,10 @@ img{max-width:100%;display:block}
 .layer .wtext{font-size:clamp(44px,13vw,78px);font-weight:900;letter-spacing:-1.5px;line-height:1.04;color:var(--text);font-family:var(--word-font);text-align:center;padding:0 6px}
 .layer .wsub{font-size:13px;color:var(--text2);position:relative;z-index:2;text-align:center;max-width:90%;line-height:1.5;font-weight:500;margin-top:2px}
 
-/* 紧贴单词本体的小边框环：彩虹(进入)/灰色(退出)，仅微小扩散，不铺满屏幕 */
+/* 紧贴单词本体的小边框环：仅退出时灰色微扩散，不铺满屏幕 */
 .layer .wtext::after,.layer .q-word::after{
   content:'';position:absolute;inset:-13px -15px;border-radius:18px;
   pointer-events:none;opacity:0;z-index:1;
-}
-/* 进入：彩虹边框环，微小扩散 */
-.layer.in-init .wtext::after,.layer.in-init .q-word::after,
-.layer.in-next .wtext::after,.layer.in-next .q-word::after,
-.layer.in-prev .wtext::after,.layer.in-prev .q-word::after{
-  border:3px solid transparent;
-  background:conic-gradient(from 0deg,#ff4d4f,#ffa940,#ffec3d,#52c41a,#1890ff,#722ed1,#eb2f96,#ff4d4f) border-box;
-  -webkit-mask:linear-gradient(#000 0 0) padding-box,linear-gradient(#000 0 0);
-  -webkit-mask-composite:xor;mask-composite:exclude;
-  animation:borderDiffuse .6s ease-out both;
 }
 /* 退出：灰色边框环，微小扩散 */
 .layer.out-next .wtext::after,.layer.out-next .q-word::after,
@@ -784,7 +774,7 @@ function renderQ(ss){
   card.classList.remove('ok','err');
   fb.className='fb';btn.classList.remove('show');
 
-  // word head (animated, aligned with forward rainbow/gray transition)
+  // word head (animated, aligned with forward gray border transition)
   let headHTML;
   if(ss.qtype==='spell'){
     headHTML=`<div class="wtext" style="font-size:30px">${esc(w.zh)}</div>`;
