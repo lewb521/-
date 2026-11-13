@@ -132,12 +132,6 @@ img{max-width:100%;display:block}
 @keyframes pageBlurIn{0%{filter:blur(26px);opacity:.18}100%{filter:blur(0);opacity:1}}
 @keyframes pageBlurOut{0%{filter:blur(0);opacity:1}100%{filter:blur(26px);opacity:0}}
 
-/* 粒子模式：页面本身只做轻微缩放淡入淡出，切换瞬间由粒子覆盖层接管 */
-body[data-anim="particle"] .page.page-in{animation:pagePopIn var(--dur-3) var(--ease-out) both;will-change:transform,opacity}
-body[data-anim="particle"] .page.page-out{animation:pagePopOut 150ms var(--ease-in) both;will-change:transform,opacity}
-@keyframes pagePopIn{0%{opacity:0;transform:scale(1.03)}100%{opacity:1;transform:scale(1)}}
-@keyframes pagePopOut{0%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(.975)}}
-
 /* ===== HOME ===== */
 .home-top{display:flex;align-items:center;gap:14px;padding:30px 4px 34px}
 .home-logo{width:46px;height:46px;border-radius:12px;border:1px solid var(--line);object-fit:cover}
@@ -288,18 +282,14 @@ body[data-anim="particle"] .page.page-out{animation:pagePopOut 150ms var(--ease-
 .layer .wtext{font-size:clamp(44px,13vw,78px);font-weight:900;letter-spacing:-1.5px;line-height:1.04;color:var(--text);font-family:var(--word-font);text-align:center;padding:0 6px}
 .layer .wsub{font-size:13px;color:var(--text2);position:relative;z-index:2;text-align:center;max-width:90%;line-height:1.5;font-weight:500;margin-top:2px}
 
-/* ===== 单词切换：模糊 / 粒子（统一节奏，时长与 JS 中 WORD_OUT/WORD_IN 对齐） ===== */
+/* ===== 单词切换：高斯模糊置换（时长与 JS 中 WORD_OUT/WORD_IN 对齐） ===== */
 .layer.in-init{animation:blurIn var(--dur-4) var(--ease-out) both}
 .layer.blur-out{animation:wordBlurOut var(--dur-2) var(--ease-in) both}
 .layer.blur-in{animation:blurIn var(--dur-3) var(--ease-out) both}
-.layer.pop-out{animation:wordPopOut var(--dur-1) var(--ease-in) both}
-.layer.pop-in{animation:wordPopIn 280ms var(--ease-out) both}
 
 /* 高浓度动态模糊切换：当前单词逐渐虚化，模糊到顶后就地换为下一单词（无左右滑动） */
 @keyframes wordBlurOut{0%{filter:blur(0);opacity:1}100%{filter:blur(40px);opacity:.35}}
 @keyframes blurIn{0%{filter:blur(40px);opacity:.35}100%{filter:blur(0);opacity:1}}
-@keyframes wordPopOut{0%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(.95)}}
-@keyframes wordPopIn{0%{opacity:0;transform:scale(1.05)}100%{opacity:1;transform:scale(1)}}
 @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}50%{transform:translateX(6px)}75%{transform:translateX(-4px)}}
@@ -316,12 +306,14 @@ body[data-anim="particle"] .page.page-out{animation:pagePopOut 150ms var(--ease-
     transition-duration:.01ms!important;scroll-behavior:auto!important;
   }
   .app::before{animation:none!important}
-  .layer.in-init,.layer.blur-out,.layer.blur-in,.layer.pop-out,.layer.pop-in,
+  .layer.in-init,.layer.blur-out,.layer.blur-in,
   .page.page-in,.page.page-out,
   #pageHome.home-leaving>*,.page.enter-page>*{
     animation:none!important;filter:none!important;opacity:1!important;transform:none!important;
   }
   #zoomMask{transition:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+  /* 导航栏吸附模糊在降级模式下关闭，内容保持原样 */
+  #pageProfile>*,#pageSettings>*{filter:none!important;transform:none!important;opacity:1!important;transition:none!important}
 }
 @keyframes spin{to{transform:rotate(360deg)}}
 
@@ -361,12 +353,27 @@ body[data-anim="particle"] .page.page-out{animation:pagePopOut 150ms var(--ease-
 .tl-dot.fwd{background:var(--chart-1)}
 .tl-dot.rev{background:var(--chart-2)}
 
-/* 设置弹窗选项副标题（切换动画） */
-.modal-opt .opt-desc{display:block;font-size:11px;font-weight:500;color:var(--text2);margin-top:5px;line-height:1.4}
-.modal-opt.sel .opt-desc{color:inherit;opacity:.72}
-/* ===== 粒子覆盖层（粒子切换动画）：page 1 < 粒子 160 < 蒙版 180 < nav 200 < modal 300 ===== */
-#fxCanvas{position:absolute;inset:0;width:100%;height:100%;z-index:160;pointer-events:none}
 
+/* ===== 关于页（设置 → 关于软件） ===== */
+.page-about{padding-bottom:calc(var(--safe) + 30px)}
+.about-top{display:flex;align-items:center;gap:12px;margin-bottom:14px;padding-top:4px}
+.about-hero{text-align:center;padding:6px 0 20px}
+.about-hero img{width:76px;height:76px;border-radius:18px;border:1px solid var(--line);margin:0 auto 14px;object-fit:cover}
+.about-name{font-size:24px;font-weight:800;letter-spacing:-.4px}
+.about-ver{font-size:12px;color:var(--text3);margin-top:6px;letter-spacing:.2px}
+.about-slogan{font-size:13px;line-height:1.8;color:var(--text2);margin:14px auto 0;max-width:300px}
+.about-link{color:var(--text);text-decoration:none}
+.about-link .sv{color:var(--text2);font-size:12px;max-width:56%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.about-footer{text-align:center;font-size:11px;color:var(--text3);padding:12px 0 18px;line-height:1.7}
+
+/* ===== 导航栏吸附：个人页/设置页内容贴近悬浮底栏时高斯模糊 + 微变形 ===== */
+#pageProfile > *,#pageSettings > *{
+  transform-origin:50% 100%;
+  transition:filter 90ms linear,transform 90ms linear,opacity 90ms linear;
+  filter:blur(calc(var(--dock,0) * 5px));
+  transform:translateY(calc(var(--dock,0) * 8px)) scale(calc(1 - var(--dock,0) * .035));
+  opacity:calc(1 - var(--dock,0) * .4);
+}
 /* ===== 前进/复习：按钮矩形放大为全屏蒙版（clip-path 展开 + 背景虚化揭开） ===== */
 #zoomMask{
   position:fixed;inset:0;z-index:180;pointer-events:none;
@@ -407,9 +414,6 @@ body[data-anim="particle"] .page.page-out{animation:pagePopOut 150ms var(--ease-
 #pageHome.home-leaving > *:nth-child(3){animation-delay:70ms}
 #pageHome.home-leaving > *:nth-child(4){animation-delay:105ms}
 @keyframes contentOut{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-26px) scale(.985)}}
-
-/* 设置项说明（切换动画的作用范围） */
-.anim-note{font-size:11px;line-height:1.6;color:var(--text3);padding:2px 2px 8px;letter-spacing:.1px}
 
 /* ===== BOTTOM NAV (圆圈描边悬浮按钮) ===== */
 .nav{
@@ -461,7 +465,7 @@ body[data-anim="particle"] .page.page-out{animation:pagePopOut 150ms var(--ease-
 .about h2{font-size:20px;font-weight:800;margin-bottom:4px}
 .about .ver{font-size:13px;color:var(--text3);margin-bottom:18px}
 .about .text{text-align:left;font-size:13px;line-height:1.8;color:var(--text2);white-space:pre-line;background:var(--bg);border:1px solid var(--line);border-radius:var(--radius);padding:18px;margin-bottom:14px}
-.about .link{display:block;color:var(--accent);font-size:13px;word-break:break-all;margin-top:8px;line-height:1.5}
+.about .link{color:var(--accent);font-size:13px;word-break:break-all}
 
 /* ===== TOAST ===== */
 .toast{position:fixed;left:50%;bottom:calc(var(--safe) + 100px);transform:translateX(-50%) translateY(20px);z-index:400;background:rgba(26,26,26,.92);color:#fff;padding:11px 20px;border-radius:22px;font-size:14px;font-weight:600;opacity:0;pointer-events:none;transition:all var(--dur-3) var(--ease-out);max-width:80%;text-align:center}
@@ -526,16 +530,12 @@ body[data-anim="particle"] .page.page-out{animation:pagePopOut 150ms var(--ease-
           <span class="sl">深色模式</span>
           <div class="toggle" id="darkToggle" onclick="toggleDark()"></div>
         </div>
-        <div class="set-row" onclick="openAnimModal()">
-          <span class="sl">切换动画</span>
-          <span class="sv" id="settingsAnim">高斯模糊 <span class="arrow">›</span></span>
-        </div>
       </div>
     </div>
     <div class="set-group">
       <h3>其他</h3>
       <div class="set-card">
-        <div class="set-row" onclick="showAbout()"><span class="sl">关于软件</span><span class="sv"><span class="arrow">›</span></span></div>
+        <div class="set-row" onclick="openAboutPage()"><span class="sl">关于软件</span><span class="sv"><span class="arrow">›</span></span></div>
         <div class="set-row" onclick="showThanks()"><span class="sl">感谢</span><span class="sv"><span class="arrow">›</span></span></div>
       </div>
     </div>
@@ -642,6 +642,50 @@ body[data-anim="particle"] .page.page-out{animation:pagePopOut 150ms var(--ease-
     <div id="doneArea" style="display:none"></div>
   </div>
 
+  <!-- ABOUT（关于页，从设置进入） -->
+  <div class="page page-about" id="pageAbout">
+    <div class="about-top">
+      <button class="learn-back" onclick="closeAboutPage()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div class="learn-title">关于</div>
+    </div>
+    <div class="about-hero">
+      <img src="appIcon.png" alt="不白背" onerror="this.style.display='none'">
+      <div class="about-name">不白背</div>
+      <div class="about-ver">BuBaiBei v2.2</div>
+      <p class="about-slogan">免费开源的英语词汇学习 PWA<br>分阶段词库 × 四种题型 × 智能复习，无广告、无注册，打开即用。</p>
+    </div>
+    <div class="set-group">
+      <h3>开发</h3>
+      <div class="set-card">
+        <div class="set-row"><span class="sl">开发者</span><span class="sv">灵力开发</span></div>
+        <div class="set-row"><span class="sl">反馈邮箱</span><span class="sv">lewbtxdy@163.com</span></div>
+      </div>
+    </div>
+    <div class="set-group">
+      <h3>参考仓库</h3>
+      <div class="set-card">
+        <a class="set-row about-link" href="https://github.com/KyleBing/english-vocabulary" target="_blank" rel="noopener"><span class="sl">KyleBing/english-vocabulary</span><span class="sv"><span class="arrow">›</span></span></a>
+        <a class="set-row about-link" href="https://github.com/kajweb/dict" target="_blank" rel="noopener"><span class="sl">kajweb/dict</span><span class="sv"><span class="arrow">›</span></span></a>
+      </div>
+    </div>
+    <div class="set-group">
+      <h3>链接</h3>
+      <div class="set-card">
+        <a class="set-row about-link" href="https://lewb521.github.io/-/" target="_blank" rel="noopener"><span class="sl">在线预览</span><span class="sv">lewb521.github.io/-/ <span class="arrow">›</span></span></a>
+        <a class="set-row about-link" href="https://github.com/lewb521/-" target="_blank" rel="noopener"><span class="sl">源码仓库</span><span class="sv">github.com/lewb521/- <span class="arrow">›</span></span></a>
+      </div>
+    </div>
+    <div class="set-group">
+      <h3>开源协议</h3>
+      <div class="set-card">
+        <div class="set-row"><span class="sl">MIT License</span><span class="sv">© 2026 灵力开发</span></div>
+      </div>
+    </div>
+    <div class="about-footer">感谢所有为开源事业做出贡献的开发者</div>
+  </div>
+
   <!-- BOTTOM NAV -->
   <nav class="nav" id="nav">
     <button class="nav-item active" data-page="home" onclick="navTap(this,'home')">
@@ -655,8 +699,6 @@ body[data-anim="particle"] .page.page-out{animation:pagePopOut 150ms var(--ease-
     </button>
   </nav>
 
-  <canvas id="fxCanvas" aria-hidden="true"></canvas>
-
   <!-- TOAST -->
   <div class="toast" id="toast"></div>
 
@@ -666,41 +708,6 @@ body[data-anim="particle"] .page.page-out{animation:pagePopOut 150ms var(--ease-
       <div class="modal-handle"></div>
       <h3>学习阶段</h3>
       <div id="stageOpts"></div>
-    </div>
-  </div>
-  <div class="modal" id="modalAnim">
-    <div class="modal-inner">
-      <div class="modal-handle"></div>
-      <h3>切换动画</h3>
-      <div class="anim-note">仅影响主页三页切换与单词切换；「前进 / 复习」的按钮放大蒙版入场始终保留。</div>
-      <div id="animOpts"></div>
-    </div>
-  </div>
-  <div class="modal" id="modalAbout">
-    <div class="modal-inner">
-      <div class="modal-handle"></div>
-      <div class="about">
-        <img src="appIcon.png" alt="不白背" onerror="this.style.display='none'">
-        <h2>不白背</h2>
-        <div class="ver">BuBaiBei v2.1</div>
-        <div class="text">不白背（BuBaiBei）· 免费开源的英语词汇学习 PWA
-版本：v2.1（2026-11）
-版权所有 © 2026 lewb521
-
-分阶段词库 × 四种题型 × 智能复习，无广告、无注册，打开即用。
-v2.1 新增：高斯模糊 / 粒子双切换动画、当前阶段背诵进度条、当日学习时间饼图、「前进 / 复习」蒙版入场过渡。
-
-本软件基于 MIT 许可证开源。
-
-【在线预览】
-https://lewb521.github.io/-/
-
-【获取源码 / 反馈】
-https://github.com/lewb521/-
-lewbtxdy@163.com</div>
-        <a href="https://lewb521.github.io/-/" target="_blank" class="link">🚀 在线预览：https://lewb521.github.io/-/</a>
-        <a href="https://github.com/lewb521/-" target="_blank" class="link">📦 源码：https://github.com/lewb521/-</a>
-      </div>
     </div>
   </div>
   <div class="modal" id="modalThanks">
@@ -719,7 +726,7 @@ lewbtxdy@163.com</div>
 • PingFang SC / Microsoft YaHei（系统字体）
 
 👤 开发者
-• 署名：灵儿万爆
+• 灵力开发
 • 反馈：lewbtxdy@163.com
 • 开源地址：github.com/lewb521/-
 
@@ -736,8 +743,7 @@ lewbtxdy@163.com</div>
 <script>
 // ===================== STATE =====================
 const K='bcz_data';
-const DEFAULT_ANIM='blur';
-function defS(){return{stage:'中考',learned:{},today:{},time:{},anim:DEFAULT_ANIM,theme:'light',nick:'',avatar:''}}
+function defS(){return{stage:'中考',learned:{},today:{},time:{},theme:'light',nick:'',avatar:''}}
 let S=loadS();
 function loadS(){
   try{
@@ -747,7 +753,6 @@ function loadS(){
       if(!s.learned||typeof s.learned!=='object')s.learned={};
       if(!s.today||typeof s.today!=='object')s.today={};
       if(!s.time||typeof s.time!=='object')s.time={};
-      if(s.anim!=='particle'&&s.anim!=='blur')s.anim=DEFAULT_ANIM;
       return s;
     }
   }catch(e){}
@@ -785,134 +790,20 @@ function toWordObj(en){let i=parseInfo(en);return{en,zh:i.zh,pos:i.pos}}
 // ===================== MOTION TOKENS =====================
 // 与 CSS 变量 --dur-* / --ease-* 保持同一套节奏：所有过渡只从这里取时长
 const MT={micro:140,fast:200,base:300,slow:420,entry:700};
-const PAGE_OUT={blur:170,particle:150};
-const PAGE_IN={blur:280,particle:280};
-const WORD_OUT={blur:200,particle:140};
-const WORD_IN={blur:300,particle:280};
+const PAGE_OUT=170;           // 旧页散焦（与 CSS .page-out 170ms 对齐）
+const PAGE_IN=280;            // 新页聚焦（与 CSS .page-in 对齐）
+const WORD_OUT=200;           // 旧单词虚化
+const WORD_IN=300;            // 新单词由模糊变清晰
 const ZOOM_IN=340;            // 蒙版 clip-path 展开（与 CSS #zoomMask transition 对齐）
 const ZOOM_CONTENT_DELAY=280; // 内里内容开始自上方滑入（蒙版开始淡出之前）
 const ZOOM_FADE_AT=360;       // 蒙版开始淡出（展开完成后、内容已开始滑入）
 const STAGGER=40;             // 内容错峰间隔
 const RM_QUERY='(prefers-reduced-motion: reduce)';
 function reduceMotion(){try{return !!(window.matchMedia&&window.matchMedia(RM_QUERY).matches)}catch(e){return false}}
-function animMode(){return S.anim==='particle'?'particle':'blur'}
-function applyAnim(){document.body.dataset.anim=animMode()}
 function nextFrame(cb){
   if(window.requestAnimationFrame)window.requestAnimationFrame(cb);
   else setTimeout(cb,16);
 }
-
-// ===================== PARTICLE ENGINE（粒子切换动画） =====================
-// 单一 canvas 覆盖层；burst 时从点击/文字中心炸开，切换瞬间由粒子接管画面
-const FX=(function(){
-  let cvs=null,ctx=null,raf=0,parts=[],last=0;
-  const MAX_DPR=2;
-  function ensure(){
-    if(cvs&&ctx)return ctx;
-    cvs=document.getElementById('fxCanvas');
-    if(!cvs||typeof cvs.getContext!=='function')return null;
-    try{ctx=cvs.getContext('2d')}catch(e){ctx=null}
-    return ctx;
-  }
-  function size(){
-    if(!cvs)return {w:360,h:640};
-    const app=document.querySelector('.app');
-    const w=(app&&app.clientWidth)||window.innerWidth||360;
-    const h=(app&&app.clientHeight)||window.innerHeight||640;
-    const dpr=Math.min(window.devicePixelRatio||1,MAX_DPR);
-    const pw=Math.max(1,Math.round(w*dpr)),ph=Math.max(1,Math.round(h*dpr));
-    if(cvs.width!==pw||cvs.height!==ph){cvs.width=pw;cvs.height=ph}
-    cvs.style.width=w+'px';cvs.style.height=h+'px';
-    if(ctx&&ctx.setTransform)ctx.setTransform(dpr,0,0,dpr,0,0);
-    return {w:w,h:h};
-  }
-  function rgbaPrefix(cssColor){
-    const m=String(cssColor).match(/\d+(?:\.\d+)?/g);
-    if(!m||m.length<3)return 'rgba(120,124,132,';
-    return 'rgba('+m[0]+','+m[1]+','+m[2]+',';
-  }
-  function palette(){
-    let text='rgb(26,26,26)';
-    try{
-      if(window.getComputedStyle){
-        const st=getComputedStyle(document.body);
-        text=st.color||text;
-      }
-    }catch(e){}
-    const dark=document.body.dataset.theme==='dark';
-    // --text3 是十六进制，直接给一套两级灰度的软色，暗色下提亮一点
-    const soft=dark?'rgba(150,154,162,':'rgba(160,164,172,';
-    return {main:rgbaPrefix(text),soft:soft};
-  }
-  function step(now){
-    raf=0;
-    if(!ctx||!cvs)return;
-    const dt=Math.min(0.05,Math.max(0.001,((now-last)/1000)||0.016));
-    last=now;
-    const w=cvs.clientWidth||window.innerWidth||360;
-    const h=cvs.clientHeight||window.innerHeight||640;
-    ctx.clearRect(0,0,w,h);
-    for(let i=parts.length-1;i>=0;i--){
-      const p=parts[i];p.t+=dt;
-      if(p.t>=p.life){parts.splice(i,1);continue}
-      p.vy+=110*dt;p.vx*=.986;p.vy*=.986;
-      p.x+=p.vx*dt;p.y+=p.vy*dt;
-      const k=1-p.t/p.life;
-      ctx.globalAlpha=Math.max(0,Math.min(1,k*k));
-      ctx.fillStyle=p.c+k.toFixed(2)+')';
-      ctx.beginPath();ctx.arc(p.x,p.y,Math.max(.4,p.r*(.45+k*.75)),0,Math.PI*2);ctx.fill();
-    }
-    ctx.globalAlpha=1;
-    if(parts.length)raf=requestAnimationFrame(step);
-    else ctx.clearRect(0,0,w,h);
-  }
-  function burst(x,y,opt){
-    if(reduceMotion())return;
-    if(!ensure())return;
-    const box=size();
-    const w=box.w,h=box.h;
-    if(!(typeof x==='number'&&isFinite(x)&&x>=0&&x<=w))x=w/2;
-    if(!(typeof y==='number'&&isFinite(y)&&y>=0&&y<=h))y=h/2;
-    const pal=palette();
-    const count=(opt&&opt.count)||46;
-    for(let i=0;i<count;i++){
-      const ang=Math.random()*Math.PI*2;
-      const sp=70+Math.random()*250;
-      const life=.34+Math.random()*.24;
-      parts.push({
-        x:x,y:y,
-        vx:Math.cos(ang)*sp,vy:Math.sin(ang)*sp-40,
-        life:life,t:0,r:1+Math.random()*2.4,
-        c:(i%6===0)?pal.soft:pal.main
-      });
-    }
-    if(!raf){
-      last=(window.performance&&performance.now())||Date.now();
-      raf=requestAnimationFrame(step);
-    }
-  }
-  // 从某个元素中心炸开；坐标换算到 canvas（.app）坐标系
-  function from(el,opt){
-    if(reduceMotion())return;
-    const app=document.querySelector('.app');
-    const ar=app?app.getBoundingClientRect():{left:0,top:0};
-    let x,y;
-    if(el&&el.getBoundingClientRect){
-      const r=el.getBoundingClientRect();
-      if(r.width>0&&r.height>0){
-        x=r.left-ar.left+r.width/2;
-        y=r.top-ar.top+r.height/2;
-      }
-    }
-    burst(x,y,opt);
-  }
-  function clear(){
-    parts=[];
-    if(raf){if(window.cancelAnimationFrame)cancelAnimationFrame(raf);else clearTimeout(raf);raf=0}
-    if(ctx&&cvs)ctx.clearRect(0,0,cvs.clientWidth||1,cvs.clientHeight||1);
-  }
-  return {burst:burst,from:from,clear:clear,reduceMotion:reduceMotion};
-})();
 
 // ===================== NAVIGATION / PAGE TRANSITION =====================
 let curPage='home';
@@ -923,41 +814,38 @@ function hideAllPages(){document.querySelectorAll('.page').forEach(p=>p.classLis
 function showNav(show){document.getElementById('nav').classList.toggle('hidden',!show)}
 function setNavActive(p){document.querySelectorAll('.nav-item').forEach(e=>e.classList.toggle('active',e.dataset.page===p))}
 
-// 统一页面切换：高斯模糊 / 粒子 两种模式共用同一节奏函数
-function switchPage(prevEl,nwId,originEl){
+// 统一页面切换：旧页散焦 → 就地换页 → 新页聚焦（CSS .page-in/.page-out 同节奏）
+function switchPage(prevEl,nwId){
   const nwEl=document.getElementById(nwId);
   if(!nwEl){pgBusy=false;return}
-  const mode=animMode(),rm=reduceMotion();
-  const outMs=rm?0:PAGE_OUT[mode];
-  const inMs=rm?0:PAGE_IN[mode];
+  const rm=reduceMotion();
+  const outMs=rm?0:PAGE_OUT;
+  const inMs=rm?0:PAGE_IN;
   const reveal=function(){
     nwEl.classList.remove('page-in','page-out');
     void nwEl.offsetWidth;
     nwEl.classList.add('active','page-in');
-    setTimeout(function(){nwEl.classList.remove('page-in');pgBusy=false},inMs+30);
+    setTimeout(function(){nwEl.classList.remove('page-in');pgBusy=false;scheduleDock()},inMs+30);
   };
   const prev=(prevEl&&prevEl!==nwEl&&prevEl.classList.contains('active'))?prevEl:null;
   if(prev){
     prev.classList.remove('page-in','page-out','home-leaving');
     void prev.offsetWidth;
     prev.classList.add('page-out');
-    // 粒子在点击瞬间炸开，覆盖「旧页淡出 → 新页淡入」整个过程
-    if(mode==='particle')FX.from(originEl||prev);
     setTimeout(function(){prev.classList.remove('active','page-out');reveal()},outMs);
   }else{
-    if(mode==='particle')FX.from(originEl);
     reveal();
   }
 }
-function goPage(p,originEl){
-  if(p===curPage||pgBusy)return;
+function goPage(p){
+  if(p===curPage||pgBusy||curPage==='about')return;
   if(!PAGE_ID[p])return;
   pgBusy=true;
   const prevEl=document.getElementById(PAGE_ID[curPage]);
   curPage=p;
   setNavActive(p);
   if(p==='home')showNav(true);
-  switchPage(prevEl,PAGE_ID[p],originEl);
+  switchPage(prevEl,PAGE_ID[p]);
   if(p==='home')refreshHome();
   if(p==='settings')refreshSet();
   if(p==='profile')refreshProf();
@@ -971,8 +859,7 @@ function exitFlash(){
   curPage='home';
   setNavActive('home');
   const prev=document.querySelector('.page.active');
-  const backBtn=document.querySelector('.flash-back')||document.querySelector('.learn-back');
-  switchPage(prev,'pageHome',backBtn);
+  switchPage(prev,'pageHome');
   refreshHome();refreshProf();
 }
 
@@ -995,8 +882,7 @@ function refreshSet(){
   const stageEl=document.getElementById('settingsStage');
   if(stageEl)stageEl.innerHTML=S.stage+' <span class="arrow">›</span>';
   document.getElementById('darkToggle').classList.toggle('on',S.theme==='dark');
-  const av=document.getElementById('settingsAnim');
-  if(av)av.innerHTML=(animMode()==='particle'?'粒子':'高斯模糊')+' <span class="arrow">›</span>';
+  scheduleDock();
 }
 function setStage(st){
   S.stage=st;saveS();refreshHome();refreshSet();closeModal('modalStage');buildStageOpts();
@@ -1015,39 +901,86 @@ function buildStageOpts(){
   let box=document.getElementById('stageOpts');
   box.innerHTML=STAGES.map(s=>`<button class="modal-opt ${s===S.stage?'sel':''}" onclick="setStage('${s}')">${s}</button>`).join('');
 }
-function showAbout(){openModal('modalAbout')}
 function showThanks(){openModal('modalThanks')}
 
-// 切换动画设置（高斯模糊 / 粒子）
-const ANIMS=[
-  {id:'blur',name:'高斯模糊',desc:'旧内容散焦、新内容由模糊变清晰'},
-  {id:'particle',name:'粒子',desc:'粒子从点击处炸开，瞬间接管画面切换'}
-];
-function buildAnimOpts(){
-  const box=document.getElementById('animOpts');
-  if(!box)return;
-  box.innerHTML=ANIMS.map(a=>`<button class="modal-opt ${a.id===animMode()?'sel':''}" data-anim="${a.id}" onclick="setAnim('${a.id}')">${a.name}<span class="opt-desc">${a.desc}</span></button>`).join('');
-}
-function openAnimModal(){buildAnimOpts();openModal('modalAnim')}
-function previewBlur(){
-  const el=document.querySelector('.page.active');
-  if(!el||reduceMotion())return;
-  el.classList.remove('page-in');
+// ===================== 关于页（设置 → 关于软件） =====================
+function openAboutPage(){
+  if(pgBusy||curPage==='about')return;
+  pgBusy=true;
+  showNav(false);
+  curPage='about';
+  // 设置页先散焦退出，关于页同时模糊聚焦 + 内容自上方错峰进入，与主页面切换同手感
+  const prev=document.getElementById('pageSettings');
+  const el=document.getElementById('pageAbout');
+  prev.classList.remove('page-in','page-out','enter-page');
+  prev.classList.add('page-out');
+  setTimeout(function(){prev.classList.remove('active','page-out')},PAGE_OUT);
+  el.classList.remove('page-in','page-out','enter-page');
   void el.offsetWidth;
-  el.classList.add('page-in');
-  setTimeout(function(){el.classList.remove('page-in')},MT.slow);
+  el.classList.add('active','page-in','enter-page');
+  setTimeout(function(){el.classList.remove('page-in');pgBusy=false},PAGE_IN+30);
+  setTimeout(function(){el.classList.remove('enter-page')},MT.slow+150);
 }
-function setAnim(m){
-  if(!ANIMS.some(a=>a.id===m))return;
-  S.anim=m;
-  saveS();
-  applyAnim();
+function closeAboutPage(){
+  if(pgBusy||curPage!=='about')return;
+  pgBusy=true;
+  curPage='settings';
+  showNav(true);
+  setNavActive('settings');
+  switchPage(document.getElementById('pageAbout'),'pageSettings');
   refreshSet();
-  buildAnimOpts();
-  closeModal('modalAnim');
-  if(m==='particle')setTimeout(function(){FX.from(document.getElementById('settingsAnim'))},60);
-  else previewBlur();
-  toast(m==='particle'?'已切换为粒子动画':'已切换为高斯模糊动画');
+}
+
+// ===================== 导航栏吸附：个人页/设置页内容贴近底栏时高斯模糊 + 微变形 =====================
+const DOCK_PAGES=['pageProfile','pageSettings'];
+const DOCK_ZONE=96;            // 导航栏上方的影响区高度（px）
+let dockRaf=0;
+function scheduleDock(){
+  if(dockRaf)return;
+  dockRaf=nextFrame(function(){dockRaf=0;updateDock()});
+}
+function clearDock(){
+  DOCK_PAGES.forEach(function(id){
+    const page=document.getElementById(id);
+    if(!page)return;
+    for(let i=0;i<page.children.length;i++)page.children[i].style.removeProperty('--dock');
+  });
+}
+function updateDock(){
+  if(reduceMotion()){clearDock();return}
+  const navEl=document.getElementById('nav');
+  const vh=window.innerHeight||(document.documentElement&&document.documentElement.clientHeight)||0;
+  if(!vh)return;
+  let navTop=vh-92;
+  if(navEl&&navEl.getBoundingClientRect){
+    const nr=navEl.getBoundingClientRect();
+    if(nr.height>0||nr.top>0)navTop=nr.top;
+  }
+  const zoneTop=navTop-DOCK_ZONE;
+  const span=Math.max(1,navTop-zoneTop);
+  DOCK_PAGES.forEach(function(id){
+    const page=document.getElementById(id);
+    if(!page)return;
+    const kids=page.children;
+    for(let i=0;i<kids.length;i++){
+      const el=kids[i];
+      let k=0;
+      if(el.getBoundingClientRect){
+        const r=el.getBoundingClientRect();
+        if(r.height>0&&r.bottom>zoneTop)k=Math.min(1,Math.max(0,(r.bottom-zoneTop)/span));
+      }
+      if(k>0.002)el.style.setProperty('--dock',k.toFixed(3));
+      else if(el.style.getPropertyValue('--dock'))el.style.removeProperty('--dock');
+    }
+  });
+}
+function initDock(){
+  DOCK_PAGES.forEach(function(id){
+    const page=document.getElementById(id);
+    if(!page)return;
+    page.addEventListener('scroll',scheduleDock,{passive:true});
+  });
+  window.addEventListener('resize',scheduleDock);
 }
 
 // ===================== PROFILE =====================
@@ -1124,8 +1057,8 @@ function resetAll(){
   try{localStorage.removeItem(K)}catch(e){}
   S=defS();
   saveS();
-  applyTheme();applyAnim();
-  refreshHome();refreshProf();refreshSet();buildAnimOpts();
+  applyTheme();
+  refreshHome();refreshProf();refreshSet();
   toast('已重置');
 }
 
@@ -1160,7 +1093,7 @@ document.addEventListener('visibilitychange',function(){
 });
 window.addEventListener('pagehide',function(){accrueStudy();saveS()});
 
-// ===================== LAYER TRANSITION（单词切换：模糊 / 粒子） =====================
+// ===================== LAYER TRANSITION（单词切换：高斯模糊置换） =====================
 function clearStage(stageEl){
   if(!stageEl)return;
   const gen=(Number(stageEl.dataset.gen)||0)+1;
@@ -1172,29 +1105,26 @@ function clearStage(stageEl){
 function mountLayer(stageEl,html,dir){
   if(!stageEl)return null;
   const gen=Number(stageEl.dataset.gen)||0;
-  const mode=animMode();
   const rm=reduceMotion();
   let layer=stageEl.querySelector('.layer');
   if(!layer){
     layer=document.createElement('div');
-    layer.className='layer '+(mode==='particle'?'pop-in':'in-init');
+    layer.className='layer in-init';
     layer.innerHTML=html;
     stageEl.appendChild(layer);
-    if(mode==='particle')FX.from(layer);
     if(rm)layer.className='layer';
     return layer;
   }
   // 切换中：缓存最后一次请求，避免快速连点错乱
   if(stageEl.dataset.swap==='1'){stageEl.dataset.pending=html;return layer}
   stageEl.dataset.swap='1';
-  const outCls=mode==='particle'?'pop-out':'blur-out';
-  const inCls=mode==='particle'?'pop-in':'blur-in';
-  const outMs=rm?0:WORD_OUT[mode];
-  const inMs=rm?0:WORD_IN[mode];
-  layer.classList.remove('in-init','blur-in','blur-out','pop-in','pop-out');
+  const outCls='blur-out';
+  const inCls='blur-in';
+  const outMs=rm?0:WORD_OUT;
+  const inMs=rm?0:WORD_IN;
+  layer.classList.remove('in-init','blur-in','blur-out');
   void layer.offsetWidth;
   layer.classList.add(outCls);
-  if(mode==='particle')FX.from(layer);
   setTimeout(function(){
     if(Number(stageEl.dataset.gen)!==gen)return;   // 阶段已被清空/重建
     layer.innerHTML=html;
@@ -1228,7 +1158,6 @@ function enterLearning(kind,btn){
   entryBusy=true;
   pgBusy=true;
   showNav(false);
-  if(animMode()==='particle')FX.from(btn);   // 粒子模式：点击处先炸开一层粒子，与页面/单词切换保持同一手感
   const pageEl=document.getElementById(kind==='forward'?'pageFlash':'pageLearn');
   const homeEl=document.getElementById('pageHome');
   runEntryTransition(btn,pageEl,homeEl,function(){
@@ -1503,24 +1432,25 @@ function toast(msg){let t=document.getElementById('toast');t.textContent=msg;t.c
 // ===================== INIT =====================
 (function(){
   applyTheme();
-  applyAnim();
   buildStageOpts();
-  buildAnimOpts();
   refreshHome();refreshSet();refreshProf();
+  initDock();
   saveS();
 })();
 
 // 调试/测试钩子（不影响正常使用）
 window.__bcz={
   get state(){return S},
-  defS:defS,animMode:animMode,setAnim:setAnim,applyAnim:applyAnim,
+  defS:defS,
   goPage:goPage,navTap:navTap,switchPage:switchPage,exitFlash:exitFlash,
+  openAboutPage:openAboutPage,closeAboutPage:closeAboutPage,
+  updateDock:updateDock,clearDock:clearDock,scheduleDock:scheduleDock,
   startForward:startForward,startReview:startReview,
   mountLayer:mountLayer,clearStage:clearStage,
   refreshHome:refreshHome,refreshSet:refreshSet,refreshProf:refreshProf,
   refreshProgress:refreshProgress,refreshTimeChart:refreshTimeChart,
   beginStudy:beginStudy,accrueStudy:accrueStudy,endStudy:endStudy,
-  get session(){return sess},FX:FX,MT:MT,STAGES:STAGES,ANIMS:ANIMS,
+  get session(){return sess},MT:MT,STAGES:STAGES,
   PAGE_OUT:PAGE_OUT,PAGE_IN:PAGE_IN,WORD_OUT:WORD_OUT,WORD_IN:WORD_IN,ZOOM_IN:ZOOM_IN,
   get fwd(){return fwd},get rev(){return rev},get curPage(){return curPage},
   get pgBusy(){return pgBusy},get entryBusy(){return entryBusy}
