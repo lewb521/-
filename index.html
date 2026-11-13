@@ -39,6 +39,14 @@
   --nav-shadow:0 10px 34px rgba(0,0,0,.10), inset 0 1px 0 rgba(255,255,255,.45);
   --word-font:'Alibaba PuHuiTi 3.0','Alibaba PuHuiTi','Noto Sans SC','PingFang SC','Microsoft YaHei',system-ui,-apple-system,sans-serif;
   --font:-apple-system,BlinkMacSystemFont,'SF Pro Display','PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;
+/* 统一动效 token：时长（--dur-*）与缓动（--ease-*），CSS/JS 共用同一套节奏 */
+--dur-1:140ms;--dur-2:200ms;--dur-3:300ms;--dur-4:420ms;
+--dur-zoom-in:340ms;--dur-zoom-fade:220ms;
+--ease-out:cubic-bezier(.22,1,.36,1);
+--ease-in:cubic-bezier(.4,0,1,1);
+--ease-spring:cubic-bezier(.34,1.22,.64,1);
+--chart-1:var(--accent);
+--chart-2:#a9aeb8;
 }
 [data-theme="dark"]{
   --bg:#0e0e10;
@@ -59,6 +67,7 @@
   --nav-border:rgba(255,255,255,.09);
   --nav-active-bg:rgba(255,255,255,.12);
   --nav-shadow:0 10px 34px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.06);
+  --chart-2:#5f636c;
 }
 
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -69,7 +78,7 @@ body{
   color:var(--text);
   min-height:100vh;min-height:100dvh;
   overflow:hidden;
-  transition:background .4s ease,color .4s ease;
+  transition:background var(--dur-4) var(--ease-out),color var(--dur-4) var(--ease-out);
   -webkit-font-smoothing:antialiased;
 }
 input,button{font-family:inherit;font-size:inherit;outline:none;border:none}
@@ -117,11 +126,17 @@ img{max-width:100%;display:block}
   pointer-events:none;
 }
 .page.active{opacity:1;pointer-events:auto}
-/* 三个主页面切换：高高斯模糊直接切换（与单词切换同手感） */
-.page.blur-in{animation:pageBlurIn .42s cubic-bezier(.22,1,.36,1) both}
-.page.blur-out{animation:pageBlurOut .3s ease-in both}
-@keyframes pageBlurIn{0%{filter:blur(40px);opacity:.12}100%{filter:blur(0);opacity:1}}
-@keyframes pageBlurOut{0%{filter:blur(0);opacity:1}100%{filter:blur(40px);opacity:0}}
+/* ===== 页面切换：高斯模糊（统一缩短版：170ms 散焦 → 280ms 聚焦，总 ~480ms） ===== */
+.page.page-in{animation:pageBlurIn var(--dur-3) var(--ease-out) both;will-change:filter,opacity}
+.page.page-out{animation:pageBlurOut 170ms var(--ease-in) both;will-change:filter,opacity}
+@keyframes pageBlurIn{0%{filter:blur(26px);opacity:.18}100%{filter:blur(0);opacity:1}}
+@keyframes pageBlurOut{0%{filter:blur(0);opacity:1}100%{filter:blur(26px);opacity:0}}
+
+/* 粒子模式：页面本身只做轻微缩放淡入淡出，切换瞬间由粒子覆盖层接管 */
+body[data-anim="particle"] .page.page-in{animation:pagePopIn var(--dur-3) var(--ease-out) both;will-change:transform,opacity}
+body[data-anim="particle"] .page.page-out{animation:pagePopOut 150ms var(--ease-in) both;will-change:transform,opacity}
+@keyframes pagePopIn{0%{opacity:0;transform:scale(1.03)}100%{opacity:1;transform:scale(1)}}
+@keyframes pagePopOut{0%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(.975)}}
 
 /* ===== HOME ===== */
 .home-top{display:flex;align-items:center;gap:14px;padding:30px 4px 34px}
@@ -135,7 +150,7 @@ img{max-width:100%;display:block}
   border:1.5px solid var(--line);background:var(--glass);
   backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
   display:flex;flex-direction:column;align-items:center;gap:11px;
-  transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease;color:var(--text);
+  transition:transform var(--dur-2) var(--ease-out),border-color var(--dur-2) var(--ease-out),box-shadow var(--dur-2) var(--ease-out);color:var(--text);
   box-shadow:0 6px 20px rgba(0,0,0,.05);
 }
 .btn-main:active{transform:scale(.96);border-color:var(--accent2)}
@@ -162,16 +177,16 @@ img{max-width:100%;display:block}
 .set-group{margin-bottom:22px}
 .set-group h3{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:9px;padding-left:4px}
 .set-card{background:var(--glass);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
-.set-row{display:flex;align-items:center;justify-content:space-between;padding:15px 16px;min-height:50px;cursor:pointer;transition:background .15s ease}
+.set-row{display:flex;align-items:center;justify-content:space-between;padding:15px 16px;min-height:50px;cursor:pointer;transition:background var(--dur-1) var(--ease-out)}
 .set-row:active{background:var(--line2)}
 .set-row+.set-row{border-top:1px solid var(--line2)}
 .set-row .sl{font-size:15px;font-weight:600}
 .set-row .sv{font-size:14px;color:var(--text2);display:flex;align-items:center;gap:4px}
 .set-row .arrow{color:var(--text3);font-size:18px}
 
-.toggle{width:46px;height:27px;background:var(--line);border-radius:14px;position:relative;transition:all .3s ease;cursor:pointer;flex:none}
+.toggle{width:46px;height:27px;background:var(--line);border-radius:14px;position:relative;transition:all var(--dur-3) var(--ease-out);cursor:pointer;flex:none}
 .toggle.on{background:var(--accent)}
-.toggle::after{content:'';position:absolute;width:23px;height:23px;background:#fff;border-radius:50%;top:2px;left:2px;transition:all .3s cubic-bezier(.34,1.56,.64,1);box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.toggle::after{content:'';position:absolute;width:23px;height:23px;background:#fff;border-radius:50%;top:2px;left:2px;transition:all var(--dur-3) var(--ease-spring);box-shadow:0 1px 3px rgba(0,0,0,.2)}
 .toggle.on::after{transform:translateX(19px)}
 
 /* ===== PROFILE ===== */
@@ -180,7 +195,7 @@ img{max-width:100%;display:block}
 .avatar-box img{width:82px;height:82px;border-radius:50%;object-fit:cover;border:1.5px solid var(--line)}
 .avatar-box .ph{width:82px;height:82px;border-radius:50%;border:1.5px dashed var(--line);display:flex;align-items:center;justify-content:center;font-size:32px;color:var(--text3)}
 .avatar-box .edit{position:absolute;bottom:0;right:0;width:25px;height:25px;border-radius:50%;background:var(--accent);color:var(--bg);display:flex;align-items:center;justify-content:center;font-size:12px;border:2px solid var(--card)}
-.nick-input{font-size:18px;font-weight:700;text-align:center;padding:8px 12px;border-radius:8px;background:var(--bg);color:var(--text);width:200px;border:1.5px solid var(--line);transition:all .2s ease}
+.nick-input{font-size:18px;font-weight:700;text-align:center;padding:8px 12px;border-radius:8px;background:var(--bg);color:var(--text);width:200px;border:1.5px solid var(--line);transition:all var(--dur-2) var(--ease-out)}
 .nick-input:focus{border-color:var(--accent)}
 .profile-stats{display:flex;justify-content:space-around;padding:22px 0;margin-bottom:8px;border-top:1px solid var(--line2);border-bottom:1px solid var(--line2)}
 .profile-stats .ps{text-align:center}
@@ -190,7 +205,7 @@ img{max-width:100%;display:block}
 /* ===== FLASH (FORWARD / browse) ===== */
 .page-flash{padding:0;display:flex;flex-direction:column}
 .flash-top{display:flex;align-items:center;gap:12px;padding:calc(var(--safe-top) + 16px) 18px 16px}
-.flash-back{width:40px;height:40px;border-radius:50%;background:var(--glass);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:transform .15s ease}
+.flash-back{width:40px;height:40px;border-radius:50%;background:var(--glass);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:transform var(--dur-1) var(--ease-out)}
 .flash-back:active{transform:scale(.9)}
 .flash-back svg{width:20px;height:20px;color:var(--text)}
 .flash-title{font-size:18px;font-weight:800;flex:1;letter-spacing:-.2px}
@@ -202,7 +217,7 @@ img{max-width:100%;display:block}
   background:var(--glass);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;
   font-size:21px;font-weight:800;color:var(--text);letter-spacing:.5px;
-  transition:transform .15s ease,opacity .25s ease,border-color .2s ease,box-shadow .2s ease;
+  transition:transform var(--dur-1) var(--ease-out),opacity var(--dur-2) var(--ease-out),border-color var(--dur-2) var(--ease-out),box-shadow var(--dur-2) var(--ease-out);
   box-shadow:0 6px 18px rgba(0,0,0,.05);
 }
 .flash-btn:active{transform:scale(.95);border-color:var(--accent2)}
@@ -212,50 +227,50 @@ img{max-width:100%;display:block}
 
 /* ===== LEARN (REVIEW quiz) ===== */
 .learn-header{display:flex;align-items:center;gap:12px;margin-bottom:20px;padding-top:4px}
-.learn-back{width:38px;height:38px;border-radius:50%;background:var(--glass);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;transition:transform .15s ease}
+.learn-back{width:38px;height:38px;border-radius:50%;background:var(--glass);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;transition:transform var(--dur-1) var(--ease-out)}
 .learn-back:active{transform:scale(.9)}
 .learn-back svg{width:19px;height:19px;color:var(--text)}
 .learn-title{font-size:20px;font-weight:800;flex:1;letter-spacing:-.2px}
 .learn-bar{width:100%;height:4px;background:var(--line2);border-radius:3px;margin-bottom:16px;overflow:hidden}
-.learn-fill{height:100%;background:var(--accent);border-radius:3px;transition:width .4s ease}
+.learn-fill{height:100%;background:var(--accent);border-radius:3px;transition:width var(--dur-4) var(--ease-out)}
 .learn-counter{text-align:center;font-size:13px;color:var(--text2);margin-bottom:22px}
 
-.q-card{position:relative;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:26px 22px;margin-bottom:16px;text-align:center;overflow:hidden;transition:all .3s ease;min-height:170px;display:flex;flex-direction:column}
+.q-card{position:relative;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:26px 22px;margin-bottom:16px;text-align:center;overflow:hidden;transition:all var(--dur-3) var(--ease-out);min-height:170px;display:flex;flex-direction:column}
 .q-card.ok{border-color:var(--green);background:var(--green-bg)}
-.q-card.err{border-color:var(--red);background:var(--red-bg);animation:shake .4s ease}
+.q-card.err{border-color:var(--red);background:var(--red-bg);animation:shake var(--dur-4) var(--ease-out)}
 .q-head{position:relative;height:92px;margin-bottom:12px;overflow:hidden}
 .q-word{font-size:34px;font-weight:800;letter-spacing:-.5px;color:var(--text);position:relative;z-index:2;line-height:1.05}
 .q-phonetic{font-size:14px;color:var(--text3);margin-top:4px;position:relative;z-index:2}
 .q-body{position:relative}
 .q-prompt{font-size:14px;color:var(--text2);margin:6px 0 14px;font-weight:500}
-.q-body.fade-in{animation:fadeUp .35s ease both}
+.q-body.fade-in{animation:fadeUp var(--dur-3) var(--ease-out) both}
 
-.spell-input{width:100%;max-width:280px;padding:12px 16px;border-radius:9px;font-size:18px;font-weight:600;text-align:center;background:var(--bg);color:var(--text);border:1.5px solid var(--line);transition:all .25s ease;letter-spacing:1px}
+.spell-input{width:100%;max-width:280px;padding:12px 16px;border-radius:9px;font-size:18px;font-weight:600;text-align:center;background:var(--bg);color:var(--text);border:1.5px solid var(--line);transition:all var(--dur-2) var(--ease-out);letter-spacing:1px}
 .spell-input:focus{border-color:var(--accent);background:var(--card)}
 .spell-input.ok{border-color:var(--green);background:var(--green-bg)}
 .spell-input.err{border-color:var(--red);background:var(--red-bg)}
 
 .choices{display:grid;grid-template-columns:1fr 1fr;gap:9px;width:100%}
-.choice{padding:14px 10px;border-radius:10px;font-size:14px;font-weight:600;background:var(--bg);color:var(--text);border:1.5px solid var(--line);transition:all .2s ease;text-align:center;line-height:1.4;min-height:48px;display:flex;align-items:center;justify-content:center}
+.choice{padding:14px 10px;border-radius:10px;font-size:14px;font-weight:600;background:var(--bg);color:var(--text);border:1.5px solid var(--line);transition:all var(--dur-2) var(--ease-out);text-align:center;line-height:1.4;min-height:48px;display:flex;align-items:center;justify-content:center}
 .choice:active{transform:scale(.96)}
 .choice.ok{border-color:var(--green);background:var(--green-bg);color:var(--green)}
 .choice.err{border-color:var(--red);background:var(--red-bg);color:var(--red)}
 
 .match-wrap{display:grid;grid-template-columns:1fr 1fr;gap:16px;width:100%;margin-top:6px}
 .match-col{display:flex;flex-direction:column;gap:8px}
-.match-it{padding:13px 10px;border-radius:9px;font-size:13px;font-weight:600;text-align:center;border:1.5px solid var(--line);transition:all .2s ease;min-height:46px;display:flex;align-items:center;justify-content:center;line-height:1.3;background:var(--bg);color:var(--text)}
+.match-it{padding:13px 10px;border-radius:9px;font-size:13px;font-weight:600;text-align:center;border:1.5px solid var(--line);transition:all var(--dur-2) var(--ease-out);min-height:46px;display:flex;align-items:center;justify-content:center;line-height:1.3;background:var(--bg);color:var(--text)}
 .match-en{cursor:pointer}
 .match-zh{color:var(--text2)}
 .match-en.sel{border-color:var(--accent);border-width:2px}
 .match-en.done,.match-zh.done{border-color:var(--green);background:var(--green-bg);color:var(--green);pointer-events:none}
-.match-zh.flash{border-color:var(--red);background:var(--red-bg);animation:shake .35s ease}
+.match-zh.flash{border-color:var(--red);background:var(--red-bg);animation:shake var(--dur-3) var(--ease-out)}
 
 .fb{text-align:center;padding:12px;border-radius:9px;font-weight:700;font-size:14px;margin-top:6px;display:none}
-.fb.show{display:block;animation:fadeIn .3s ease}
+.fb.show{display:block;animation:fadeIn var(--dur-3) var(--ease-out)}
 .fb.ok{background:var(--green-bg);color:var(--green);border:1px solid var(--green)}
 .fb.err{background:var(--red-bg);color:var(--red);border:1px solid var(--red)}
 
-.btn-go{display:none;width:100%;padding:14px;border-radius:var(--radius);font-size:16px;font-weight:700;color:var(--accent);background:transparent;margin-top:14px;transition:all .2s ease;border:1.5px solid var(--accent)}
+.btn-go{display:none;width:100%;padding:14px;border-radius:var(--radius);font-size:16px;font-weight:700;color:var(--accent);background:transparent;margin-top:14px;transition:all var(--dur-2) var(--ease-out);border:1.5px solid var(--accent)}
 .btn-go.show{display:block}
 .btn-go:active{transform:scale(.97);opacity:.9}
 
@@ -273,13 +288,18 @@ img{max-width:100%;display:block}
 .layer .wtext{font-size:clamp(44px,13vw,78px);font-weight:900;letter-spacing:-1.5px;line-height:1.04;color:var(--text);font-family:var(--word-font);text-align:center;padding:0 6px}
 .layer .wsub{font-size:13px;color:var(--text2);position:relative;z-index:2;text-align:center;max-width:90%;line-height:1.5;font-weight:500;margin-top:2px}
 
-.layer.in-init{animation:blurIn .5s cubic-bezier(.22,1,.36,1) both}
-.layer.blur-out{animation:blurOut .36s ease-in both}
-.layer.blur-in{animation:blurIn .46s cubic-bezier(.22,1,.36,1) both}
+/* ===== 单词切换：模糊 / 粒子（统一节奏，时长与 JS 中 WORD_OUT/WORD_IN 对齐） ===== */
+.layer.in-init{animation:blurIn var(--dur-4) var(--ease-out) both}
+.layer.blur-out{animation:wordBlurOut var(--dur-2) var(--ease-in) both}
+.layer.blur-in{animation:blurIn var(--dur-3) var(--ease-out) both}
+.layer.pop-out{animation:wordPopOut var(--dur-1) var(--ease-in) both}
+.layer.pop-in{animation:wordPopIn 280ms var(--ease-out) both}
 
 /* 高浓度动态模糊切换：当前单词逐渐虚化，模糊到顶后就地换为下一单词（无左右滑动） */
-@keyframes blurOut{0%{filter:blur(0);opacity:1}100%{filter:blur(40px);opacity:.4}}
-@keyframes blurIn{0%{filter:blur(40px);opacity:.4}100%{filter:blur(0);opacity:1}}
+@keyframes wordBlurOut{0%{filter:blur(0);opacity:1}100%{filter:blur(40px);opacity:.35}}
+@keyframes blurIn{0%{filter:blur(40px);opacity:.35}100%{filter:blur(0);opacity:1}}
+@keyframes wordPopOut{0%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(.95)}}
+@keyframes wordPopIn{0%{opacity:0;transform:scale(1.05)}100%{opacity:1;transform:scale(1)}}
 @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}50%{transform:translateX(6px)}75%{transform:translateX(-4px)}}
@@ -288,12 +308,108 @@ img{max-width:100%;display:block}
 @keyframes ringIn{from{opacity:0;transform:scale(.4)}to{opacity:1;transform:scale(1)}}
 @keyframes ripple{from{transform:scale(0);opacity:.5}to{transform:scale(2.6);opacity:0}}
 
-/* 降级：用户偏好减少动态时，切换为瞬时换词，不做模糊 */
+/* 降级：用户偏好减少动态时，所有切换/进出场瞬时完成（JS 同步走零延迟分支） */
 @media (prefers-reduced-motion: reduce){
-  .layer.in-init,.layer.blur-out,.layer.blur-in,
-  .page.blur-in,.page.blur-out{animation:none!important;filter:none!important;opacity:1!important}
+  /* 全局兜底：环境流动背景、弹窗、导航、开关、toast、按压缩放等全部瞬时 */
+  *,*::before,*::after{
+    animation-duration:.01ms!important;animation-iteration-count:1!important;
+    transition-duration:.01ms!important;scroll-behavior:auto!important;
+  }
+  .app::before{animation:none!important}
+  .layer.in-init,.layer.blur-out,.layer.blur-in,.layer.pop-out,.layer.pop-in,
+  .page.page-in,.page.page-out,
+  #pageHome.home-leaving>*,.page.enter-page>*{
+    animation:none!important;filter:none!important;opacity:1!important;transform:none!important;
+  }
+  #zoomMask{transition:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
 }
 @keyframes spin{to{transform:rotate(360deg)}}
+
+/* ===== PROFILE：背诵进度（粗体进度条） + 当日学习时间（环形饼图） ===== */
+.progress-card{
+  padding:18px 18px 20px;
+  background:var(--glass);border:1px solid var(--line);border-radius:var(--radius);
+  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+}
+.pg-top{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:14px}
+.pg-stage{font-size:16px;font-weight:800;letter-spacing:-.2px}
+.pg-stage small{display:block;font-size:11px;font-weight:500;color:var(--text2);margin-top:4px;letter-spacing:.2px}
+.pg-pct{font-size:32px;font-weight:900;letter-spacing:-1.2px;line-height:1;font-variant-numeric:tabular-nums}
+.pg-bar{height:16px;border-radius:9px;background:var(--line);overflow:hidden}
+.pg-fill{height:100%;width:0;border-radius:9px;background:var(--accent);transition:width var(--dur-4) var(--ease-out)}
+.pg-meta{display:flex;justify-content:space-between;gap:10px;margin-top:10px;font-size:11px;color:var(--text2);font-variant-numeric:tabular-nums}
+
+.time-card{
+  display:flex;align-items:center;gap:18px;padding:18px;
+  background:var(--glass);border:1px solid var(--line);border-radius:var(--radius);
+  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+}
+.donut-wrap{position:relative;width:116px;height:116px;flex:none}
+.donut{width:100%;height:100%;transform:rotate(-90deg);overflow:visible}
+.donut circle{fill:none;stroke-width:12}
+.donut-track{stroke:var(--line2)}
+.donut-seg{transition:stroke-dasharray var(--dur-4) var(--ease-out),stroke-dashoffset var(--dur-4) var(--ease-out)}
+#donutFwd{stroke:var(--chart-1)}
+#donutRev{stroke:var(--chart-2)}
+.donut-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-align:center}
+.donut-total{font-size:17px;font-weight:900;letter-spacing:-.6px;line-height:1.15;font-variant-numeric:tabular-nums;white-space:nowrap;padding:0 4px}
+.donut-label{font-size:10px;color:var(--text2);letter-spacing:.4px}
+.time-legend{flex:1;min-width:0;display:flex;flex-direction:column;gap:12px;font-size:12px;color:var(--text2)}
+.tl-item{display:flex;align-items:center;gap:8px}
+.tl-item b{color:var(--text);font-weight:800;font-variant-numeric:tabular-nums;margin-left:auto}
+.tl-dot{width:10px;height:10px;border-radius:3px;flex:none}
+.tl-dot.fwd{background:var(--chart-1)}
+.tl-dot.rev{background:var(--chart-2)}
+
+/* 设置弹窗选项副标题（切换动画） */
+.modal-opt .opt-desc{display:block;font-size:11px;font-weight:500;color:var(--text2);margin-top:5px;line-height:1.4}
+.modal-opt.sel .opt-desc{color:inherit;opacity:.72}
+/* ===== 粒子覆盖层（粒子切换动画）：page 1 < 粒子 160 < 蒙版 180 < nav 200 < modal 300 ===== */
+#fxCanvas{position:absolute;inset:0;width:100%;height:100%;z-index:160;pointer-events:none}
+
+/* ===== 前进/复习：按钮矩形放大为全屏蒙版（clip-path 展开 + 背景虚化揭开） ===== */
+#zoomMask{
+  position:fixed;inset:0;z-index:180;pointer-events:none;
+  opacity:0;visibility:hidden;
+  /* 只用半透明玻璃色 + clip-path 展开：不做全视口 backdrop-filter，避免低端机逐帧采样掉帧 */
+  background:var(--glass);
+  clip-path:inset(0 0 0 0 round 0);
+  transition:clip-path var(--dur-zoom-in) var(--ease-out);
+}
+#zoomMask.show{opacity:1;visibility:visible;pointer-events:auto;will-change:clip-path}
+/* 蒙版在内容开始滑入后淡出，收尾时已不可见，不会突兀消失 */
+#zoomMask.fade{opacity:0;transition:opacity var(--dur-zoom-fade) var(--ease-out);will-change:opacity}
+#zoomMask .zm-inner{
+  position:fixed;transform:translate(-50%,-50%);
+  display:flex;flex-direction:column;align-items:center;gap:10px;
+  color:var(--text);opacity:1;pointer-events:none;
+  transition:opacity var(--dur-2) var(--ease-out);
+}
+#zoomMask.expanded .zm-inner{opacity:0}
+#zoomMask .zm-inner svg{width:34px;height:34px;stroke:currentColor;fill:none}
+#zoomMask .zm-inner .btn-label{font-size:18px;font-weight:700;letter-spacing:-.2px}
+#zoomMask .zm-inner .btn-hint{font-size:12px;color:var(--text2);font-weight:500}
+
+/* ===== 学习页进入：内里内容自上方错峰滑入（蒙版揭开时逐层显示） ===== */
+.page.enter-page > *{animation:contentIn var(--dur-3) var(--ease-out) both}
+.page.enter-page > *:nth-child(2){animation-delay:40ms}
+.page.enter-page > *:nth-child(3){animation-delay:80ms}
+.page.enter-page > *:nth-child(4){animation-delay:120ms}
+.page.enter-page > *:nth-child(5){animation-delay:160ms}
+.page.enter-page > *:nth-child(6){animation-delay:200ms}
+.page.enter-page > *:nth-child(7){animation-delay:240ms}
+.page.enter-page > *:nth-child(8){animation-delay:280ms}
+@keyframes contentIn{0%{opacity:0;transform:translateY(-26px)}100%{opacity:1;transform:translateY(0)}}
+
+/* ===== 主页内容：与进入方向相反的退出动画（上移 + 轻微缩小 + 淡出） ===== */
+#pageHome.home-leaving > *{animation:contentOut var(--dur-3) var(--ease-in) both}
+#pageHome.home-leaving > *:nth-child(2){animation-delay:35ms}
+#pageHome.home-leaving > *:nth-child(3){animation-delay:70ms}
+#pageHome.home-leaving > *:nth-child(4){animation-delay:105ms}
+@keyframes contentOut{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-26px) scale(.985)}}
+
+/* 设置项说明（切换动画的作用范围） */
+.anim-note{font-size:11px;line-height:1.6;color:var(--text3);padding:2px 2px 8px;letter-spacing:.1px}
 
 /* ===== BOTTOM NAV (圆圈描边悬浮按钮) ===== */
 .nav{
@@ -307,7 +423,7 @@ img{max-width:100%;display:block}
   background:transparent;
   border:none;
   box-shadow:none;
-  transition:transform .35s cubic-bezier(.34,1.3,.64,1),opacity .3s ease;
+  transition:transform var(--dur-4) var(--ease-spring),opacity var(--dur-3) var(--ease-out);
 }
 .nav-item{
   width:58px;height:58px;
@@ -316,10 +432,10 @@ img{max-width:100%;display:block}
   border-radius:50%;
   border:1.5px solid var(--line2);
   background:transparent;
-  transition:all .3s cubic-bezier(.22,1,.36,1);
+  transition:all var(--dur-3) var(--ease-out);
 }
 .nav-item:active{transform:scale(.88)}
-.nav-item .nav-ic{width:26px;height:26px;transition:transform .3s cubic-bezier(.22,1,.36,1)}
+.nav-item .nav-ic{width:26px;height:26px;transition:transform var(--dur-3) var(--ease-out)}
 .nav-item.active{
   color:var(--accent);
   border:2.5px solid var(--accent);
@@ -330,13 +446,13 @@ img{max-width:100%;display:block}
 .nav.hidden{opacity:0;transform:translateX(-50%) translateY(150%);pointer-events:none}
 
 /* ===== MODAL ===== */
-.modal{position:fixed;inset:0;z-index:300;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s ease;background:rgba(0,0,0,.32);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+.modal{position:fixed;inset:0;z-index:300;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity var(--dur-3) var(--ease-out);background:rgba(0,0,0,.32);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
 .modal.open{opacity:1;pointer-events:auto}
-.modal-inner{background:var(--card);border-radius:var(--radius) var(--radius) 0 0;border:1px solid var(--line);border-bottom:none;width:100%;max-width:460px;max-height:80vh;overflow-y:auto;padding:22px 22px calc(var(--safe) + 20px);transform:translateY(100%);transition:transform .35s cubic-bezier(.34,1.56,.64,1)}
+.modal-inner{background:var(--card);border-radius:var(--radius) var(--radius) 0 0;border:1px solid var(--line);border-bottom:none;width:100%;max-width:460px;max-height:80vh;overflow-y:auto;padding:22px 22px calc(var(--safe) + 20px);transform:translateY(100%);transition:transform var(--dur-4) var(--ease-spring)}
 .modal.open .modal-inner{transform:translateY(0)}
 .modal-handle{width:34px;height:4px;background:var(--line);border-radius:2px;margin:0 auto 16px}
 .modal h3{font-size:18px;font-weight:800;margin-bottom:16px;letter-spacing:-.2px}
-.modal-opt{display:block;width:100%;text-align:left;padding:16px;border-radius:11px;border:1.5px solid var(--line);background:var(--bg);color:var(--text);font-size:15px;font-weight:600;margin-bottom:9px;transition:all .15s ease}
+.modal-opt{display:block;width:100%;text-align:left;padding:16px;border-radius:11px;border:1.5px solid var(--line);background:var(--bg);color:var(--text);font-size:15px;font-weight:600;margin-bottom:9px;transition:all var(--dur-1) var(--ease-out)}
 .modal-opt:active{transform:scale(.98);border-color:var(--accent2)}
 .modal-opt.sel{border-color:var(--accent);background:var(--green-bg);color:var(--green)}
 
@@ -345,10 +461,10 @@ img{max-width:100%;display:block}
 .about h2{font-size:20px;font-weight:800;margin-bottom:4px}
 .about .ver{font-size:13px;color:var(--text3);margin-bottom:18px}
 .about .text{text-align:left;font-size:13px;line-height:1.8;color:var(--text2);white-space:pre-line;background:var(--bg);border:1px solid var(--line);border-radius:var(--radius);padding:18px;margin-bottom:14px}
-.about .link{color:var(--accent);font-size:13px;word-break:break-all}
+.about .link{display:block;color:var(--accent);font-size:13px;word-break:break-all;margin-top:8px;line-height:1.5}
 
 /* ===== TOAST ===== */
-.toast{position:fixed;left:50%;bottom:calc(var(--safe) + 100px);transform:translateX(-50%) translateY(20px);z-index:400;background:rgba(26,26,26,.92);color:#fff;padding:11px 20px;border-radius:22px;font-size:14px;font-weight:600;opacity:0;pointer-events:none;transition:all .3s ease;max-width:80%;text-align:center}
+.toast{position:fixed;left:50%;bottom:calc(var(--safe) + 100px);transform:translateX(-50%) translateY(20px);z-index:400;background:rgba(26,26,26,.92);color:#fff;padding:11px 20px;border-radius:22px;font-size:14px;font-weight:600;opacity:0;pointer-events:none;transition:all var(--dur-3) var(--ease-out);max-width:80%;text-align:center}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
 </head>
@@ -367,12 +483,12 @@ img{max-width:100%;display:block}
     </div>
 
     <div class="home-actions">
-      <button class="btn-main" onclick="startReview()">
+      <button class="btn-main" data-entry="review" onclick="startReview(this)">
         <svg viewBox="0 0 24 24" stroke-width="1.6"><path d="M3 12a9 9 0 1 0 3-6.7"/><polyline points="3 4 3 9 8 9"/></svg>
         <span class="btn-label">复习</span>
         <span class="btn-hint">巩固已学单词</span>
       </button>
-      <button class="btn-main" onclick="startForward()">
+      <button class="btn-main" data-entry="forward" onclick="startForward(this)">
         <svg viewBox="0 0 24 24" stroke-width="1.6"><line x1="12" y1="20" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
         <span class="btn-label">前进</span>
         <span class="btn-hint">学习新单词</span>
@@ -410,6 +526,10 @@ img{max-width:100%;display:block}
           <span class="sl">深色模式</span>
           <div class="toggle" id="darkToggle" onclick="toggleDark()"></div>
         </div>
+        <div class="set-row" onclick="openAnimModal()">
+          <span class="sl">切换动画</span>
+          <span class="sv" id="settingsAnim">高斯模糊 <span class="arrow">›</span></span>
+        </div>
       </div>
     </div>
     <div class="set-group">
@@ -436,6 +556,34 @@ img{max-width:100%;display:block}
       <div class="ps"><div class="ps-num" id="profTotal">0</div><div class="ps-label">累计学习</div></div>
       <div class="ps"><div class="ps-num" id="profDays">0</div><div class="ps-label">学习天数</div></div>
       <div class="ps"><div class="ps-num" id="profToday">0</div><div class="ps-label">今日学习</div></div>
+    </div>
+    <div class="set-group">
+      <h3>背诵进度</h3>
+      <div class="progress-card">
+        <div class="pg-top">
+          <div class="pg-stage"><span id="profStageName">中考</span><small>当前学习阶段</small></div>
+          <div class="pg-pct" id="profPercent">0%</div>
+        </div>
+        <div class="pg-bar"><div class="pg-fill" id="profBarFill" style="width:0%"></div></div>
+        <div class="pg-meta"><span id="profBarMeta">0 / 0 词</span><span>已背 / 本阶段词库</span></div>
+      </div>
+    </div>
+    <div class="set-group">
+      <h3>今日学习时间</h3>
+      <div class="time-card">
+        <div class="donut-wrap">
+          <svg class="donut" viewBox="0 0 100 100" aria-hidden="true">
+            <circle class="donut-track" cx="50" cy="50" r="42"></circle>
+            <circle class="donut-seg" id="donutFwd" cx="50" cy="50" r="42" stroke-dasharray="0 264" stroke-dashoffset="0"></circle>
+            <circle class="donut-seg" id="donutRev" cx="50" cy="50" r="42" stroke-dasharray="0 264" stroke-dashoffset="0"></circle>
+          </svg>
+          <div class="donut-center"><div class="donut-total" id="timeTotal">0 分钟</div><div class="donut-label">今日</div></div>
+        </div>
+        <div class="time-legend">
+          <div class="tl-item"><i class="tl-dot fwd"></i>前进学习<b id="timeFwdVal">0 分</b></div>
+          <div class="tl-item"><i class="tl-dot rev"></i>复习<b id="timeRevVal">0 分</b></div>
+        </div>
+      </div>
     </div>
     <div class="set-group">
       <h3>数据</h3>
@@ -507,6 +655,8 @@ img{max-width:100%;display:block}
     </button>
   </nav>
 
+  <canvas id="fxCanvas" aria-hidden="true"></canvas>
+
   <!-- TOAST -->
   <div class="toast" id="toast"></div>
 
@@ -518,22 +668,38 @@ img{max-width:100%;display:block}
       <div id="stageOpts"></div>
     </div>
   </div>
+  <div class="modal" id="modalAnim">
+    <div class="modal-inner">
+      <div class="modal-handle"></div>
+      <h3>切换动画</h3>
+      <div class="anim-note">仅影响主页三页切换与单词切换；「前进 / 复习」的按钮放大蒙版入场始终保留。</div>
+      <div id="animOpts"></div>
+    </div>
+  </div>
   <div class="modal" id="modalAbout">
     <div class="modal-inner">
       <div class="modal-handle"></div>
       <div class="about">
         <img src="appIcon.png" alt="不白背" onerror="this.style.display='none'">
         <h2>不白背</h2>
-        <div class="ver">BuBaiBei v2.0</div>
-        <div class="text">不白背（BuBaiBei）
-版本：v2.0
+        <div class="ver">BuBaiBei v2.1</div>
+        <div class="text">不白背（BuBaiBei）· 免费开源的英语词汇学习 PWA
+版本：v2.1（2026-11）
 版权所有 © 2026 lewb521
 
-本软件基于 MIT 许可证开源，是一款完全免费的词汇学习工具。
+分阶段词库 × 四种题型 × 智能复习，无广告、无注册，打开即用。
+v2.1 新增：高斯模糊 / 粒子双切换动画、当前阶段背诵进度条、当日学习时间饼图、「前进 / 复习」蒙版入场过渡。
 
-【获取源码】
-https://github.com/lewb521/-</div>
-        <a href="https://github.com/lewb521/-" target="_blank" class="link">https://github.com/lewb521/-</a>
+本软件基于 MIT 许可证开源。
+
+【在线预览】
+https://lewb521.github.io/-/
+
+【获取源码 / 反馈】
+https://github.com/lewb521/-
+lewbtxdy@163.com</div>
+        <a href="https://lewb521.github.io/-/" target="_blank" class="link">🚀 在线预览：https://lewb521.github.io/-/</a>
+        <a href="https://github.com/lewb521/-" target="_blank" class="link">📦 源码：https://github.com/lewb521/-</a>
       </div>
     </div>
   </div>
@@ -564,14 +730,30 @@ https://github.com/lewb521/-</div>
 
 </div>
 
+<div id="zoomMask" aria-hidden="true"><div class="zm-inner"></div></div>
+
 <script src="words-data.js"></script>
 <script>
 // ===================== STATE =====================
 const K='bcz_data';
-function defS(){return{stage:'中考',learned:{},today:{},theme:'light',nick:'',avatar:''}}
+const DEFAULT_ANIM='blur';
+function defS(){return{stage:'中考',learned:{},today:{},time:{},anim:DEFAULT_ANIM,theme:'light',nick:'',avatar:''}}
 let S=loadS();
-function loadS(){try{let r=localStorage.getItem(K);if(r)return Object.assign(defS(),JSON.parse(r))}catch(e){}return defS()}
-function saveS(){localStorage.setItem(K,JSON.stringify(S))}
+function loadS(){
+  try{
+    const r=localStorage.getItem(K);
+    if(r){
+      const s=Object.assign(defS(),JSON.parse(r));
+      if(!s.learned||typeof s.learned!=='object')s.learned={};
+      if(!s.today||typeof s.today!=='object')s.today={};
+      if(!s.time||typeof s.time!=='object')s.time={};
+      if(s.anim!=='particle'&&s.anim!=='blur')s.anim=DEFAULT_ANIM;
+      return s;
+    }
+  }catch(e){}
+  return defS();
+}
+function saveS(){try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}}
 
 // ===================== HELPERS =====================
 function getToday(){return new Date().toLocaleDateString('zh-CN')}
@@ -580,6 +762,7 @@ function getAvail(stage){let all=wordLists[stage]||[],l=getLearned(stage);return
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function shuffle(a){for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}}
 function rand(n){return Math.floor(Math.random()*n)}
+function setText(id,txt){const el=document.getElementById(id);if(el)el.textContent=txt}
 
 const quotes=[
 {text:'学而不思则罔，思而不学则殆。',author:'孔子'},{text:'千里之行，始于足下。',author:'老子'},
@@ -599,51 +782,197 @@ function parseInfo(word){
 }
 function toWordObj(en){let i=parseInfo(en);return{en,zh:i.zh,pos:i.pos}}
 
-// ===================== NAVIGATION =====================
+// ===================== MOTION TOKENS =====================
+// 与 CSS 变量 --dur-* / --ease-* 保持同一套节奏：所有过渡只从这里取时长
+const MT={micro:140,fast:200,base:300,slow:420,entry:700};
+const PAGE_OUT={blur:170,particle:150};
+const PAGE_IN={blur:280,particle:280};
+const WORD_OUT={blur:200,particle:140};
+const WORD_IN={blur:300,particle:280};
+const ZOOM_IN=340;            // 蒙版 clip-path 展开（与 CSS #zoomMask transition 对齐）
+const ZOOM_CONTENT_DELAY=280; // 内里内容开始自上方滑入（蒙版开始淡出之前）
+const ZOOM_FADE_AT=360;       // 蒙版开始淡出（展开完成后、内容已开始滑入）
+const STAGGER=40;             // 内容错峰间隔
+const RM_QUERY='(prefers-reduced-motion: reduce)';
+function reduceMotion(){try{return !!(window.matchMedia&&window.matchMedia(RM_QUERY).matches)}catch(e){return false}}
+function animMode(){return S.anim==='particle'?'particle':'blur'}
+function applyAnim(){document.body.dataset.anim=animMode()}
+function nextFrame(cb){
+  if(window.requestAnimationFrame)window.requestAnimationFrame(cb);
+  else setTimeout(cb,16);
+}
+
+// ===================== PARTICLE ENGINE（粒子切换动画） =====================
+// 单一 canvas 覆盖层；burst 时从点击/文字中心炸开，切换瞬间由粒子接管画面
+const FX=(function(){
+  let cvs=null,ctx=null,raf=0,parts=[],last=0;
+  const MAX_DPR=2;
+  function ensure(){
+    if(cvs&&ctx)return ctx;
+    cvs=document.getElementById('fxCanvas');
+    if(!cvs||typeof cvs.getContext!=='function')return null;
+    try{ctx=cvs.getContext('2d')}catch(e){ctx=null}
+    return ctx;
+  }
+  function size(){
+    if(!cvs)return {w:360,h:640};
+    const app=document.querySelector('.app');
+    const w=(app&&app.clientWidth)||window.innerWidth||360;
+    const h=(app&&app.clientHeight)||window.innerHeight||640;
+    const dpr=Math.min(window.devicePixelRatio||1,MAX_DPR);
+    const pw=Math.max(1,Math.round(w*dpr)),ph=Math.max(1,Math.round(h*dpr));
+    if(cvs.width!==pw||cvs.height!==ph){cvs.width=pw;cvs.height=ph}
+    cvs.style.width=w+'px';cvs.style.height=h+'px';
+    if(ctx&&ctx.setTransform)ctx.setTransform(dpr,0,0,dpr,0,0);
+    return {w:w,h:h};
+  }
+  function rgbaPrefix(cssColor){
+    const m=String(cssColor).match(/\d+(?:\.\d+)?/g);
+    if(!m||m.length<3)return 'rgba(120,124,132,';
+    return 'rgba('+m[0]+','+m[1]+','+m[2]+',';
+  }
+  function palette(){
+    let text='rgb(26,26,26)';
+    try{
+      if(window.getComputedStyle){
+        const st=getComputedStyle(document.body);
+        text=st.color||text;
+      }
+    }catch(e){}
+    const dark=document.body.dataset.theme==='dark';
+    // --text3 是十六进制，直接给一套两级灰度的软色，暗色下提亮一点
+    const soft=dark?'rgba(150,154,162,':'rgba(160,164,172,';
+    return {main:rgbaPrefix(text),soft:soft};
+  }
+  function step(now){
+    raf=0;
+    if(!ctx||!cvs)return;
+    const dt=Math.min(0.05,Math.max(0.001,((now-last)/1000)||0.016));
+    last=now;
+    const w=cvs.clientWidth||window.innerWidth||360;
+    const h=cvs.clientHeight||window.innerHeight||640;
+    ctx.clearRect(0,0,w,h);
+    for(let i=parts.length-1;i>=0;i--){
+      const p=parts[i];p.t+=dt;
+      if(p.t>=p.life){parts.splice(i,1);continue}
+      p.vy+=110*dt;p.vx*=.986;p.vy*=.986;
+      p.x+=p.vx*dt;p.y+=p.vy*dt;
+      const k=1-p.t/p.life;
+      ctx.globalAlpha=Math.max(0,Math.min(1,k*k));
+      ctx.fillStyle=p.c+k.toFixed(2)+')';
+      ctx.beginPath();ctx.arc(p.x,p.y,Math.max(.4,p.r*(.45+k*.75)),0,Math.PI*2);ctx.fill();
+    }
+    ctx.globalAlpha=1;
+    if(parts.length)raf=requestAnimationFrame(step);
+    else ctx.clearRect(0,0,w,h);
+  }
+  function burst(x,y,opt){
+    if(reduceMotion())return;
+    if(!ensure())return;
+    const box=size();
+    const w=box.w,h=box.h;
+    if(!(typeof x==='number'&&isFinite(x)&&x>=0&&x<=w))x=w/2;
+    if(!(typeof y==='number'&&isFinite(y)&&y>=0&&y<=h))y=h/2;
+    const pal=palette();
+    const count=(opt&&opt.count)||46;
+    for(let i=0;i<count;i++){
+      const ang=Math.random()*Math.PI*2;
+      const sp=70+Math.random()*250;
+      const life=.34+Math.random()*.24;
+      parts.push({
+        x:x,y:y,
+        vx:Math.cos(ang)*sp,vy:Math.sin(ang)*sp-40,
+        life:life,t:0,r:1+Math.random()*2.4,
+        c:(i%6===0)?pal.soft:pal.main
+      });
+    }
+    if(!raf){
+      last=(window.performance&&performance.now())||Date.now();
+      raf=requestAnimationFrame(step);
+    }
+  }
+  // 从某个元素中心炸开；坐标换算到 canvas（.app）坐标系
+  function from(el,opt){
+    if(reduceMotion())return;
+    const app=document.querySelector('.app');
+    const ar=app?app.getBoundingClientRect():{left:0,top:0};
+    let x,y;
+    if(el&&el.getBoundingClientRect){
+      const r=el.getBoundingClientRect();
+      if(r.width>0&&r.height>0){
+        x=r.left-ar.left+r.width/2;
+        y=r.top-ar.top+r.height/2;
+      }
+    }
+    burst(x,y,opt);
+  }
+  function clear(){
+    parts=[];
+    if(raf){if(window.cancelAnimationFrame)cancelAnimationFrame(raf);else clearTimeout(raf);raf=0}
+    if(ctx&&cvs)ctx.clearRect(0,0,cvs.clientWidth||1,cvs.clientHeight||1);
+  }
+  return {burst:burst,from:from,clear:clear,reduceMotion:reduceMotion};
+})();
+
+// ===================== NAVIGATION / PAGE TRANSITION =====================
 let curPage='home';
 let pgBusy=false;
+let entryBusy=false;
 const PAGE_ID={home:'pageHome',settings:'pageSettings',profile:'pageProfile'};
-function hideAllPages(){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active','blur-in','blur-out'))}
+function hideAllPages(){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active','page-in','page-out','enter-page','home-leaving'))}
 function showNav(show){document.getElementById('nav').classList.toggle('hidden',!show)}
 function setNavActive(p){document.querySelectorAll('.nav-item').forEach(e=>e.classList.toggle('active',e.dataset.page===p))}
 
-// 高高斯模糊直接切换：旧页模糊散开 → 就地换成新页 → 新页由模糊清晰（与单词切换同手感）
-function switchPage(prevEl,nwId){
+// 统一页面切换：高斯模糊 / 粒子 两种模式共用同一节奏函数
+function switchPage(prevEl,nwId,originEl){
   const nwEl=document.getElementById(nwId);
-  if(prevEl&&prevEl!==nwEl&&prevEl.classList.contains('active')){
-    prevEl.classList.remove('blur-in');
-    prevEl.classList.add('blur-out');
-    setTimeout(()=>{
-      prevEl.classList.remove('active','blur-out');
-      nwEl.classList.add('active','blur-in');
-      setTimeout(()=>{nwEl.classList.remove('blur-in');pgBusy=false;},430);
-    },280);
+  if(!nwEl){pgBusy=false;return}
+  const mode=animMode(),rm=reduceMotion();
+  const outMs=rm?0:PAGE_OUT[mode];
+  const inMs=rm?0:PAGE_IN[mode];
+  const reveal=function(){
+    nwEl.classList.remove('page-in','page-out');
+    void nwEl.offsetWidth;
+    nwEl.classList.add('active','page-in');
+    setTimeout(function(){nwEl.classList.remove('page-in');pgBusy=false},inMs+30);
+  };
+  const prev=(prevEl&&prevEl!==nwEl&&prevEl.classList.contains('active'))?prevEl:null;
+  if(prev){
+    prev.classList.remove('page-in','page-out','home-leaving');
+    void prev.offsetWidth;
+    prev.classList.add('page-out');
+    // 粒子在点击瞬间炸开，覆盖「旧页淡出 → 新页淡入」整个过程
+    if(mode==='particle')FX.from(originEl||prev);
+    setTimeout(function(){prev.classList.remove('active','page-out');reveal()},outMs);
   }else{
-    if(prevEl)prevEl.classList.remove('active','blur-in','blur-out');
-    nwEl.classList.add('active','blur-in');
-    setTimeout(()=>{nwEl.classList.remove('blur-in');pgBusy=false;},430);
+    if(mode==='particle')FX.from(originEl);
+    reveal();
   }
 }
-function goPage(p){
+function goPage(p,originEl){
   if(p===curPage||pgBusy)return;
+  if(!PAGE_ID[p])return;
   pgBusy=true;
   const prevEl=document.getElementById(PAGE_ID[curPage]);
   curPage=p;
   setNavActive(p);
   if(p==='home')showNav(true);
-  switchPage(prevEl,PAGE_ID[p]);
+  switchPage(prevEl,PAGE_ID[p],originEl);
   if(p==='home')refreshHome();
   if(p==='settings')refreshSet();
   if(p==='profile')refreshProf();
 }
-function navTap(el,p){ if(p!==curPage)goPage(p); }
+function navTap(el,p){if(p!==curPage)goPage(p,el)}
 function exitFlash(){
+  if(entryBusy||pgBusy)return;
+  endStudy();
   pgBusy=true;
   showNav(true);
   curPage='home';
   setNavActive('home');
-  const prevEl=document.querySelector('.page.active');
-  switchPage(prevEl,'pageHome');
+  const prev=document.querySelector('.page.active');
+  const backBtn=document.querySelector('.flash-back')||document.querySelector('.learn-back');
+  switchPage(prev,'pageHome',backBtn);
   refreshHome();refreshProf();
 }
 
@@ -653,27 +982,30 @@ function refreshHome(){
   let todayCnt=0;if(S.today[td])for(let k in S.today[td])todayCnt+=S.today[td][k];
   let total=0;for(let st in S.learned)total+=Object.keys(S.learned[st]).length;
   let days=Object.keys(S.today).length;
-  document.getElementById('statToday').textContent=todayCnt;
-  document.getElementById('statTotal').textContent=total;
-  document.getElementById('statDays').textContent=days;
+  setText('statToday',todayCnt);
+  setText('statTotal',total);
+  setText('statDays',days);
   let qi=new Date().getDate()%quotes.length;
-  document.getElementById('dailyQuote').textContent='"'+quotes[qi].text+'"';
-  document.getElementById('dailyAuthor').textContent='— '+quotes[qi].author;
+  setText('dailyQuote','"'+quotes[qi].text+'"');
+  setText('dailyAuthor','— '+quotes[qi].author);
 }
 
 // ===================== SETTINGS =====================
 function refreshSet(){
-  document.getElementById('settingsStage').innerHTML=S.stage+' <span class="arrow">›</span>';
+  const stageEl=document.getElementById('settingsStage');
+  if(stageEl)stageEl.innerHTML=S.stage+' <span class="arrow">›</span>';
   document.getElementById('darkToggle').classList.toggle('on',S.theme==='dark');
+  const av=document.getElementById('settingsAnim');
+  if(av)av.innerHTML=(animMode()==='particle'?'粒子':'高斯模糊')+' <span class="arrow">›</span>';
 }
 function setStage(st){
-  S.stage=st;saveS();refreshHome();refreshSet();closeModal('modalStage');
-  buildStageOpts();
+  S.stage=st;saveS();refreshHome();refreshSet();closeModal('modalStage');buildStageOpts();
 }
 function toggleDark(){S.theme=S.theme==='dark'?'light':'dark';applyTheme();saveS();refreshSet()}
 function applyTheme(){
   document.body.dataset.theme=S.theme;
-  document.querySelector('meta[name="theme-color"]').setAttribute('content',S.theme==='dark'?'#121216':'#f2f3f5');
+  const meta=document.querySelector('meta[name="theme-color"]');
+  if(meta)meta.setAttribute('content',S.theme==='dark'?'#121216':'#f2f3f5');
 }
 function openModal(id){document.getElementById(id).classList.add('open')}
 function closeModal(id){document.getElementById(id).classList.remove('open')}
@@ -686,6 +1018,38 @@ function buildStageOpts(){
 function showAbout(){openModal('modalAbout')}
 function showThanks(){openModal('modalThanks')}
 
+// 切换动画设置（高斯模糊 / 粒子）
+const ANIMS=[
+  {id:'blur',name:'高斯模糊',desc:'旧内容散焦、新内容由模糊变清晰'},
+  {id:'particle',name:'粒子',desc:'粒子从点击处炸开，瞬间接管画面切换'}
+];
+function buildAnimOpts(){
+  const box=document.getElementById('animOpts');
+  if(!box)return;
+  box.innerHTML=ANIMS.map(a=>`<button class="modal-opt ${a.id===animMode()?'sel':''}" data-anim="${a.id}" onclick="setAnim('${a.id}')">${a.name}<span class="opt-desc">${a.desc}</span></button>`).join('');
+}
+function openAnimModal(){buildAnimOpts();openModal('modalAnim')}
+function previewBlur(){
+  const el=document.querySelector('.page.active');
+  if(!el||reduceMotion())return;
+  el.classList.remove('page-in');
+  void el.offsetWidth;
+  el.classList.add('page-in');
+  setTimeout(function(){el.classList.remove('page-in')},MT.slow);
+}
+function setAnim(m){
+  if(!ANIMS.some(a=>a.id===m))return;
+  S.anim=m;
+  saveS();
+  applyAnim();
+  refreshSet();
+  buildAnimOpts();
+  closeModal('modalAnim');
+  if(m==='particle')setTimeout(function(){FX.from(document.getElementById('settingsAnim'))},60);
+  else previewBlur();
+  toast(m==='particle'?'已切换为粒子动画':'已切换为高斯模糊动画');
+}
+
 // ===================== PROFILE =====================
 function refreshProf(){
   document.getElementById('nickInput').value=S.nick||'';
@@ -695,72 +1059,281 @@ function refreshProf(){
   let todayCnt=0;if(S.today[td])for(let k in S.today[td])todayCnt+=S.today[td][k];
   let total=0;for(let st in S.learned)total+=Object.keys(S.learned[st]).length;
   let days=Object.keys(S.today).length;
-  document.getElementById('profTotal').textContent=total;
-  document.getElementById('profDays').textContent=days;
-  document.getElementById('profToday').textContent=todayCnt;
+  setText('profTotal',total);
+  setText('profDays',days);
+  setText('profToday',todayCnt);
+  refreshProgress();
+  refreshTimeChart();
+}
+// 当前学习阶段的背诵进度（粗体进度条）
+function refreshProgress(){
+  const total=(wordLists[S.stage]||[]).length;
+  const learned=Math.min(Object.keys(S.learned[S.stage]||{}).length,total);
+  const pct=total>0?Math.round(learned/total*100):0;
+  setText('profStageName',S.stage);
+  setText('profPercent',pct+'%');
+  const fill=document.getElementById('profBarFill');
+  if(fill)fill.style.width=pct+'%';
+  setText('profBarMeta',learned+' / '+total+' 词');
+}
+// 当日学习时间环形饼图（前进 / 复习 两段）
+const DONUT_R=42;
+const DONUT_C=2*Math.PI*DONUT_R;
+function fmtMin(sec){
+  if(!(sec>0))return '0 分钟';
+  if(sec>=3600){
+    const h=sec/3600;
+    const txt=(h>=10?h.toFixed(0):h.toFixed(1));
+    return txt.replace(/\.0$/,'')+' 小时';
+  }
+  if(sec<60)return Math.max(1,Math.round(sec))+' 秒';
+  return Math.round(sec/60)+' 分钟';
+}
+function fmtBrief(sec){
+  if(!(sec>0))return '0 分';
+  if(sec<60)return Math.round(sec)+' 秒';
+  const m=Math.round(sec/60);
+  return (m<1?'不足 1 分':m+' 分');
+}
+function refreshTimeChart(){
+  const rec=S.time[getToday()]||{};
+  const fwd=Math.max(0,Number(rec.forward)||0);
+  const rev=Math.max(0,Number(rec.review)||0);
+  const total=fwd+rev;
+  const fEl=document.getElementById('donutFwd'),rEl=document.getElementById('donutRev');
+  if(fEl&&rEl){
+    if(total>0){
+      const fLen=DONUT_C*(fwd/total);
+      fEl.style.strokeDasharray=fLen+' '+(DONUT_C-fLen);
+      fEl.style.strokeDashoffset='0';
+      rEl.style.strokeDasharray=(DONUT_C-fLen)+' '+fLen;
+      rEl.style.strokeDashoffset=String(-fLen);
+    }else{
+      fEl.style.strokeDasharray='0 '+DONUT_C;fEl.style.strokeDashoffset='0';
+      rEl.style.strokeDasharray='0 '+DONUT_C;rEl.style.strokeDashoffset='0';
+    }
+  }
+  setText('timeTotal',fmtMin(total));
+  setText('timeFwdVal',fmtBrief(fwd));
+  setText('timeRevVal',fmtBrief(rev));
 }
 function onAvatar(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=function(ev){S.avatar=ev.target.result;saveS();refreshProf()};r.readAsDataURL(f)}
 function saveNick(){S.nick=document.getElementById('nickInput').value.trim();saveS()}
-function resetAll(){if(confirm('确定重置所有数据？不可撤销！')){localStorage.removeItem(K);S=defS();saveS();refreshHome();refreshProf();refreshSet();toast('已重置')}}
+function resetAll(){
+  if(!confirm('确定重置所有数据？不可撤销！'))return;
+  try{localStorage.removeItem(K)}catch(e){}
+  S=defS();
+  saveS();
+  applyTheme();applyAnim();
+  refreshHome();refreshProf();refreshSet();buildAnimOpts();
+  toast('已重置');
+}
 
-// ===================== LAYER TRANSITION (动态模糊置换，无滑动) =====================
+// ===================== 学习时长统计（当日学习时间饼图数据源） =====================
+let sess=null;
+function beginStudy(m){if(sess)endStudy();sess={mode:m,last:Date.now(),saveAt:0}}
+function accrueStudy(){
+  if(!sess)return false;
+  const now=Date.now();
+  const hidden=document.visibilityState==='hidden';
+  const dt=(now-sess.last)/1000;
+  sess.last=now;
+  if(hidden||!(dt>0))return false;
+  const add=Math.min(dt,5);
+  const td=getToday();
+  if(!S.time[td]||typeof S.time[td]!=='object')S.time[td]={forward:0,review:0};
+  const rec=S.time[td];
+  rec[sess.mode]=(Number(rec[sess.mode])||0)+add;
+  if(now-(sess.saveAt||0)>20000){sess.saveAt=now;saveS()}
+  return true;
+}
+function endStudy(){
+  if(!sess)return;
+  accrueStudy();
+  sess=null;
+  saveS();
+}
+setInterval(function(){if(sess)accrueStudy()},1000);
+document.addEventListener('visibilitychange',function(){
+  if(document.visibilityState==='hidden'){accrueStudy();saveS()}
+  else if(sess){sess.last=Date.now()}
+});
+window.addEventListener('pagehide',function(){accrueStudy();saveS()});
+
+// ===================== LAYER TRANSITION（单词切换：模糊 / 粒子） =====================
+function clearStage(stageEl){
+  if(!stageEl)return;
+  const gen=(Number(stageEl.dataset.gen)||0)+1;
+  stageEl.dataset.gen=String(gen);
+  stageEl.dataset.swap='0';
+  stageEl.dataset.pending='';
+  stageEl.innerHTML='';
+}
 function mountLayer(stageEl,html,dir){
+  if(!stageEl)return null;
+  const gen=Number(stageEl.dataset.gen)||0;
+  const mode=animMode();
+  const rm=reduceMotion();
   let layer=stageEl.querySelector('.layer');
-  if(!layer){ // 首次：就地创建并清晰浮现
+  if(!layer){
     layer=document.createElement('div');
-    layer.className='layer in-init';
+    layer.className='layer '+(mode==='particle'?'pop-in':'in-init');
     layer.innerHTML=html;
     stageEl.appendChild(layer);
+    if(mode==='particle')FX.from(layer);
+    if(rm)layer.className='layer';
     return layer;
   }
   // 切换中：缓存最后一次请求，避免快速连点错乱
-  if(stageEl.dataset.swap==='1'){ stageEl.dataset.pending=html; return layer; }
+  if(stageEl.dataset.swap==='1'){stageEl.dataset.pending=html;return layer}
   stageEl.dataset.swap='1';
-  layer.classList.remove('in-init','blur-in');
-  layer.classList.add('blur-out');           // 当前单词高浓度模糊
-  setTimeout(()=>{
-    layer.innerHTML=html;                    // 模糊到顶后就地换词
-    layer.classList.remove('blur-out');
-    layer.classList.add('blur-in');          // 新单词由模糊逐渐清晰
-    setTimeout(()=>{
-      layer.classList.remove('blur-in');
+  const outCls=mode==='particle'?'pop-out':'blur-out';
+  const inCls=mode==='particle'?'pop-in':'blur-in';
+  const outMs=rm?0:WORD_OUT[mode];
+  const inMs=rm?0:WORD_IN[mode];
+  layer.classList.remove('in-init','blur-in','blur-out','pop-in','pop-out');
+  void layer.offsetWidth;
+  layer.classList.add(outCls);
+  if(mode==='particle')FX.from(layer);
+  setTimeout(function(){
+    if(Number(stageEl.dataset.gen)!==gen)return;   // 阶段已被清空/重建
+    layer.innerHTML=html;
+    layer.classList.remove(outCls);
+    void layer.offsetWidth;
+    layer.classList.add(inCls);
+    setTimeout(function(){
+      if(Number(stageEl.dataset.gen)!==gen)return;
+      layer.classList.remove(inCls);
       stageEl.dataset.swap='0';
-      if(stageEl.dataset.pending){           // 处理切换期间积压的请求
-        const p=stageEl.dataset.pending; stageEl.dataset.pending='';
-        mountLayer(stageEl,p,dir);
-      }
-    },460);
-  },360);
+      const pending=stageEl.dataset.pending;
+      if(pending){stageEl.dataset.pending='';mountLayer(stageEl,pending,dir)}
+    },inMs+20);
+  },outMs);
   return layer;
 }
-function clearStage(stageEl){stageEl.innerHTML=''}
+
+// ===================== 前进 / 复习：按钮放大为全屏蒙版 =====================
+function startForward(btn){enterLearning('forward',btn)}
+function startReview(btn){enterLearning('review',btn)}
+function enterLearning(kind,btn){
+  if(entryBusy||pgBusy)return;
+  let list;
+  if(kind==='forward'){
+    list=getAvail(S.stage);
+    if(!list.length){toast('当前阶段已经学完啦 🎉');return}
+  }else{
+    list=getLearned(S.stage);
+    if(!list.length){toast('还没有已学单词，先去前进学习吧');return}
+  }
+  entryBusy=true;
+  pgBusy=true;
+  showNav(false);
+  if(animMode()==='particle')FX.from(btn);   // 粒子模式：点击处先炸开一层粒子，与页面/单词切换保持同一手感
+  const pageEl=document.getElementById(kind==='forward'?'pageFlash':'pageLearn');
+  const homeEl=document.getElementById('pageHome');
+  runEntryTransition(btn,pageEl,homeEl,function(){
+    if(kind==='forward')beginForward(list);
+    else beginReview(list);
+  });
+}
+function runEntryTransition(btn,pageEl,homeEl,render){
+  const rm=reduceMotion();
+  const mask=document.getElementById('zoomMask');
+  const inner=mask?mask.querySelector('.zm-inner'):null;
+  const appEl=document.querySelector('.app');
+  const ar=appEl?appEl.getBoundingClientRect():null;
+  const vw=window.innerWidth||360;
+  const vh=window.innerHeight||640;
+  const appTop=ar?ar.top:0,appLeft=ar?ar.left:0;
+  const appRight=ar?vw-(ar.left+ar.width):0;
+  const appBottom=ar?vh-(ar.top+ar.height):0;
+  const br=(btn&&btn.getBoundingClientRect)?btn.getBoundingClientRect():null;
+  const hasRect=!!(br&&br.width>0&&br.height>0);
+  let bTop,bLeft,bRight,bBottom;
+  if(hasRect){
+    bLeft=Math.max(0,br.left);bTop=Math.max(0,br.top);
+    bRight=Math.max(0,vw-(br.left+br.width));
+    bBottom=Math.max(0,vh-(br.top+br.height));
+  }else{
+    bLeft=appLeft+34;bTop=appTop+vh*0.28;bRight=appRight+34;bBottom=vh-bTop-120;
+  }
+  // 1) 目标页先在蒙版之下就位并渲染（重置上次留下的滚动位置）
+  pageEl.classList.remove('page-in','page-out','enter-page');
+  pageEl.classList.add('active');
+  pageEl.scrollTop=0;
+  try{render()}catch(e){console.error('enter render failed',e)}
+  pageEl.classList.add('enter-page');
+  const kids=pageEl.children;
+  // 内里内容自上方错峰滑入：起步时间推迟到蒙版开始淡出附近，保证「逐渐显示」不是隔着毛玻璃
+  if(!rm){
+    const base=mask?ZOOM_CONTENT_DELAY:0;
+    for(let i=0;i<kids.length;i++)kids[i].style.animationDelay=(base+i*STAGGER)+'ms';
+  }
+  // 2) 主页内容反向退出（上移 + 轻微缩小 + 淡出）
+  if(homeEl){
+    homeEl.classList.remove('home-leaving');
+    void homeEl.offsetWidth;
+    homeEl.classList.add('home-leaving');
+  }
+  // 3) 蒙版立即出现在按钮位置（看起来就是被点的卡片）→ clip-path 展开到整页
+  if(mask&&!rm){
+    if(inner){
+      inner.innerHTML=btn?btn.innerHTML:'';
+      const cx=hasRect?br.left+br.width/2:vw/2;
+      const cy=hasRect?br.top+br.height/2:vh/2;
+      inner.style.left=cx+'px';
+      inner.style.top=cy+'px';
+    }
+    mask.classList.remove('show','expanded','fade');
+    mask.style.transition='none';
+    mask.style.clipPath='inset('+bTop+'px '+bRight+'px '+bBottom+'px '+bLeft+'px round 14px)';
+    void mask.offsetWidth;
+    mask.style.transition='';
+    mask.classList.add('show');
+    nextFrame(function(){
+      mask.style.clipPath='inset('+appTop+'px '+appRight+'px '+appBottom+'px '+appLeft+'px round 0px)';
+      mask.classList.add('expanded');
+    });
+  }
+  // 4) 收尾：蒙版淡出（内容已在滑入）→ 卸下蒙版与主页
+  const totalMs=rm?80:MT.entry;
+  setTimeout(function(){if(mask&&!rm)mask.classList.add('fade')},rm?0:ZOOM_FADE_AT);
+  setTimeout(function(){
+    if(mask){
+      mask.classList.remove('show','expanded','fade');
+      mask.style.transition='none';
+      mask.style.clipPath='';
+      void mask.offsetWidth;
+      mask.style.transition='';
+      if(inner)inner.innerHTML='';
+    }
+    if(!rm)for(let i=0;i<kids.length;i++)kids[i].style.animationDelay='';
+    if(homeEl)homeEl.classList.remove('active','home-leaving');
+    pageEl.classList.remove('enter-page');
+    entryBusy=false;
+    pgBusy=false;
+  },totalMs);
+}
 
 // ===================== FLASH (FORWARD browse) =====================
 let fwd=null;
-function startForward(){
-  let av=getAvail(S.stage);
-  if(!av.length){toast('当前阶段已经学完啦 🎉');return;}
-  fwd={list:av,idx:0,mode:'forward'};
-  const prev=document.querySelector('.page.active');
-  if(prev){
-    prev.classList.remove('blur-in');prev.classList.add('blur-out');
-    setTimeout(()=>prev.classList.remove('active','blur-out'),300);
-  }
-  const fl=document.getElementById('pageFlash');fl.classList.remove('blur-in','blur-out');
-  fl.classList.add('active');
-  document.getElementById('flashTitle').textContent='前进';
+function beginForward(list){
+  fwd={list:list,idx:0,mode:'forward'};
+  setText('flashTitle','前进');
+  document.getElementById('doneArea').style.display='none';
   showNav(false);
   clearStage(document.getElementById('flashStage'));
-  renderFlash(fwd.list[0],'init');
-  markWord(fwd.list[0]);
+  renderFlash(list[0],'init');
+  markWord(list[0]);
   updateFlashButtons();
+  beginStudy('forward');
   refreshHome();refreshProf();
 }
 function renderFlash(word,dir){
   let info=parseInfo(word);
   let html=`<div class="wtext">${esc(word)}</div><div class="wsub">${esc(info.pos)} · ${esc(info.zh)} · ${esc(info.range)}</div>`;
   mountLayer(document.getElementById('flashStage'),html,dir);
-  document.getElementById('flashMeta').textContent=(fwd.idx+1)+' / '+fwd.list.length;
+  setText('flashMeta',(fwd.idx+1)+' / '+fwd.list.length);
 }
 function flashNext(){
   if(!fwd)return;
@@ -775,24 +1348,18 @@ function updateFlashButtons(){
   document.getElementById('btnNext').disabled=(fwd.idx>=fwd.list.length-1);
 }
 
-// ===================== REVIEW (quiz, animations aligned) =====================
+// ===================== REVIEW (quiz) =====================
 let rev=null;
-function startReview(){
-  let l=getLearned(S.stage);
-  if(!l.length){toast('还没有已学单词，先去前进学习吧');return;}
-  rev={list:l,words:l.map(toWordObj),remaining:l.map(toWordObj),idx:0,ok:0,wrong:[],qtype:null,_dir:'next',mode:'review'};
-  shuffle(rev.words);rev.remaining=[...rev.words];
-  const prev=document.querySelector('.page.active');
-  if(prev){
-    prev.classList.remove('blur-in');prev.classList.add('blur-out');
-    setTimeout(()=>prev.classList.remove('active','blur-out'),300);
-  }
-  const ln=document.getElementById('pageLearn');ln.classList.remove('blur-in','blur-out');
-  ln.classList.add('active');
-  document.getElementById('learnTitle').textContent='复习';
+function beginReview(list){
+  clearStage(document.getElementById('qHead'));
+  rev={list:list,words:list.map(toWordObj),remaining:list.map(toWordObj),idx:0,ok:0,wrong:[],qtype:null,_dir:'next',mode:'review'};
+  shuffle(rev.words);
+  rev.remaining=[...rev.words];
+  setText('learnTitle','复习');
   showNav(false);
   document.getElementById('doneArea').style.display='none';
   startQ();
+  beginStudy('review');
 }
 function startQ(){
   let ss=rev;if(!ss)return;
@@ -805,7 +1372,8 @@ function startQ(){
   ss.qtype=types[rand(types.length)];
   if(ss.qtype==='match'&&ss.words.length<4)ss.qtype='choiceDef';
   renderQ(ss);
-  updateBar();saveS();
+  updateBar();
+  saveS();
 }
 function renderQ(ss){
   let w=ss.curWord,fb=document.getElementById('fb'),btn=document.getElementById('btnGo');
@@ -813,11 +1381,8 @@ function renderQ(ss){
   card.classList.remove('ok','err');
   fb.className='fb';btn.classList.remove('show');
 
-  // word head (animated, aligned with forward gray border transition)
   let headHTML;
-  if(ss.qtype==='spell'){
-    headHTML=`<div class="wtext" style="font-size:30px">${esc(w.zh)}</div>`;
-  }else if(ss.qtype==='choiceEn'){
+  if(ss.qtype==='spell'||ss.qtype==='choiceEn'){
     headHTML=`<div class="wtext" style="font-size:30px">${esc(w.zh)}</div>`;
   }else if(ss.qtype==='match'){
     headHTML=`<div class="wtext" style="font-size:21px;font-weight:800">连线匹配</div>`;
@@ -858,6 +1423,7 @@ function renderQ(ss){
 function checkSpell(){
   let inp=document.getElementById('spellIn');if(!inp)return;
   let ss=rev;if(!ss)return;let w=ss.curWord;
+  if(inp.disabled)return;
   let ok=inp.value.trim().toLowerCase()===w.en.toLowerCase();
   let card=document.getElementById('qCard'),fb=document.getElementById('fb'),btn=document.getElementById('btnGo');
   inp.disabled=true;
@@ -895,10 +1461,11 @@ function finishMatch(){
   else{card.classList.add('err');fb.className='fb show err';fb.textContent='✗ 有'+mState.wrongs+'次错误';ss.wrong.push(w)}
   go.classList.add('show');saveS();
 }
-function nextQ(){let ss=rev;if(!ss)return;ss.idx++;startQ()}
+function nextQ(){let ss=rev;if(!ss)return;startQ()}
 function finishS(){
   let ss=rev;if(!ss)return;
   if(ss.wrong.length>0){let w=ss.wrong.shift();ss.curWord=w;ss.qtype=['spell','choiceDef','choiceEn'][rand(3)];renderQ(ss);updateBar();saveS();return}
+  endStudy();
   let total=ss.words.length,ok=ss.ok;
   document.getElementById('qBody').innerHTML='';document.getElementById('qHead').innerHTML='';
   document.getElementById('fb').className='fb';document.getElementById('btnGo').classList.remove('show');
@@ -918,7 +1485,17 @@ function markWord(w){
   }
   saveS();
 }
-function updateBar(){let ss=rev;if(!ss)return;let pct=Math.min(Math.round((ss.idx/ss.words.length)*100),100);document.getElementById('learnFill').style.width=pct+'%';document.getElementById('learnCounter').textContent=(ss.idx+1)+' / '+ss.words.length}
+function updateBar(){
+  let ss=rev;if(!ss)return;
+  const total=ss.words.length||1;
+  const wrong=ss.wrong.length;
+  // 已掌握 = 第一轮已抽到 - 仍在错题重练队列里的词；重练阶段进度条不会卡在 100%
+  const mastered=Math.min(Math.max(ss.idx-wrong,0),total);
+  const pct=Math.min(Math.round(mastered/total*100),100);
+  const fill=document.getElementById('learnFill');
+  if(fill)fill.style.width=pct+'%';
+  setText('learnCounter',wrong>0?('错题重练 · 已掌握 '+mastered+' / '+total):(Math.max(ss.idx,1)+' / '+total));
+}
 
 // ===================== TOAST =====================
 function toast(msg){let t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),1900)}
@@ -926,10 +1503,28 @@ function toast(msg){let t=document.getElementById('toast');t.textContent=msg;t.c
 // ===================== INIT =====================
 (function(){
   applyTheme();
+  applyAnim();
   buildStageOpts();
+  buildAnimOpts();
   refreshHome();refreshSet();refreshProf();
   saveS();
 })();
+
+// 调试/测试钩子（不影响正常使用）
+window.__bcz={
+  get state(){return S},
+  defS:defS,animMode:animMode,setAnim:setAnim,applyAnim:applyAnim,
+  goPage:goPage,navTap:navTap,switchPage:switchPage,exitFlash:exitFlash,
+  startForward:startForward,startReview:startReview,
+  mountLayer:mountLayer,clearStage:clearStage,
+  refreshHome:refreshHome,refreshSet:refreshSet,refreshProf:refreshProf,
+  refreshProgress:refreshProgress,refreshTimeChart:refreshTimeChart,
+  beginStudy:beginStudy,accrueStudy:accrueStudy,endStudy:endStudy,
+  get session(){return sess},FX:FX,MT:MT,STAGES:STAGES,ANIMS:ANIMS,
+  PAGE_OUT:PAGE_OUT,PAGE_IN:PAGE_IN,WORD_OUT:WORD_OUT,WORD_IN:WORD_IN,ZOOM_IN:ZOOM_IN,
+  get fwd(){return fwd},get rev(){return rev},get curPage(){return curPage},
+  get pgBusy(){return pgBusy},get entryBusy(){return entryBusy}
+};
 </script>
 </body>
 </html>
