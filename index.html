@@ -470,6 +470,118 @@ img{max-width:100%;display:block}
 /* ===== TOAST ===== */
 .toast{position:fixed;left:50%;bottom:calc(var(--safe) + 100px);transform:translateX(-50%) translateY(20px);z-index:400;background:rgba(26,26,26,.92);color:#fff;padding:11px 20px;border-radius:22px;font-size:14px;font-weight:600;opacity:0;pointer-events:none;transition:all var(--dur-3) var(--ease-out);max-width:80%;text-align:center}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ===== 内嵌字体：阿里巴巴普惠体（仅字母子集，用于虚拟键盘/输入字母） ===== */
+@font-face{font-family:'PuHuiTi KB';src:url(data:font/woff2;base64,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) format('woff2');font-weight:100 900;font-style:normal;font-display:swap}
+
+/* ===== 复习：沉浸式拼写答题（虚拟键盘 / 输入框 / 对勾叉） ===== */
+.page-learn{padding-bottom:calc(var(--safe) + 8px);display:flex;flex-direction:column;overflow:hidden}
+.page-learn .learn-header,.page-learn .learn-bar,.page-learn .learn-counter{flex:none}
+.page-learn .learn-header{margin-bottom:14px}
+.page-learn .learn-bar{margin-bottom:12px}
+.page-learn .learn-counter{margin-bottom:6px}
+.q-stage{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(14px,4.2vh,26px);padding:2px 0 8px;width:100%}
+.q-prompt-wrap{text-align:center;position:relative;width:100%}
+.q-prompt-wrap.out{animation:promptOut 220ms var(--ease-in) both;will-change:filter,opacity,transform}
+@keyframes promptOut{0%{opacity:1;filter:blur(0);transform:translateY(0)}100%{opacity:0;filter:blur(16px);transform:translateY(-24px)}}
+.q-prompt-wrap.in{animation:blurIn 300ms var(--ease-out) both;will-change:filter,opacity}
+.q-pos{display:inline-block;font-size:12px;font-weight:700;color:var(--text2);border:1px solid var(--line);border-radius:7px;padding:3px 9px;margin-bottom:13px;letter-spacing:.3px}
+.q-zh{font-size:clamp(23px,6.6vw,31px);font-weight:800;letter-spacing:-.4px;line-height:1.38;font-family:var(--word-font);padding:0 6px;word-break:break-word;max-height:38vh;overflow-y:auto}
+.ans-wrap{width:100%;display:flex;justify-content:center}
+/* 空输入时是短短一个 r 角矩形，每打一个字母向外扩张 */
+.ans-box{
+  position:relative;height:58px;width:64px;min-width:64px;margin:0 auto;
+  display:flex;align-items:center;justify-content:center;
+  border:2px solid var(--line);border-radius:14px;background:transparent;padding:0 12px;
+  transition:width 300ms var(--ease-out),border-color 200ms var(--ease-out),background 200ms var(--ease-out);
+  overflow:hidden;user-select:none;-webkit-user-select:none;
+}
+.ans-box.ok{border-color:var(--green);background:var(--green-bg)}
+.ans-box.err{border-color:var(--red);background:var(--red-bg)}
+.ans-box.shake{animation:shake 320ms var(--ease-out)}
+.ans-letters{display:flex;align-items:center;justify-content:center;gap:1px;min-width:0;font-size:27px;line-height:1}
+.lt{
+  display:inline-block;font-family:'PuHuiTi KB',var(--font);font-size:inherit;font-weight:500;
+  line-height:1;color:var(--text);letter-spacing:0;
+  animation:ltIn 280ms var(--ease-out) both;will-change:transform,opacity,filter;
+}
+.lt-out{animation:ltOut 330ms var(--ease-out) both}
+.lt-dash{padding:0 3px}
+@keyframes ltIn{0%{opacity:0;transform:translateY(20px);filter:blur(9px)}55%{opacity:1;filter:blur(0)}100%{transform:translateY(0)}}
+@keyframes ltOut{0%{opacity:1;transform:translateY(0);filter:blur(0)}100%{opacity:0;transform:translateY(-24px);filter:blur(10px)}}
+.caret{width:2px;height:26px;border-radius:2px;background:var(--text3);animation:caretBlink 1.1s steps(1) infinite}
+@keyframes caretBlink{0%,49%{opacity:.55}50%,100%{opacity:0}}
+/* 对勾 / 叉：0.5s 描线 */
+.ans-mark{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
+.ans-mark svg{width:40px;height:40px;overflow:visible;opacity:0}
+.ans-mark path{fill:none;stroke-width:7;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:1}
+.ans-mark.ok path{stroke:var(--green)}
+.ans-mark.err path{stroke:var(--red)}
+.ans-mark.show svg{opacity:1;animation:markIn 500ms var(--ease-out) both}
+.ans-mark.show path{animation:markDraw 500ms var(--ease-out) both}
+@keyframes markIn{0%{transform:scale(.8)}62%{transform:scale(1.07)}100%{transform:scale(1)}}
+@keyframes markDraw{to{stroke-dashoffset:0}}
+.ans-hint{text-align:center;font-size:14px;color:var(--text2);min-height:20px;font-weight:500;line-height:1.5;padding:0 8px}
+.ans-hint b{color:var(--red);font-weight:800;letter-spacing:.4px}
+/* 虚拟键盘：透明底，与页面沉浸 */
+.kbd{flex:none;width:auto;margin:0 -20px;padding:4px 8px 2px;user-select:none;-webkit-user-select:none;touch-action:manipulation}
+.kbd.hide{display:none}
+.kbd-rows{display:flex;flex-direction:column;gap:5px}
+.kbd-row{display:flex;justify-content:center;gap:4px}
+.kbd-key{
+  flex:0 0 auto;width:calc((100% - 36px) / 10);max-width:48px;height:44px;border-radius:10px;
+  background:transparent;color:var(--text);
+  font-family:'PuHuiTi KB',var(--font);font-size:21px;font-weight:500;
+  display:flex;align-items:center;justify-content:center;
+  transition:background 110ms var(--ease-out),transform 110ms var(--ease-out),opacity 160ms var(--ease-out);
+  -webkit-tap-highlight-color:transparent;
+}
+.kbd-key:active{background:rgba(0,0,0,.07);transform:scale(.94)}
+[data-theme="dark"] .kbd-key:active{background:rgba(255,255,255,.1)}
+.kbd-key.dim{opacity:.32;pointer-events:none}
+.kbd-key.kbd-del svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.kbd-bottom{display:flex;gap:9px;margin-top:9px}
+.kbd-bottom button{
+  height:50px;border-radius:13px;font-size:16px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  transition:transform 110ms var(--ease-out),background 140ms var(--ease-out),opacity 160ms var(--ease-out);
+}
+.kbd-dunno{flex:1;color:var(--text2);background:rgba(0,0,0,.045);font-weight:600}
+[data-theme="dark"] .kbd-dunno{background:rgba(255,255,255,.07)}
+.kbd-enter{flex:1.8;color:var(--bg);background:var(--text)}
+.kbd-enter.next{color:var(--text);background:rgba(0,0,0,.06)}
+[data-theme="dark"] .kbd-enter.next{background:rgba(255,255,255,.1)}
+.kbd-enter:active,.kbd-dunno:active{transform:scale(.97)}
+.kbd-dunno.dim{opacity:.35;pointer-events:none}
+
+/* ===== 查漏补缺 ===== */
+.gap-actions{display:flex;gap:13px;margin:6px 0 18px}
+.gap-actions .btn-main{padding:26px 12px;gap:9px}
+.gap-actions .btn-label{font-size:17px}
+.gap-actions .btn-hint{font-size:11.5px;text-align:center;line-height:1.4}
+.gap-tip{font-size:12px;color:var(--text3);line-height:1.8;padding:0 4px}
+.missed-list{display:flex;flex-direction:column;gap:9px;padding-bottom:24px}
+.mi{background:var(--glass);border:1px solid var(--line);border-radius:var(--radius);padding:14px 15px;transition:border-color 200ms var(--ease-out)}
+.mi.open{border-color:var(--accent2)}
+.mi-top{display:flex;align-items:center;gap:10px;cursor:pointer}
+.mi-zh{flex:1;min-width:0;font-size:15px;font-weight:700;line-height:1.45;word-break:break-word}
+.mi-pos{flex:none;font-size:10.5px;color:var(--text2);border:1px solid var(--line);border-radius:6px;padding:2px 5px;font-weight:600}
+.mi-c{flex:none;font-size:11.5px;color:var(--red);font-weight:700;font-variant-numeric:tabular-nums}
+.mi-more{max-height:0;overflow:hidden;transition:max-height 300ms var(--ease-out)}
+.mi.open .mi-more{max-height:160px}
+.mi-en{margin-top:12px;font-size:20px;font-weight:600;letter-spacing:.6px;font-family:'PuHuiTi KB',var(--font);display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.mi-en small{font-size:11px;color:var(--text3);font-weight:500;letter-spacing:0;font-family:var(--font)}
+.mi-acts{display:flex;gap:8px;margin-top:12px}
+.mi-btn{flex:1;height:40px;border-radius:10px;font-size:13px;font-weight:700;border:1.5px solid var(--line);color:var(--text);display:flex;align-items:center;justify-content:center;transition:transform 120ms var(--ease-out)}
+.mi-btn:active{transform:scale(.97)}
+.mi-btn.primary{border-color:var(--accent);color:var(--accent)}
+.mi-empty{text-align:center;padding:64px 20px;color:var(--text2);font-size:14px;line-height:2}
+.mi-all{margin-bottom:4px}
+.mi-all .mi-btn{height:46px;font-size:14px;font-weight:800;border-radius:12px}
+.mi-all .mi-btn.primary{background:transparent}
+.ans-mark.hide{opacity:0;transition:opacity 120ms linear}
+.ans-mark{transition:opacity 120ms linear}
+
 </style>
 </head>
 <body data-theme="light">
@@ -586,6 +698,12 @@ img{max-width:100%;display:block}
       </div>
     </div>
     <div class="set-group">
+      <h3>查漏补缺</h3>
+      <div class="set-card">
+        <div class="set-row" onclick="openGapPage()"><span class="sl">查漏补缺</span><span class="sv"><span id="profGap">0 个错词</span><span class="arrow">›</span></span></div>
+      </div>
+    </div>
+    <div class="set-group">
       <h3>数据</h3>
       <div class="set-card">
         <div class="set-row" onclick="resetAll()"><span class="sl" style="color:var(--red)">重置所有数据</span><span class="sv"><span class="arrow">›</span></span></div>
@@ -618,28 +736,39 @@ img{max-width:100%;display:block}
       <button class="flash-btn next" id="btnNext" onclick="flashNext()">
         <svg viewBox="0 0 24 24" stroke-width="1.8"><polyline points="9 18 15 12 9 6"/></svg>
         下个
-        <span class="sub">学习新单词</span>
+        <span class="sub" id="flashNextSub">学习新单词</span>
       </button>
     </div>
   </div>
 
-  <!-- LEARN (REVIEW quiz) -->
-  <div class="page" id="pageLearn">
+  <!-- LEARN（复习 / 重拼：看中文+词性 → 虚拟键盘拼写） -->
+  <div class="page page-learn" id="pageLearn">
     <div class="learn-header">
-      <button class="learn-back" onclick="exitFlash()">
+      <button class="learn-back" onclick="exitLearn()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
       </button>
       <div class="learn-title" id="learnTitle">复习</div>
     </div>
     <div class="learn-bar"><div class="learn-fill" id="learnFill" style="width:0%"></div></div>
     <div class="learn-counter" id="learnCounter"></div>
-    <div id="qCard" class="q-card">
-      <div id="qHead" class="q-head"></div>
-      <div id="qBody" class="q-body"></div>
+    <div class="q-stage" id="qStage">
+      <div class="q-prompt-wrap" id="qPrompt"></div>
+      <div class="ans-wrap">
+        <div class="ans-box" id="ansBox">
+          <div class="ans-letters" id="ansLetters"></div>
+          <div class="ans-mark" id="ansMark"></div>
+        </div>
+      </div>
+      <div class="ans-hint" id="ansHint"></div>
     </div>
-    <div id="fb" class="fb"></div>
-    <button class="btn-go" id="btnGo" onclick="nextQ()">继续</button>
     <div id="doneArea" style="display:none"></div>
+    <div class="kbd" id="kbd">
+      <div class="kbd-rows" id="kbdRows"></div>
+      <div class="kbd-bottom">
+        <button type="button" class="kbd-dunno" id="kbDunno">不会</button>
+        <button type="button" class="kbd-enter" id="kbSubmit">提交</button>
+      </div>
+    </div>
   </div>
 
   <!-- ABOUT（关于页，从设置进入） -->
@@ -653,8 +782,8 @@ img{max-width:100%;display:block}
     <div class="about-hero">
       <img src="appIcon.png" alt="不白背" onerror="this.style.display='none'">
       <div class="about-name">不白背</div>
-      <div class="about-ver">BuBaiBei v2.2</div>
-      <p class="about-slogan">免费开源的英语词汇学习 PWA<br>分阶段词库 × 四种题型 × 智能复习，无广告、无注册，打开即用。</p>
+      <div class="about-ver">BuBaiBei v2.3</div>
+      <p class="about-slogan">免费开源的英语词汇学习 PWA<br>分阶段词库 × 虚拟键盘拼写复习 × 查漏补缺，无广告、无注册，打开即用。</p>
     </div>
     <div class="set-group">
       <h3>开发</h3>
@@ -684,6 +813,41 @@ img{max-width:100%;display:block}
       </div>
     </div>
     <div class="about-footer">感谢所有为开源事业做出贡献的开发者</div>
+  </div>
+
+  <!-- 查漏补缺（个人页进入，两个分区） -->
+  <div class="page" id="pageGap">
+    <div class="learn-header">
+      <button class="learn-back" onclick="closeGapPage()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div class="learn-title">查漏补缺</div>
+    </div>
+    <div class="gap-actions">
+      <button class="btn-main" onclick="openLearned()">
+        <svg viewBox="0 0 24 24" stroke-width="1.6"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H19v18H6.5A2.5 2.5 0 0 0 4 23"/><line x1="7.5" y1="8" x2="15.5" y2="8"/><line x1="7.5" y1="12" x2="15.5" y2="12"/></svg>
+        <span class="btn-label">温故</span>
+        <span class="btn-hint" id="gapLearnedHint">已学 0 词</span>
+      </button>
+      <button class="btn-main" onclick="openMissedPage()">
+        <svg viewBox="0 0 24 24" stroke-width="1.6"><path d="M12 3.5 2.8 20h18.4z"/><line x1="12" y1="9" x2="12" y2="14"/><circle cx="12" cy="17" r=".7" fill="currentColor" stroke="none"/></svg>
+        <span class="btn-label">补缺</span>
+        <span class="btn-hint" id="gapMissedHint">错词 0 个</span>
+      </button>
+    </div>
+    <div class="gap-tip" id="gapTip"></div>
+  </div>
+
+  <!-- 错词本（补缺分区） -->
+  <div class="page" id="pageMissed">
+    <div class="learn-header">
+      <button class="learn-back" onclick="closeMissedPage()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div class="learn-title">补缺 · 错词本</div>
+      <div class="flash-meta" id="missedMeta">0 词</div>
+    </div>
+    <div class="missed-list" id="missedList"></div>
   </div>
 
   <!-- BOTTOM NAV -->
@@ -722,7 +886,8 @@ img{max-width:100%;display:block}
 • kajweb/dict（原始词库来源）
 
 🔤 字体
-• Noto Sans SC / 阿里巴巴普惠体（免费粗体中文）
+• 阿里巴巴普惠体（键盘字母子集，已内嵌）
+• Noto Sans SC / PingFang SC（系统中文）
 • PingFang SC / Microsoft YaHei（系统字体）
 
 👤 开发者
@@ -743,7 +908,7 @@ img{max-width:100%;display:block}
 <script>
 // ===================== STATE =====================
 const K='bcz_data';
-function defS(){return{stage:'中考',learned:{},today:{},time:{},theme:'light',nick:'',avatar:''}}
+function defS(){return{stage:'中考',learned:{},today:{},time:{},theme:'light',nick:'',avatar:'',missed:{}}}
 let S=loadS();
 function loadS(){
   try{
@@ -753,6 +918,7 @@ function loadS(){
       if(!s.learned||typeof s.learned!=='object')s.learned={};
       if(!s.today||typeof s.today!=='object')s.today={};
       if(!s.time||typeof s.time!=='object')s.time={};
+      if(!s.missed||typeof s.missed!=='object')s.missed={};
       return s;
     }
   }catch(e){}
@@ -838,7 +1004,8 @@ function switchPage(prevEl,nwId){
   }
 }
 function goPage(p){
-  if(p===curPage||pgBusy||curPage==='about')return;
+  if(p===curPage||pgBusy)return;
+  if(curPage!=='home'&&curPage!=='settings'&&curPage!=='profile')return;
   if(!PAGE_ID[p])return;
   pgBusy=true;
   const prevEl=document.getElementById(PAGE_ID[curPage]);
@@ -854,13 +1021,18 @@ function navTap(el,p){if(p!==curPage)goPage(p,el)}
 function exitFlash(){
   if(entryBusy||pgBusy)return;
   endStudy();
-  pgBusy=true;
-  showNav(true);
-  curPage='home';
-  setNavActive('home');
-  const prev=document.querySelector('.page.active');
-  switchPage(prev,'pageHome');
-  refreshHome();refreshProf();
+  const mode=fwd?fwd.mode:'forward';
+  fwd=null;
+  pgBusy=true;showNav(false);
+  if(mode==='learned'){
+    curPage='gap';
+    refreshGap();
+    switchPage(document.querySelector('.page.active'),'pageGap');
+  }else{
+    curPage='home';showNav(true);setNavActive('home');
+    switchPage(document.querySelector('.page.active'),'pageHome');
+    refreshHome();refreshProf();
+  }
 }
 
 // ===================== HOME =====================
@@ -995,6 +1167,8 @@ function refreshProf(){
   setText('profTotal',total);
   setText('profDays',days);
   setText('profToday',todayCnt);
+  const gc=document.getElementById('profGap');
+  if(gc)gc.textContent=missedList(S.stage).length+' 个错词';
   refreshProgress();
   refreshTimeChart();
 }
@@ -1157,6 +1331,7 @@ function enterLearning(kind,btn){
   }
   entryBusy=true;
   pgBusy=true;
+  curPage='learn';
   showNav(false);
   const pageEl=document.getElementById(kind==='forward'?'pageFlash':'pageLearn');
   const homeEl=document.getElementById('pageHome');
@@ -1244,18 +1419,23 @@ function runEntryTransition(btn,pageEl,homeEl,render){
   },totalMs);
 }
 
-// ===================== FLASH (FORWARD browse) =====================
+// ===================== 浏览（前进 / 温故） =====================
 let fwd=null;
-function beginForward(list){
-  fwd={list:list,idx:0,mode:'forward'};
-  setText('flashTitle','前进');
-  document.getElementById('doneArea').style.display='none';
+function beginForward(list){beginFlash(list,'forward')}
+function beginLearned(list){beginFlash(list,'learned')}
+function beginFlash(list,mode){
+  if(!list||!list.length)return;
+  fwd={list:list,idx:0,mode:mode||'forward'};
+  setText('flashTitle',fwd.mode==='learned'?'温故':'前进');
+  setText('flashNextSub',fwd.mode==='learned'?'下一个单词':'学习新单词');
+  const da=document.getElementById('doneArea');
+  if(da)da.style.display='none';
   showNav(false);
   clearStage(document.getElementById('flashStage'));
   renderFlash(list[0],'init');
-  markWord(list[0]);
+  if(fwd.mode!=='learned')markWord(list[0]);
   updateFlashButtons();
-  beginStudy('forward');
+  beginStudy(fwd.mode==='learned'?'review':'forward');
   refreshHome();refreshProf();
 }
 function renderFlash(word,dir){
@@ -1266,141 +1446,475 @@ function renderFlash(word,dir){
 }
 function flashNext(){
   if(!fwd)return;
-  if(fwd.idx<fwd.list.length-1){fwd.idx++;renderFlash(fwd.list[fwd.idx],'next');markWord(fwd.list[fwd.idx]);updateFlashButtons();refreshHome();refreshProf();}
+  if(fwd.idx<fwd.list.length-1){
+    fwd.idx++;
+    renderFlash(fwd.list[fwd.idx],'next');
+    if(fwd.mode!=='learned')markWord(fwd.list[fwd.idx]);
+    updateFlashButtons();refreshHome();refreshProf();
+  }
 }
 function flashPrev(){
   if(!fwd)return;
   if(fwd.idx>0){fwd.idx--;renderFlash(fwd.list[fwd.idx],'prev');updateFlashButtons();}
 }
 function updateFlashButtons(){
-  document.getElementById('btnPrev').disabled=(fwd.idx<=0);
-  document.getElementById('btnNext').disabled=(fwd.idx>=fwd.list.length-1);
+  const p=document.getElementById('btnPrev'),n=document.getElementById('btnNext');
+  if(p)p.disabled=(fwd.idx<=0);
+  if(n)n.disabled=(fwd.idx>=fwd.list.length-1);
 }
 
-// ===================== REVIEW (quiz) =====================
-let rev=null;
-function beginReview(list){
-  clearStage(document.getElementById('qHead'));
-  rev={list:list,words:list.map(toWordObj),remaining:list.map(toWordObj),idx:0,ok:0,wrong:[],qtype:null,_dir:'next',mode:'review'};
-  shuffle(rev.words);
-  rev.remaining=[...rev.words];
-  setText('learnTitle','复习');
-  showNav(false);
-  document.getElementById('doneArea').style.display='none';
-  startQ();
-  beginStudy('review');
+// ===================== 查漏补缺（个人页 → 两个分区） =====================
+function openGapPage(){
+  if(pgBusy)return;
+  pgBusy=true;curPage='gap';showNav(false);
+  refreshGap();
+  switchPage(document.querySelector('.page.active'),'pageGap');
 }
-function startQ(){
-  let ss=rev;if(!ss)return;
-  let w;
-  if(ss.wrong.length>0){w=ss.wrong.shift();ss._dir='next';}
-  else if(ss.remaining.length>0){w=ss.remaining.splice(rand(ss.remaining.length),1)[0];ss.idx++;ss._dir='next';}
-  else{finishS();return;}
-  ss.curWord=w;
-  let types=['spell','choiceDef','choiceEn','match'];
-  ss.qtype=types[rand(types.length)];
-  if(ss.qtype==='match'&&ss.words.length<4)ss.qtype='choiceDef';
-  renderQ(ss);
+function closeGapPage(){
+  if(pgBusy)return;
+  pgBusy=true;curPage='profile';showNav(true);setNavActive('profile');
+  switchPage(document.querySelector('.page.active'),'pageProfile');
+  refreshProf();
+}
+function refreshGap(){
+  const st=S.stage;
+  const learned=getLearned(st).length;
+  const missed=missedList(st).length;
+  setText('gapLearnedHint','已学 '+learned+' 词');
+  setText('gapMissedHint','错词 '+missed+' 个');
+  const tip=document.getElementById('gapTip');
+  if(tip)tip.textContent=missed
+    ? '「补缺」里收着复习时答错或点「不会」的词，答对一次就会自动移出。'
+    : '复习时答错或点「不会」的单词会自动收进「补缺」，随时回来重拼。';
+}
+function openLearned(){
+  if(pgBusy)return;
+  const list=getLearned(S.stage);
+  if(!list.length){toast('还没有学过的单词');return}
+  pgBusy=true;curPage='flash';entryBusy=true;
+  showNav(false);
+  beginLearned(list);
+  switchPage(document.querySelector('.page.active'),'pageFlash');
+  setTimeout(function(){entryBusy=false},420);
+}
+function openMissedPage(){
+  if(pgBusy)return;
+  pgBusy=true;curPage='missed';showNav(false);
+  renderMissed();
+  switchPage(document.querySelector('.page.active'),'pageMissed');
+}
+function closeMissedPage(){
+  if(pgBusy)return;
+  pgBusy=true;curPage='gap';showNav(false);
+  refreshGap();
+  switchPage(document.querySelector('.page.active'),'pageGap');
+}
+function missedList(stage){
+  const m=S.missed[stage]||{};
+  return Object.keys(m).map(function(en){
+    const r=m[en]||{};
+    return {en:en,c:r.c||1,t:r.t||0};
+  }).sort(function(a,b){return b.t-a.t});
+}
+function fmtWhen(t){
+  if(!t)return '';
+  const d=new Date(t),n=new Date();
+  const pad=function(x){return x<10?'0'+x:''+x};
+  if(d.toDateString()===n.toDateString())return pad(d.getHours())+':'+pad(d.getMinutes());
+  return pad(d.getMonth()+1)+'-'+pad(d.getDate());
+}
+function renderMissed(){
+  const box=document.getElementById('missedList');
+  if(!box)return;
+  const list=missedList(S.stage);
+  setText('missedMeta',list.length+' 词');
+  if(!list.length){
+    box.innerHTML='<div class="mi-empty">暂时没有错词 🎉<br>复习时答错或点「不会」的单词会自动收进这里。</div>';
+    return;
+  }
+  box.innerHTML='<div class="mi-all"><button type="button" class="mi-btn primary" data-act="all">全部重拼 · '+list.length+' 词</button></div>'+list.map(function(o){
+    const info=parseInfo(o.en);
+    return '<div class="mi" data-w="'+esc(o.en)+'">'+
+      '<div class="mi-top">'+
+        '<span class="mi-zh">'+esc(info.zh)+'</span>'+
+        (info.pos&&info.pos!=='—'?'<span class="mi-pos">'+esc(info.pos)+'</span>':'')+
+        '<span class="mi-c">错 '+o.c+' 次</span>'+
+      '</div>'+
+      '<div class="mi-more">'+
+        '<div class="mi-en">'+esc(o.en)+'<small>'+fmtWhen(o.t)+'</small></div>'+
+        '<div class="mi-acts">'+
+          '<button type="button" class="mi-btn primary" data-act="retry">重拼</button>'+
+          '<button type="button" class="mi-btn" data-act="known">已掌握</button>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+function bindMissedList(){
+  const box=document.getElementById('missedList');
+  if(!box||box.dataset.bound)return;
+  box.dataset.bound='1';
+  box.addEventListener('click',function(e){
+    const all=e.target.closest('.mi-btn[data-act="all"]');
+    if(all){startRetryAll();return}
+    const btn=e.target.closest('.mi-btn');
+    const row=e.target.closest('.mi');
+    if(!row)return;
+    const w=row.dataset.w;
+    if(btn){
+      e.stopPropagation();
+      if(btn.dataset.act==='retry')startRetry(w);
+      else markKnown(w);
+      return;
+    }
+    const wasOpen=row.classList.contains('open');
+    box.querySelectorAll('.mi.open').forEach(function(x){x.classList.remove('open')});
+    if(!wasOpen)row.classList.add('open');
+  });
+}
+function markKnown(en){
+  clearMissed(en);
+  renderMissed();refreshGap();refreshProf();
+  toast('已移出错词本');
+}
+function startRetryAll(){
+  if(pgBusy)return;
+  const list=missedList(S.stage);
+  if(!list.length){toast('错词本已经空了');return}
+  pgBusy=true;curPage='learn';showNav(false);
+  beginReview(list.map(function(o){return o.en}),{mode:'retryAll'});
+  switchPage(document.querySelector('.page.active'),'pageLearn');
+}
+function startRetry(en){
+  if(pgBusy)return;
+  pgBusy=true;curPage='learn';showNav(false);
+  beginReview([en],{mode:'retry'});
+  switchPage(document.querySelector('.page.active'),'pageLearn');
+}
+
+// ===================== 复习 / 重拼：看中文+词性 → 虚拟键盘拼写 =====================
+const KB_ROWS=[
+  ['q','w','e','r','t','y','u','i','o','p'],
+  ['a','s','d','f','g','h','j','k','l'],
+  ['z','x','c','v','b','n','m','-']
+];
+const BASE_W=64,PER_CHAR=19,MAX_LEN=26;
+const MARK_OK='<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M10.5 25.5 19.5 34.5 37.5 13.5" pathLength="1"/></svg>';
+const MARK_NO='<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M15 15 33 33" pathLength="1"/><path d="M33 15 15 33" pathLength="1"/></svg>';
+const DEL_SVG='<svg viewBox="0 0 24 24"><path d="M9 5h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H9l-5-7z"/><line x1="12.5" y1="9.5" x2="17.5" y2="14.5"/><line x1="17.5" y1="9.5" x2="12.5" y2="14.5"/></svg>';
+let rev=null;
+let advTimer=0;
+let promptToken=0;
+
+function beginReview(list,opts){
+  opts=opts||{};
+  if(!list||!list.length){toast('还没有已学单词，先去前进学习吧');return}
+  clearTimeout(advTimer);
+  var q=list.slice();shuffle(q);
+  rev={mode:opts.mode||'review',total:list.length,queue:q,idx:0,ok:0,wrong:[],cur:null,answered:false,typed:''};
+  setText('learnTitle',rev.mode==='retry'?'重拼':(rev.mode==='retryAll'?'错词重拼':'复习'));
+  const da=document.getElementById('doneArea');
+  if(da){da.style.display='none';da.innerHTML=''}
+  const kbd=document.getElementById('kbd');
+  if(kbd)kbd.classList.remove('hide');
+  const stg=document.getElementById('qStage');
+  if(stg)stg.style.display='';
+  showNav(false);
+  beginStudy('review');
+  startQ(true);
+}
+function startQ(instant){
+  const ss=rev;if(!ss)return;
+  clearTimeout(advTimer);
+  if(!ss.queue.length){finishS();return}
+  ss.cur=toWordObj(ss.queue.shift());
+  ss.idx++;ss.answered=false;ss.typed='';
+  renderQ(instant);
   updateBar();
+}
+function renderQ(instant){
+  const ss=rev;if(!ss)return;
+  const w=ss.cur;
+  const pos=(w.pos&&w.pos!=='—')?'<div class="q-pos">'+esc(w.pos)+'</div>':'';
+  const len=(w.zh||'').length;
+  const fs=len>90?16:(len>50?18:(len>26?21:0));
+  swapPrompt(pos+'<div class="q-zh"'+(fs?' style="font-size:'+fs+'px"':'')+'>'+esc(w.zh)+'</div>',instant);
+  const box=document.getElementById('ansBox');
+  if(box){box.classList.remove('ok','err','shake');box.style.width=BASE_W+'px'}
+  const ls=document.getElementById('ansLetters');
+  if(ls){ls.innerHTML='<span class="caret" id="ansCaret"></span>';ls.style.fontSize='27px'}
+  hideMark();
+  setHint('');
+  setKbd('answer');
+  document.querySelectorAll('#kbdRows .kbd-key').forEach(function(k){k.classList.remove('dim')});
+  const dn=document.getElementById('kbDunno');
+  if(dn)dn.classList.remove('dim');
+}
+function swapPrompt(html,instant){
+  const el=document.getElementById('qPrompt');
+  if(!el)return;
+  const token=++promptToken;
+  if(instant||reduceMotion()){
+    el.innerHTML=html;el.classList.remove('out','in');
+    return;
+  }
+  el.classList.remove('in');
+  void el.offsetWidth;
+  el.classList.add('out');
+  setTimeout(function(){
+    if(token!==promptToken)return;
+    el.innerHTML=html;
+    el.classList.remove('out');
+    void el.offsetWidth;
+    el.classList.add('in');
+    setTimeout(function(){if(token===promptToken)el.classList.remove('in')},330);
+  },190);
+}
+function growBox(){
+  const ss=rev;if(!ss)return;
+  const box=document.getElementById('ansBox');
+  const wrap=document.getElementById('ansLetters');
+  if(!box)return;
+  const vw=window.innerWidth||360;
+  const n=ss.typed.length;
+  const max=Math.min(vw*0.92,vw-72);
+  const w=Math.min(BASE_W+n*PER_CHAR,Math.max(BASE_W,max));
+  box.style.width=w+'px';
+  if(wrap){
+    const avail=Math.max(40,w-28);
+    const fs=Math.min(27,Math.floor(avail/Math.max(n*0.56,1)));
+    wrap.style.fontSize=Math.max(14,fs)+'px';
+  }
+}
+function typeChar(ch){
+  const ss=rev;if(!ss||ss.answered)return;
+  if(ss.typed.length>=MAX_LEN)return;
+  ss.typed+=ch;
+  const wrap=document.getElementById('ansLetters');
+  if(!wrap)return;
+  const caret=document.getElementById('ansCaret');
+  if(caret)caret.remove();
+  const s=document.createElement('span');
+  s.className='lt'+(ch==='-'?' lt-dash':'');
+  s.textContent=ch;
+  wrap.appendChild(s);
+  growBox();
+  if(navigator.vibrate){try{navigator.vibrate(7)}catch(e){}}
+}
+function delChar(){
+  const ss=rev;if(!ss||ss.answered||!ss.typed)return;
+  ss.typed=ss.typed.slice(0,-1);
+  const wrap=document.getElementById('ansLetters');
+  if(!wrap)return;
+  const items=wrap.querySelectorAll('.lt');
+  const last=items[items.length-1];
+  if(last){
+    last.classList.add('lt-out');
+    setTimeout(function(){if(last.parentNode)last.parentNode.removeChild(last)},330);
+  }
+  if(!ss.typed){
+    const c=document.createElement('span');
+    c.className='caret';c.id='ansCaret';
+    wrap.appendChild(c);
+  }
+  growBox();
+}
+function flyLetters(){
+  const wrap=document.getElementById('ansLetters');
+  if(!wrap)return;
+  const caret=document.getElementById('ansCaret');
+  if(caret)caret.remove();
+  wrap.querySelectorAll('.lt').forEach(function(el){
+    el.classList.add('lt-out');
+    setTimeout(function(){if(el.parentNode)el.parentNode.removeChild(el)},340);
+  });
+}
+function showMark(ok){
+  const m=document.getElementById('ansMark');
+  if(!m)return;
+  m.className='ans-mark';
+  m.innerHTML=ok?MARK_OK:MARK_NO;
+  void m.offsetWidth;
+  m.classList.add(ok?'ok':'err','show');
+}
+function hideMark(){
+  const m=document.getElementById('ansMark');
+  if(!m)return;
+  m.className='ans-mark';
+  m.innerHTML='';
+}
+function setHint(html){
+  const h=document.getElementById('ansHint');
+  if(h)h.innerHTML=html||'';
+}
+function setKbd(mode){
+  const enter=document.getElementById('kbSubmit');
+  const dunno=document.getElementById('kbDunno');
+  const kbd=document.getElementById('kbd');
+  if(!enter)return;
+  if(mode==='answer'){
+    enter.textContent='提交';enter.classList.remove('next');
+    if(dunno)dunno.style.display='flex';
+    if(kbd)kbd.classList.remove('hide');
+  }else if(mode==='next'){
+    enter.textContent='继续';enter.classList.add('next');
+    if(dunno)dunno.style.display='none';
+  }else if(mode==='done'){
+    if(kbd)kbd.classList.add('hide');
+  }
+}
+function shakeBox(){
+  const box=document.getElementById('ansBox');
+  if(!box)return;
+  box.classList.remove('shake');
+  void box.offsetWidth;
+  box.classList.add('shake');
+  setTimeout(function(){box.classList.remove('shake')},340);
+}
+function submitAnswer(){
+  const ss=rev;if(!ss)return;
+  if(ss.answered){advance();return}
+  if(!ss.typed){shakeBox();return}
+  const ok=ss.typed.toLowerCase()===ss.cur.en.toLowerCase();
+  finishAnswer(ok);
+}
+function dunno(){
+  const ss=rev;if(!ss||ss.answered)return;
+  finishAnswer(false);
+}
+function finishAnswer(ok){
+  const ss=rev;if(!ss)return;
+  ss.answered=true;
+  const box=document.getElementById('ansBox');
+  if(box)box.classList.add(ok?'ok':'err');
+  flyLetters();
+  showMark(ok);
+  setKbd('next');
+  document.querySelectorAll('#kbdRows .kbd-key').forEach(function(k){k.classList.add('dim')});
+  const dn=document.getElementById('kbDunno');
+  if(dn)dn.classList.add('dim');
+  if(ok){
+    ss.ok++;
+    if(S.missed[S.stage]&&S.missed[S.stage][ss.cur.en])clearMissed(ss.cur.en);
+    advTimer=setTimeout(function(){if(rev===ss)advance()},1000);
+  }else{
+    ss.wrong.push(ss.cur.en);
+    markMissed(ss.cur.en);
+    setHint('正确答案：<b>'+esc(ss.cur.en)+'</b>');
+  }
   saveS();
 }
-function renderQ(ss){
-  let w=ss.curWord,fb=document.getElementById('fb'),btn=document.getElementById('btnGo');
-  let card=document.getElementById('qCard');
-  card.classList.remove('ok','err');
-  fb.className='fb';btn.classList.remove('show');
-
-  let headHTML;
-  if(ss.qtype==='spell'||ss.qtype==='choiceEn'){
-    headHTML=`<div class="wtext" style="font-size:30px">${esc(w.zh)}</div>`;
-  }else if(ss.qtype==='match'){
-    headHTML=`<div class="wtext" style="font-size:21px;font-weight:800">连线匹配</div>`;
-  }else{
-    headHTML=`<div class="q-word">${esc(w.en)}</div><div class="q-phonetic">${esc(w.pos)}</div>`;
-  }
-  mountLayer(document.getElementById('qHead'),headHTML,ss._dir);
-
-  // body
-  let body=document.getElementById('qBody');
-  if(ss.qtype==='spell'){
-    body.innerHTML=`<div class="q-prompt">根据释义拼写单词</div><input class="spell-input" id="spellIn" placeholder="输入英文单词..." autocomplete="off" autocorrect="off" autocapitalize="off" style="margin:0 auto"><button class="btn-go show" id="spellSubmit" onclick="checkSpell()" style="margin-top:14px;max-width:280px;background:transparent;color:var(--accent);border-color:var(--accent)">提交</button>`;
-    let inp=body.querySelector('#spellIn');setTimeout(()=>inp.focus(),350);
-    inp.addEventListener('keydown',e=>{if(e.key==='Enter')checkSpell()});
-  }else if(ss.qtype==='choiceDef'){
-    let pool=ss.words.filter(x=>x.en!==w.en);
-    if(pool.length<3){ss.qtype='spell';renderQ(ss);return}
-    shuffle(pool);let opts=[w,...pool.slice(0,3)];shuffle(opts);
-    body.innerHTML=`<div class="q-prompt">选择正确的中文释义</div><div class="choices">`+opts.map(o=>`<button class="choice" data-ok="${o.en===w.en}">${esc(o.zh)}</button>`).join('')+`</div>`;
-    body.querySelectorAll('.choice').forEach(b=>b.addEventListener('click',()=>checkChoice(b)));
-  }else if(ss.qtype==='choiceEn'){
-    let pool=ss.words.filter(x=>x.en!==w.en);
-    if(pool.length<3){ss.qtype='spell';renderQ(ss);return}
-    shuffle(pool);let opts=[w,...pool.slice(0,3)];shuffle(opts);
-    body.innerHTML=`<div class="q-prompt">选择正确的英文单词</div><div class="choices">`+opts.map(o=>`<button class="choice" data-ok="${o.en===w.en}">${esc(o.en)}</button>`).join('')+`</div>`;
-    body.querySelectorAll('.choice').forEach(b=>b.addEventListener('click',()=>checkChoice(b)));
-  }else if(ss.qtype==='match'){
-    let pool=ss.words.filter(x=>x.en!==w.en);
-    let others=pool.slice(0,3);shuffle(others);
-    let mw=[w,...others];shuffle(mw);
-    let enL=[...mw],zhL=[...mw];shuffle(zhL);
-    body.innerHTML=`<div class="q-prompt">先点英文单词，再点对应中文</div><div class="match-wrap"><div class="match-col" id="matchEn">`+enL.map(x=>`<div class="match-it match-en" data-w="${esc(x.en)}">${esc(x.en)}</div>`).join('')+`</div><div class="match-col" id="matchZh">`+zhL.map(x=>`<div class="match-it match-zh" data-w="${esc(x.en)}">${esc(x.zh)}</div>`).join('')+`</div></div>`;
-    initMatch();
-  }
-  body.classList.remove('fade-in');void body.offsetWidth;body.classList.add('fade-in');
-  ss._dir='next';
+function advance(){
+  const ss=rev;if(!ss)return;
+  clearTimeout(advTimer);
+  const box=document.getElementById('ansBox');
+  if(box){box.classList.remove('ok','err');box.style.width=BASE_W+'px'}
+  const ls=document.getElementById('ansLetters');
+  if(ls){ls.innerHTML='<span class="caret" id="ansCaret"></span>';ls.style.fontSize='27px'}
+  hideMark();
+  setHint('');
+  setKbd('answer');
+  document.querySelectorAll('#kbdRows .kbd-key').forEach(function(k){k.classList.remove('dim')});
+  const dn=document.getElementById('kbDunno');
+  if(dn)dn.classList.remove('dim');
+  ss.answered=false;ss.typed='';
+  setTimeout(function(){
+    if(rev!==ss)return;
+    startQ(false);
+  },260);
 }
-function checkSpell(){
-  let inp=document.getElementById('spellIn');if(!inp)return;
-  let ss=rev;if(!ss)return;let w=ss.curWord;
-  if(inp.disabled)return;
-  let ok=inp.value.trim().toLowerCase()===w.en.toLowerCase();
-  let card=document.getElementById('qCard'),fb=document.getElementById('fb'),btn=document.getElementById('btnGo');
-  inp.disabled=true;
-  if(ok){inp.classList.add('ok');card.classList.add('ok');fb.className='fb show ok';fb.textContent='✓ 正确';ss.ok++}
-  else{inp.classList.add('err');card.classList.add('err');fb.className='fb show err';fb.innerHTML='✗ 错误，正确答案：<strong>'+esc(w.en)+'</strong>（'+esc(w.zh)+'）';ss.wrong.push(w)}
-  btn.classList.add('show');saveS();
+function updateBar(){
+  const ss=rev;if(!ss)return;
+  const total=ss.total||1;
+  const done=Math.min(ss.idx,total);
+  const pct=Math.min(Math.round(done/total*100),100);
+  const fill=document.getElementById('learnFill');
+  if(fill)fill.style.width=pct+'%';
+  setText('learnCounter',ss.mode==='retry'?'错词重拼':done+' / '+total);
 }
-function checkChoice(btn){
-  let ss=rev;if(!ss)return;let w=ss.curWord;
-  let ok=btn.dataset.ok==='true';
-  let card=document.getElementById('qCard'),fb=document.getElementById('fb'),go=document.getElementById('btnGo');
-  let body=document.getElementById('qBody');
-  body.querySelectorAll('.choice').forEach(b=>{b.disabled=true;if(b.dataset.ok==='true')b.classList.add('ok');if(b===btn&&!ok)b.classList.add('err')});
-  if(ok){card.classList.add('ok');fb.className='fb show ok';fb.textContent='✓ 正确';ss.ok++}
-  else{card.classList.add('err');fb.className='fb show err';fb.innerHTML='✗ 错误，正确答案：<strong>'+esc(w.en)+'</strong> — '+esc(w.zh);ss.wrong.push(w)}
-  go.classList.add('show');saveS();
-}
-let mState={sel:null,matched:0,total:4,wrongs:0};
-function initMatch(){
-  mState={sel:null,matched:0,total:4,wrongs:0};
-  let body=document.getElementById('qBody');
-  body.querySelectorAll('.match-en').forEach(e=>e.addEventListener('click',()=>{if(e.classList.contains('done'))return;body.querySelectorAll('.match-en').forEach(x=>x.classList.remove('sel'));e.classList.add('sel');mState.sel=e}));
-  body.querySelectorAll('.match-zh').forEach(e=>e.addEventListener('click',()=>{
-    if(e.classList.contains('done')||!mState.sel)return;
-    let en=mState.sel;
-    if(en.dataset.w===e.dataset.w){en.classList.add('done');en.classList.remove('sel');e.classList.add('done');mState.matched++;mState.sel=null;if(mState.matched>=mState.total)finishMatch(true)}
-    else{e.classList.add('flash');setTimeout(()=>e.classList.remove('flash'),350);mState.wrongs++;en.classList.remove('sel');mState.sel=null}
-  }));
-}
-function finishMatch(){
-  let ss=rev;if(!ss)return;let w=ss.curWord;
-  let card=document.getElementById('qCard'),fb=document.getElementById('fb'),go=document.getElementById('btnGo');
-  let ok=mState.wrongs===0;
-  if(ok){card.classList.add('ok');fb.className='fb show ok';fb.textContent='✓ 全部正确';ss.ok++}
-  else{card.classList.add('err');fb.className='fb show err';fb.textContent='✗ 有'+mState.wrongs+'次错误';ss.wrong.push(w)}
-  go.classList.add('show');saveS();
-}
-function nextQ(){let ss=rev;if(!ss)return;startQ()}
 function finishS(){
-  let ss=rev;if(!ss)return;
-  if(ss.wrong.length>0){let w=ss.wrong.shift();ss.curWord=w;ss.qtype=['spell','choiceDef','choiceEn'][rand(3)];renderQ(ss);updateBar();saveS();return}
+  const ss=rev;if(!ss)return;
   endStudy();
-  let total=ss.words.length,ok=ss.ok;
-  document.getElementById('qBody').innerHTML='';document.getElementById('qHead').innerHTML='';
-  document.getElementById('fb').className='fb';document.getElementById('btnGo').classList.remove('show');
-  let da=document.getElementById('doneArea');da.style.display='block';
-  da.innerHTML=`<div class="done-card"><div class="done-icon">${ok>=total*.8?'🎉':'💪'}</div><h2>复习完成！</h2><p>${ok>=total*.8?'太棒了，巩固得很扎实！':'继续加油，温故而知新！'}</p><div class="done-stats"><div><div class="ds-num">${ok}</div><div class="ds-label">正确</div></div><div><div class="ds-num">${total-ok}</div><div class="ds-label">需加强</div></div></div><button class="btn-go show" onclick="exitFlash()" style="background:var(--accent);color:var(--bg);border-color:var(--accent)">返回主页</button></div>`;
+  const total=ss.total,ok=ss.ok,bad=Math.max(total-ok,0);
+  const retry=ss.mode==='retry'||ss.mode==='retryAll';
+  const single=ss.mode==='retry';
+  const good=ok>=total*0.8;
+  const da=document.getElementById('doneArea');
+  const box=document.getElementById('ansBox');
+  if(box){box.classList.remove('ok','err');box.style.width=BASE_W+'px'}
+  const ls=document.getElementById('ansLetters');
+  if(ls)ls.innerHTML='';
+  hideMark();setHint('');
+  setKbd('done');
+  const stg=document.getElementById('qStage');
+  if(stg)stg.style.display='none';
+  const p=document.getElementById('qPrompt');
+  if(p)p.innerHTML='';
+  if(!da)return;
+  da.style.display='block';
+  const primary='background:var(--accent);color:var(--bg);border-color:var(--accent)';
+  const secondary='margin-top:10px;background:transparent;color:var(--text);border-color:var(--line)';
+  da.innerHTML='<div class="done-card">'+
+    '<div class="done-icon">'+(good?'🎉':'💪')+'</div>'+
+    '<h2>'+(single?'重拼完成！':(retry?'错词重拼完成！':'复习完成！'))+'</h2>'+
+    '<p>'+(good?(single?'这个词已经拿下了':'太棒了，错词清掉不少！'):(single?'稍后再回错词本多来两遍':'没记住的还留在错词本里，明天再来'))+'</p>'+
+    '<div class="done-stats"><div><div class="ds-num">'+ok+'</div><div class="ds-label">正确</div></div>'+
+    '<div><div class="ds-num">'+bad+'</div><div class="ds-label">需加强</div></div></div>'+
+    '<button class="btn-go show" onclick="exitLearn()" style="'+primary+'">'+(retry?'返回错词本':'返回主页')+'</button>'+
+    (bad>0&&!retry?'<button class="btn-go show" onclick="goMissedFromDone()" style="'+secondary+'">去查漏补缺</button>':'')+
+  '</div>';
 }
+function goMissedFromDone(){
+  rev=null;
+  pgBusy=true;curPage='missed';showNav(false);
+  renderMissed();
+  switchPage(document.querySelector('.page.active'),'pageMissed');
+}
+function exitLearn(){
+  if(pgBusy)return;
+  endStudy();
+  const mode=rev?rev.mode:'review';
+  rev=null;
+  clearTimeout(advTimer);
+  pgBusy=true;showNav(false);
+  if(mode==='retry'||mode==='retryAll'){
+    curPage='missed';
+    renderMissed();
+    switchPage(document.querySelector('.page.active'),'pageMissed');
+  }else{
+    curPage='home';showNav(true);setNavActive('home');
+    switchPage(document.querySelector('.page.active'),'pageHome');
+    refreshHome();refreshProf();
+  }
+}
+function bindKbd(){
+  const rows=document.getElementById('kbdRows');
+  if(!rows||rows.dataset.built)return;
+  rows.dataset.built='1';
+  rows.innerHTML=KB_ROWS.map(function(r,i){
+    return '<div class="kbd-row">'+r.map(function(k){
+      return '<button type="button" class="kbd-key" data-k="'+k+'">'+k+'</button>';
+    }).join('')+(i===2?'<button type="button" class="kbd-key kbd-del" data-k="del">'+DEL_SVG+'</button>':'')+'</div>';
+  }).join('');
+  rows.addEventListener('click',function(e){
+    const b=e.target.closest('.kbd-key');
+    if(!b)return;
+    const k=b.dataset.k;
+    if(k==='del')delChar();else typeChar(k);
+  });
+  const sub=document.getElementById('kbSubmit');
+  if(sub)sub.addEventListener('click',submitAnswer);
+  const dn=document.getElementById('kbDunno');
+  if(dn)dn.addEventListener('click',dunno);
+}
+document.addEventListener('keydown',function(e){
+  if(curPage!=='learn'||!rev)return;
+  const da=document.getElementById('doneArea');
+  if(da&&da.style.display!=='none')return;
+  if(e.key==='Enter'){e.preventDefault();submitAnswer();return}
+  if(e.key==='Backspace'){e.preventDefault();delChar();return}
+  if(e.key.length===1&&/[a-zA-Z-]/.test(e.key)){e.preventDefault();typeChar(e.key.toLowerCase())}
+});
 
 // ===================== MARK / STATS =====================
 function markWord(w){
@@ -1414,16 +1928,21 @@ function markWord(w){
   }
   saveS();
 }
-function updateBar(){
-  let ss=rev;if(!ss)return;
-  const total=ss.words.length||1;
-  const wrong=ss.wrong.length;
-  // 已掌握 = 第一轮已抽到 - 仍在错题重练队列里的词；重练阶段进度条不会卡在 100%
-  const mastered=Math.min(Math.max(ss.idx-wrong,0),total);
-  const pct=Math.min(Math.round(mastered/total*100),100);
-  const fill=document.getElementById('learnFill');
-  if(fill)fill.style.width=pct+'%';
-  setText('learnCounter',wrong>0?('错题重练 · 已掌握 '+mastered+' / '+total):(Math.max(ss.idx,1)+' / '+total));
+function markMissed(en){
+  const st=S.stage;
+  if(!S.missed[st])S.missed[st]={};
+  const m=S.missed[st][en]||{c:0,t:0};
+  m.c=(Number(m.c)||0)+1;
+  m.t=Date.now();
+  S.missed[st][en]=m;
+  saveS();
+}
+function clearMissed(en){
+  const st=S.stage;
+  if(S.missed[st]&&S.missed[st][en]){
+    delete S.missed[st][en];
+    saveS();
+  }
 }
 
 // ===================== TOAST =====================
@@ -1435,6 +1954,8 @@ function toast(msg){let t=document.getElementById('toast');t.textContent=msg;t.c
   buildStageOpts();
   refreshHome();refreshSet();refreshProf();
   initDock();
+  bindKbd();
+  bindMissedList();
   saveS();
 })();
 
@@ -1449,10 +1970,16 @@ window.__bcz={
   mountLayer:mountLayer,clearStage:clearStage,
   refreshHome:refreshHome,refreshSet:refreshSet,refreshProf:refreshProf,
   refreshProgress:refreshProgress,refreshTimeChart:refreshTimeChart,
+  flashNext:flashNext,flashPrev:flashPrev,beginFlash:beginFlash,beginForward:beginForward,beginLearned:beginLearned,
   beginStudy:beginStudy,accrueStudy:accrueStudy,endStudy:endStudy,
   get session(){return sess},MT:MT,STAGES:STAGES,
   PAGE_OUT:PAGE_OUT,PAGE_IN:PAGE_IN,WORD_OUT:WORD_OUT,WORD_IN:WORD_IN,ZOOM_IN:ZOOM_IN,
   get fwd(){return fwd},get rev(){return rev},get curPage(){return curPage},
+  beginReview:beginReview,startRetry:startRetry,startRetryAll:startRetryAll,submitAnswer:submitAnswer,advance:advance,exitLearn:exitLearn,
+  typeChar:typeChar,delChar:delChar,openGapPage:openGapPage,closeGapPage:closeGapPage,
+  openMissedPage:openMissedPage,closeMissedPage:closeMissedPage,openLearned:openLearned,
+  renderMissed:renderMissed,refreshGap:refreshGap,missedList:missedList,markMissed:markMissed,clearMissed:clearMissed,markWord:markWord,
+  get fwdSub(){return document.getElementById('flashNextSub')},
   get pgBusy(){return pgBusy},get entryBusy(){return entryBusy}
 };
 </script>
