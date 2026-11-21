@@ -520,7 +520,7 @@ img{max-width:100%;display:block}
 .ans-mark.show svg{opacity:1;animation:markIn 500ms var(--ease-out) both}
 .ans-mark.show path{animation:markDraw 500ms var(--ease-out) both}
 @keyframes markIn{0%{transform:scale(.8)}62%{transform:scale(1.07)}100%{transform:scale(1)}}
-@keyframes markDraw{to{stroke-dashoffset:0}}
+@keyframes markDraw{to{stroke-dashoffset:0px}}
 .ans-hint{text-align:center;font-size:14px;color:var(--text2);min-height:20px;font-weight:500;line-height:1.5;padding:0 8px}
 .ans-hint b{color:var(--red);font-weight:800;letter-spacing:.4px}
 /* 虚拟键盘：透明底，与页面沉浸 */
@@ -563,7 +563,7 @@ img{max-width:100%;display:block}
 .missed-list{display:flex;flex-direction:column;gap:9px;padding-bottom:24px}
 .mi{background:var(--glass);border:1px solid var(--line);border-radius:var(--radius);padding:14px 15px;transition:border-color 200ms var(--ease-out)}
 .mi.open{border-color:var(--accent2)}
-.mi-top{display:flex;align-items:center;gap:10px;cursor:pointer}
+.mi-top{display:flex;align-items:flex-start;gap:10px;cursor:pointer}
 .mi-zh{flex:1;min-width:0;font-size:15px;font-weight:700;line-height:1.45;word-break:break-word}
 .mi-pos{flex:none;font-size:10.5px;color:var(--text2);border:1px solid var(--line);border-radius:6px;padding:2px 5px;font-weight:600}
 .mi-c{flex:none;font-size:11.5px;color:var(--red);font-weight:700;font-variant-numeric:tabular-nums}
@@ -577,7 +577,7 @@ img{max-width:100%;display:block}
 .mi-btn.primary{border-color:var(--accent);color:var(--accent)}
 .mi-empty{text-align:center;padding:64px 20px;color:var(--text2);font-size:14px;line-height:2}
 .mi-all{margin-bottom:4px}
-.mi-all .mi-btn{height:46px;font-size:14px;font-weight:800;border-radius:12px}
+.mi-all .mi-btn{width:100%;flex:none;height:46px;font-size:14px;font-weight:800;border-radius:12px}
 .mi-all .mi-btn.primary{background:transparent}
 .ans-mark.hide{opacity:0;transition:opacity 120ms linear}
 .ans-mark{transition:opacity 120ms linear}
@@ -681,6 +681,12 @@ img{max-width:100%;display:block}
       </div>
     </div>
     <div class="set-group">
+      <h3>巩固</h3>
+      <div class="set-card">
+        <div class="set-row" onclick="openGapPage()"><span class="sl">查漏补缺</span><span class="sv"><span id="profGap">0 个错词</span><span class="arrow">›</span></span></div>
+      </div>
+    </div>
+    <div class="set-group">
       <h3>今日学习时间</h3>
       <div class="time-card">
         <div class="donut-wrap">
@@ -695,12 +701,6 @@ img{max-width:100%;display:block}
           <div class="tl-item"><i class="tl-dot fwd"></i>前进学习<b id="timeFwdVal">0 分</b></div>
           <div class="tl-item"><i class="tl-dot rev"></i>复习<b id="timeRevVal">0 分</b></div>
         </div>
-      </div>
-    </div>
-    <div class="set-group">
-      <h3>查漏补缺</h3>
-      <div class="set-card">
-        <div class="set-row" onclick="openGapPage()"><span class="sl">查漏补缺</span><span class="sv"><span id="profGap">0 个错词</span><span class="arrow">›</span></span></div>
       </div>
     </div>
     <div class="set-group">
@@ -949,6 +949,7 @@ function parseInfo(word){
   let pos='',zh=raw;
   let m=raw.match(/^((?:[a-z]+\.\s*)+)/i);
   if(m){pos=m[1].replace(/\s+/g,' ').trim();zh=raw.slice(m[1].length).replace(/^[\s；;]+/,'');}
+  zh=(zh||raw||'').replace(/[\s；;，,]+$/,'');
   return{pos:pos||'—',zh:zh||raw||'—',range:S.stage};
 }
 function toWordObj(en){let i=parseInfo(en);return{en,zh:i.zh,pos:i.pos}}
