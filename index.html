@@ -622,7 +622,7 @@ img{max-width:100%;display:block}
       <button class="btn-main" data-entry="review" onclick="startReview(this)">
         <svg viewBox="0 0 24 24" stroke-width="1.6"><path d="M3 12a9 9 0 1 0 3-6.7"/><polyline points="3 4 3 9 8 9"/></svg>
         <span class="btn-label">复习</span>
-        <span class="btn-hint">巩固已学单词</span>
+        <span class="btn-hint" id="reviewHint">巩固已学单词</span>
       </button>
       <button class="btn-main" data-entry="forward" onclick="startForward(this)">
         <svg viewBox="0 0 24 24" stroke-width="1.6"><line x1="12" y1="20" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
@@ -808,7 +808,7 @@ img{max-width:100%;display:block}
     <div class="about-hero">
       <img src="appIcon.png" alt="不白背" onerror="this.style.display='none'">
       <div class="about-name">不白背</div>
-      <div class="about-ver">BuBaiBei v2.6</div>
+      <div class="about-ver">BuBaiBei v2.7</div>
       <p class="about-slogan">免费开源的英语词汇学习 PWA<br>分阶段词库（19,327 词）× 虚拟键盘拼写复习 × 查漏补缺，无广告、无注册，打开即用。</p>
     </div>
     <div class="set-group">
@@ -934,7 +934,7 @@ img{max-width:100%;display:block}
 <script>
 // ===================== STATE =====================
 const K='bcz_data';
-function defS(){return{stage:'中考',learned:{},today:{},time:{},theme:'light',nick:'',avatar:'',missed:{},haptic:true}}
+function defS(){return{stage:'中考',learned:{},today:{},time:{},theme:'light',nick:'',avatar:'',missed:{},haptic:true,rev:{}}}
 let S=loadS();
 function loadS(){
   try{
@@ -946,6 +946,7 @@ function loadS(){
       if(!s.time||typeof s.time!=='object')s.time={};
       if(!s.missed||typeof s.missed!=='object')s.missed={};
       if(typeof s.haptic!=='boolean')s.haptic=true;
+      if(!s.rev||typeof s.rev!=='object')s.rev={};
       return s;
     }
   }catch(e){}
@@ -1077,6 +1078,8 @@ function refreshHome(){
   setText('statToday',todayCnt);
   setText('statTotal',total);
   setText('statDays',days);
+  const dueN=dueList(S.stage).length;
+  setText('reviewHint',dueN>0?('到期 '+dueN+' 词'):'今天没有到期');
   let qi=new Date().getDate()%quotes.length;
   setText('dailyQuote','"'+quotes[qi].text+'"');
   setText('dailyAuthor','— '+quotes[qi].author);
@@ -1366,8 +1369,10 @@ function enterLearning(kind,btn){
     list=getAvail(S.stage);
     if(!list.length){toast('当前阶段已经学完啦 🎉');return}
   }else{
-    list=getLearned(S.stage);
-    if(!list.length){toast('还没有已学单词，先去前进学习吧');return}
+    const learnedAll=getLearned(S.stage);
+    if(!learnedAll.length){toast('还没有已学单词，先去前进学习吧');return}
+    list=dueList(S.stage);
+    if(!list.length){toast('今天没有到期的单词，去前进学点新的吧');return}
   }
   entryBusy=true;
   pgBusy=true;
@@ -1473,7 +1478,7 @@ function beginFlash(list,mode){
   showNav(false);
   clearStage(document.getElementById('flashStage'));
   renderFlash(list[0],'init');
-  if(fwd.mode!=='learned'){markWord(list[0]);autoPronounce(list[0]);}else stopSpeak();
+  if(fwd.mode!=='learned'){markWord(list[0]);autoPronounce(list[0]);}else{touchWord(list[0]);stopSpeak();}
   updateFlashButtons();
   beginStudy(fwd.mode==='learned'?'review':'forward');
   refreshHome();refreshProf();
@@ -1493,7 +1498,7 @@ function flashNext(){
   if(fwd.idx<fwd.list.length-1){
     fwd.idx++;
     renderFlash(fwd.list[fwd.idx],'next');
-    if(fwd.mode!=='learned'){markWord(fwd.list[fwd.idx]);autoPronounce(fwd.list[fwd.idx]);}
+    if(fwd.mode!=='learned'){markWord(fwd.list[fwd.idx]);autoPronounce(fwd.list[fwd.idx]);}else touchWord(fwd.list[fwd.idx]);
     updateFlashButtons();refreshHome();refreshProf();
   }
 }
@@ -1501,7 +1506,7 @@ function flashPrev(){
   if(!fwd)return;
   if(fwd.idx>0){
     fwd.idx--;renderFlash(fwd.list[fwd.idx],'prev');updateFlashButtons();
-    if(fwd.mode!=='learned')autoPronounce(fwd.list[fwd.idx]);
+    if(fwd.mode!=='learned')autoPronounce(fwd.list[fwd.idx]);else touchWord(fwd.list[fwd.idx]);
   }
 }
 function updateFlashButtons(){
@@ -1913,11 +1918,13 @@ function finishAnswer(ok){
   if(dn)dn.classList.add('dim');
   if(ok){
     buzz(HAPTIC.ok);
+    scheduleWord(ss.cur.en,true);
     ss.ok++;
     if(S.missed[S.stage]&&S.missed[S.stage][ss.cur.en])clearMissed(ss.cur.en);
     advTimer=setTimeout(function(){if(rev===ss)advance()},1000);
   }else{
     buzz(HAPTIC.err);
+    scheduleWord(ss.cur.en,false);
     ss.wrong.push(ss.cur.en);
     markMissed(ss.cur.en);
     setHint('正确答案：<b>'+esc(ss.cur.en)+'</b>');
@@ -2040,6 +2047,61 @@ document.addEventListener('keydown',function(e){
   if(e.key.length===1&&/[a-zA-Z-]/.test(e.key)){e.preventDefault();typeChar(e.key.toLowerCase())}
 });
 
+
+// ===================== 复习排期（艾宾浩斯遗忘曲线） =====================
+// 首次学完即到期；答对一次后按 1、2、4、7、15、30、60 天递进；答错立刻回到 30 分钟后重考
+const REV_GAP=[1,2,4,7,15,30,60];
+const DAY_MS=86400000;
+function revRec(word,stage){
+  stage=stage||S.stage;
+  if(!S.rev[stage])S.rev[stage]={};
+  let r=S.rev[stage][word];
+  if(!r){
+    const learnedAt=(S.learned[stage]&&S.learned[stage][word])||Date.now();
+    r={n:0,due:learnedAt,last:learnedAt};
+    S.rev[stage][word]=r;
+  }
+  return r;
+}
+function gapDays(n){
+  return REV_GAP[Math.min(Math.max(n-1,0),REV_GAP.length-1)];
+}
+// 复习答完：对则升一级、错则清零回到 30 分钟后
+function scheduleWord(word,ok){
+  if(!word)return;
+  const r=revRec(word);
+  r.last=Date.now();
+  if(ok){
+    r.n=(Number(r.n)||0)+1;
+    r.due=Date.now()+gapDays(r.n)*DAY_MS;
+  }else{
+    r.n=0;
+    r.due=Date.now()+30*60000;
+  }
+  saveS();
+}
+// 温故里翻到这个词：算一次复习，按当前等级顺延
+function touchWord(word){
+  if(!word)return;
+  const r=revRec(word);
+  r.last=Date.now();
+  r.due=Date.now()+gapDays((Number(r.n)||0)+1)*DAY_MS;
+  saveS();
+}
+// 到期队列：已学、长度 > 3、且到期时间已过
+function dueList(stage){
+  stage=stage||S.stage;
+  const now=Date.now();
+  const out=[];
+  getLearned(stage).forEach(function(w){
+    if(w.length<=3)return;
+    const r=revRec(w,stage);
+    if((Number(r.due)||0)<=now)out.push({w:w,due:Number(r.due)||0});
+  });
+  out.sort(function(a,b){return a.due-b.due});
+  return out.map(function(o){return o.w});
+}
+
 // ===================== MARK / STATS =====================
 function markWord(w){
   if(!S.learned[S.stage])S.learned[S.stage]={};
@@ -2050,6 +2112,7 @@ function markWord(w){
     if(!S.today[td][S.stage])S.today[td][S.stage]=0;
     S.today[td][S.stage]++;
   }
+  revRec(w);
   saveS();
 }
 function markMissed(en){
@@ -2095,6 +2158,7 @@ window.__bcz={
   refreshHome:refreshHome,refreshSet:refreshSet,refreshProf:refreshProf,
   refreshProgress:refreshProgress,refreshTimeChart:refreshTimeChart,
   playWord:playWord,playCurrent:playCurrent,autoPronounce:autoPronounce,stopSpeak:stopSpeak,
+  dueList:dueList,scheduleWord:scheduleWord,touchWord:touchWord,revRec:revRec,
   flashNext:flashNext,flashPrev:flashPrev,beginFlash:beginFlash,beginForward:beginForward,beginLearned:beginLearned,
   beginStudy:beginStudy,accrueStudy:accrueStudy,endStudy:endStudy,
   get session(){return sess},MT:MT,STAGES:STAGES,
