@@ -1,7 +1,7 @@
 {
   "name": "不白背",
   "short_name": "不白背",
-  "description": "开源免费英语词汇学习工具",
+  "description": "开源免费英语词汇学习 PWA：分阶段词库、虚拟键盘拼写复习、查漏补缺",
   "start_url": "./index.html",
   "display": "standalone",
   "orientation": "portrait",
