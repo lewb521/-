@@ -804,7 +804,7 @@ img{max-width:100%;display:block}
     <div class="about-hero">
       <img src="appIcon.png" alt="不白背" onerror="this.style.display='none'">
       <div class="about-name">不白背</div>
-      <div class="about-ver">BuBaiBei v2.5</div>
+      <div class="about-ver">BuBaiBei v2.6</div>
       <p class="about-slogan">免费开源的英语词汇学习 PWA<br>分阶段词库（19,327 词）× 虚拟键盘拼写复习 × 查漏补缺，无广告、无注册，打开即用。</p>
     </div>
     <div class="set-group">
@@ -993,6 +993,10 @@ function nextFrame(cb){
   if(window.requestAnimationFrame)window.requestAnimationFrame(cb);
   else setTimeout(cb,16);
 }
+
+// ===================== 触感反馈（仅 Android 支持 Vibration API，iOS 静默跳过） =====================
+const HAPTIC={key:8, ok:30, err:[50,35,50,35,90]};
+function buzz(p){try{if(navigator.vibrate)navigator.vibrate(p)}catch(e){}}
 
 // ===================== NAVIGATION / PAGE TRANSITION =====================
 let curPage='home';
@@ -1800,13 +1804,14 @@ function typeChar(ch){
   wrap.appendChild(s);
   letterNodes.push(s);
   growBox();
-  if(navigator.vibrate){try{navigator.vibrate(7)}catch(e){}}
+  buzz(HAPTIC.key);
 }
 function delChar(){
   const ss=rev;if(!ss||ss.answered||!ss.typed)return;
   ss.typed=ss.typed.slice(0,-1);
   const wrap=document.getElementById('ansLetters');
   if(!wrap)return;
+  buzz(HAPTIC.key);
   const last=letterNodes.pop();
   if(last){
     last.classList.add('lt-out');
@@ -1895,10 +1900,12 @@ function finishAnswer(ok){
   const dn=document.getElementById('kbDunno');
   if(dn)dn.classList.add('dim');
   if(ok){
+    buzz(HAPTIC.ok);
     ss.ok++;
     if(S.missed[S.stage]&&S.missed[S.stage][ss.cur.en])clearMissed(ss.cur.en);
     advTimer=setTimeout(function(){if(rev===ss)advance()},1000);
   }else{
+    buzz(HAPTIC.err);
     ss.wrong.push(ss.cur.en);
     markMissed(ss.cur.en);
     setHint('正确答案：<b>'+esc(ss.cur.en)+'</b>');
