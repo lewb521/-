@@ -653,6 +653,10 @@ img{max-width:100%;display:block}
           <span class="sl">学习阶段</span>
           <span class="sv" id="settingsStage">中考 <span class="arrow">›</span></span>
         </div>
+        <div class="set-row">
+          <span class="sl">震动反馈</span>
+          <div class="toggle" id="hapticToggle" onclick="toggleHaptic()"></div>
+        </div>
       </div>
     </div>
     <div class="set-group">
@@ -930,7 +934,7 @@ img{max-width:100%;display:block}
 <script>
 // ===================== STATE =====================
 const K='bcz_data';
-function defS(){return{stage:'中考',learned:{},today:{},time:{},theme:'light',nick:'',avatar:'',missed:{}}}
+function defS(){return{stage:'中考',learned:{},today:{},time:{},theme:'light',nick:'',avatar:'',missed:{},haptic:true}}
 let S=loadS();
 function loadS(){
   try{
@@ -941,6 +945,7 @@ function loadS(){
       if(!s.today||typeof s.today!=='object')s.today={};
       if(!s.time||typeof s.time!=='object')s.time={};
       if(!s.missed||typeof s.missed!=='object')s.missed={};
+      if(typeof s.haptic!=='boolean')s.haptic=true;
       return s;
     }
   }catch(e){}
@@ -996,7 +1001,7 @@ function nextFrame(cb){
 
 // ===================== 触感反馈（仅 Android 支持 Vibration API，iOS 静默跳过） =====================
 const HAPTIC={key:8, ok:30, err:[50,35,50,35,90]};
-function buzz(p){try{if(navigator.vibrate)navigator.vibrate(p)}catch(e){}}
+function buzz(p){if(!S||S.haptic===false)return;try{if(navigator.vibrate)navigator.vibrate(p)}catch(e){}}
 
 // ===================== NAVIGATION / PAGE TRANSITION =====================
 let curPage='home';
@@ -1082,12 +1087,19 @@ function refreshSet(){
   const stageEl=document.getElementById('settingsStage');
   if(stageEl)stageEl.innerHTML=S.stage+' <span class="arrow">›</span>';
   document.getElementById('darkToggle').classList.toggle('on',S.theme==='dark');
+  const ht=document.getElementById('hapticToggle');
+  if(ht)ht.classList.toggle('on',S.haptic!==false);
   scheduleDock();
 }
 function setStage(st){
   S.stage=st;saveS();refreshHome();refreshSet();closeModal('modalStage');buildStageOpts();
 }
 function toggleDark(){S.theme=S.theme==='dark'?'light':'dark';applyTheme();saveS();refreshSet()}
+function toggleHaptic(){
+  S.haptic=S.haptic===false?true:false;
+  saveS();refreshSet();
+  if(S.haptic)buzz(HAPTIC.ok);
+}
 function applyTheme(){
   document.body.dataset.theme=S.theme;
   const meta=document.querySelector('meta[name="theme-color"]');
