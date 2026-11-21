@@ -558,6 +558,22 @@ img{max-width:100%;display:block}
 .kbd-enter:active,.kbd-dunno:active{transform:scale(.97)}
 .kbd-dunno.dim{opacity:.35;pointer-events:none}
 
+/* ===== 发音小喇叭（前进 / 温故） ===== */
+.wpron{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:16px;position:relative;z-index:2}
+.pr-btn{
+  display:flex;align-items:center;gap:6px;height:34px;padding:0 13px;border-radius:17px;
+  border:1.5px solid var(--line);background:transparent;color:var(--text2);
+  font-size:12px;font-weight:700;letter-spacing:.2px;
+  transition:transform 120ms var(--ease-out),border-color 160ms var(--ease-out),color 160ms var(--ease-out),background 160ms var(--ease-out);
+  -webkit-tap-highlight-color:transparent;
+}
+.pr-btn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.pr-btn:active{transform:scale(.94);border-color:var(--accent2)}
+.pr-btn.playing{color:var(--accent);border-color:var(--accent);background:rgba(0,0,0,.03)}
+[data-theme="dark"] .pr-btn.playing{background:rgba(255,255,255,.06)}
+@keyframes prPulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.18);opacity:.55}}
+.pr-btn.playing svg{animation:prPulse 900ms ease-in-out infinite}
+
 /* ===== 查漏补缺 ===== */
 .gap-actions{display:flex;gap:13px;margin:6px 0 18px}
 .gap-actions .btn-main{padding:26px 12px;gap:9px}
@@ -1027,6 +1043,7 @@ function goPage(p){
 function navTap(el,p){if(p!==curPage)goPage(p,el)}
 function exitFlash(){
   if(entryBusy||pgBusy)return;
+  stopSpeak();
   endStudy();
   const mode=fwd?fwd.mode:'forward';
   fwd=null;
@@ -1440,14 +1457,18 @@ function beginFlash(list,mode){
   showNav(false);
   clearStage(document.getElementById('flashStage'));
   renderFlash(list[0],'init');
-  if(fwd.mode!=='learned')markWord(list[0]);
+  if(fwd.mode!=='learned'){markWord(list[0]);autoPronounce(list[0]);}else stopSpeak();
   updateFlashButtons();
   beginStudy(fwd.mode==='learned'?'review':'forward');
   refreshHome();refreshProf();
 }
 function renderFlash(word,dir){
   let info=parseInfo(word);
-  let html=`<div class="wtext">${esc(word)}</div><div class="wsub">${esc(info.pos)} · ${esc(info.zh)} · ${esc(info.range)}</div>`;
+  let html=`<div class="wtext">${esc(word)}</div><div class="wsub">${esc(info.pos)} · ${esc(info.zh)} · ${esc(info.range)}</div>`+
+    `<div class="wpron">`+
+      `<button type="button" class="pr-btn" data-type="1" onclick="playCurrent('1')"><svg viewBox="0 0 24 24"><path d="M4 9.5v5h3.6L13 19V5L7.6 9.5H4z"/><path d="M16.4 8.6a4.8 4.8 0 0 1 0 6.8"/></svg>英音</button>`+
+      `<button type="button" class="pr-btn" data-type="2" onclick="playCurrent('2')"><svg viewBox="0 0 24 24"><path d="M4 9.5v5h3.6L13 19V5L7.6 9.5H4z"/><path d="M16.4 8.6a4.8 4.8 0 0 1 0 6.8"/><path d="M19 6a8 8 0 0 1 0 12"/></svg>美音</button>`+
+    `</div>`;
   mountLayer(document.getElementById('flashStage'),html,dir);
   setText('flashMeta',(fwd.idx+1)+' / '+fwd.list.length);
 }
@@ -1456,18 +1477,87 @@ function flashNext(){
   if(fwd.idx<fwd.list.length-1){
     fwd.idx++;
     renderFlash(fwd.list[fwd.idx],'next');
-    if(fwd.mode!=='learned')markWord(fwd.list[fwd.idx]);
+    if(fwd.mode!=='learned'){markWord(fwd.list[fwd.idx]);autoPronounce(fwd.list[fwd.idx]);}
     updateFlashButtons();refreshHome();refreshProf();
   }
 }
 function flashPrev(){
   if(!fwd)return;
-  if(fwd.idx>0){fwd.idx--;renderFlash(fwd.list[fwd.idx],'prev');updateFlashButtons();}
+  if(fwd.idx>0){
+    fwd.idx--;renderFlash(fwd.list[fwd.idx],'prev');updateFlashButtons();
+    if(fwd.mode!=='learned')autoPronounce(fwd.list[fwd.idx]);
+  }
 }
 function updateFlashButtons(){
   const p=document.getElementById('btnPrev'),n=document.getElementById('btnNext');
   if(p)p.disabled=(fwd.idx<=0);
   if(n)n.disabled=(fwd.idx>=fwd.list.length-1);
+}
+
+
+// ===================== 发音（有道优先，失败回退系统 TTS） =====================
+const TTS_BASE='https://dict.youdao.com/dictvoice?audio=';
+let audioEl=null, autoTimer=0, autoSeq=0;
+function stopSpeak(){
+  autoSeq++;
+  clearTimeout(autoTimer);
+  if(audioEl){try{audioEl.pause();audioEl.src=''}catch(e){};audioEl=null}
+  try{if(window.speechSynthesis)speechSynthesis.cancel()}catch(e){}
+}
+function setPronPlaying(type,on){
+  document.querySelectorAll('#flashStage .pr-btn').forEach(function(b){
+    b.classList.toggle('playing',!!on&&b.dataset.type===type);
+  });
+}
+function playWord(word,type,done){
+  if(!word){if(done)done();return}
+  const t=type==='1'?'1':'2';
+  let finished=false;
+  function finish(){
+    if(finished)return;finished=true;
+    setPronPlaying(t,false);
+    if(done)done();
+  }
+  setPronPlaying(t,true);
+  let fell=false;
+  function fallback(){
+    if(fell)return;fell=true;
+    if(audioEl)audioEl=null;
+    try{
+      if(!window.speechSynthesis||!window.SpeechSynthesisUtterance){finish();return}
+      const u=new SpeechSynthesisUtterance(word);
+      u.lang=t==='1'?'en-GB':'en-US';
+      u.rate=.92;
+      u.onend=finish;u.onerror=finish;
+      speechSynthesis.cancel();
+      speechSynthesis.speak(u);
+      setTimeout(finish,4000);
+    }catch(e){finish()}
+  }
+  try{
+    const a=new Audio(TTS_BASE+encodeURIComponent(word)+'&type='+t);
+    a.preload='auto';
+    audioEl=a;
+    a.onended=function(){if(audioEl===a)audioEl=null;finish()};
+    a.onerror=fallback;
+    const p=a.play();
+    if(p&&p.catch)p.catch(fallback);
+    setTimeout(function(){if(audioEl===a&&a.paused&&a.currentTime===0)fallback()},2500);
+  }catch(e){fallback()}
+}
+function playCurrent(type){
+  if(!fwd)return;
+  const word=fwd.list[fwd.idx];
+  stopSpeak();
+  playWord(word,type);
+}
+function autoPronounce(word){
+  stopSpeak();
+  const seq=autoSeq;
+  playWord(word,'1',function(){
+    if(seq!==autoSeq)return;
+    autoTimer=setTimeout(function(){if(seq===autoSeq)playWord(word,'2')},160);
+  });
 }
 
 // ===================== 查漏补缺（个人页 → 两个分区） =====================
@@ -1616,6 +1706,7 @@ let letterNodes=[];
 
 function beginReview(list,opts){
   opts=opts||{};
+  stopSpeak();
   if(!list||!list.length){toast('还没有已学单词，先去前进学习吧');return}
   clearTimeout(advTimer);
   var q=list.slice();shuffle(q);
@@ -1984,6 +2075,7 @@ window.__bcz={
   mountLayer:mountLayer,clearStage:clearStage,
   refreshHome:refreshHome,refreshSet:refreshSet,refreshProf:refreshProf,
   refreshProgress:refreshProgress,refreshTimeChart:refreshTimeChart,
+  playWord:playWord,playCurrent:playCurrent,autoPronounce:autoPronounce,stopSpeak:stopSpeak,
   flashNext:flashNext,flashPrev:flashPrev,beginFlash:beginFlash,beginForward:beginForward,beginLearned:beginLearned,
   beginStudy:beginStudy,accrueStudy:accrueStudy,endStudy:endStudy,
   get session(){return sess},MT:MT,STAGES:STAGES,
