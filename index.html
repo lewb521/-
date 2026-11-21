@@ -527,10 +527,10 @@ img{max-width:100%;display:block}
 /* 虚拟键盘：透明底，与页面沉浸 */
 .kbd{flex:none;width:auto;margin:0 -20px;padding:4px 8px 2px;user-select:none;-webkit-user-select:none;touch-action:manipulation}
 .kbd.hide{display:none}
-.kbd-rows{display:flex;flex-direction:column;gap:9px}
-.kbd-row{display:flex;justify-content:center;gap:clamp(6px,2.4vw,10px)}
+.kbd-rows{display:flex;flex-direction:column;gap:9px;--kg:clamp(6px,2.4vw,10px);--kw:calc((100% - 9 * var(--kg)) / 10)}
+.kbd-row{display:flex;justify-content:center;gap:var(--kg)}
 .kbd-key{
-  flex:0 0 auto;width:calc((100% - 9 * clamp(6px,2.4vw,10px)) / 10);max-width:54px;height:56px;border-radius:11px;
+  flex:0 0 auto;width:var(--kw);max-width:54px;height:54px;border-radius:11px;
   background:transparent;color:var(--text);
   font-family:'PuHuiTi KB',var(--font);font-size:clamp(21px,6.7vw,26px);font-weight:500;
   display:flex;align-items:center;justify-content:center;
@@ -541,15 +541,18 @@ img{max-width:100%;display:block}
 [data-theme="dark"] .kbd-key:active{background:rgba(255,255,255,.1)}
 .kbd-key.dim{opacity:.32;pointer-events:none}
 .kbd-key.kbd-del svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.kbd-blank{flex:0 0 auto;width:var(--kw);height:54px;visibility:hidden;pointer-events:none}
 .kbd-bottom{display:flex;gap:9px;margin-top:9px}
 .kbd-bottom button{
-  height:60px;border-radius:13px;font-size:16px;font-weight:700;
+  height:58px;border-radius:13px;font-size:16px;font-weight:700;
   display:flex;align-items:center;justify-content:center;
   transition:transform 110ms var(--ease-out),background 140ms var(--ease-out),opacity 160ms var(--ease-out);
 }
-.kbd-dunno{flex:1;color:var(--text2);background:rgba(0,0,0,.045);font-weight:600}
+.kbd-bottom .kb-blank{height:auto;flex:0.85;width:auto}
+.kbd-bottom .kb-space{flex:3.2}
+.kbd-dunno{flex:1.45;color:var(--text2);background:rgba(0,0,0,.045);font-weight:600}
 [data-theme="dark"] .kbd-dunno{background:rgba(255,255,255,.07)}
-.kbd-enter{flex:1.8;color:var(--bg);background:var(--text)}
+.kbd-enter{flex:2.1;color:var(--bg);background:var(--text)}
 .kbd-enter.next{color:var(--text);background:rgba(0,0,0,.06)}
 [data-theme="dark"] .kbd-enter.next{background:rgba(255,255,255,.1)}
 .kbd-enter:active,.kbd-dunno:active{transform:scale(.97)}
@@ -767,6 +770,8 @@ img{max-width:100%;display:block}
       <div class="kbd-rows" id="kbdRows"></div>
       <div class="kbd-bottom">
         <button type="button" class="kbd-dunno" id="kbDunno">不会</button>
+        <span class="kbd-blank"></span>
+        <span class="kb-space"></span>
         <button type="button" class="kbd-enter" id="kbSubmit">提交</button>
       </div>
     </div>
@@ -1598,7 +1603,7 @@ function startRetry(en){
 const KB_ROWS=[
   ['q','w','e','r','t','y','u','i','o','p'],
   ['a','s','d','f','g','h','j','k','l'],
-  ['z','x','c','v','b','n','m','-']
+  ['blank','z','x','c','v','b','n','m','-','del']
 ];
 const BASE_W=64,PER_CHAR=19,MAX_LEN=26;
 const MARK_OK='<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M10.5 25.5 19.5 34.5 37.5 13.5" pathLength="1"/></svg>';
@@ -1607,6 +1612,7 @@ const DEL_SVG='<svg viewBox="0 0 24 24"><path d="M9 5h10a2 2 0 0 1 2 2v10a2 2 0 
 let rev=null;
 let advTimer=0;
 let promptToken=0;
+let letterNodes=[];
 
 function beginReview(list,opts){
   opts=opts||{};
@@ -1645,6 +1651,7 @@ function renderQ(instant){
   if(box){box.classList.remove('ok','err','shake');box.style.width=BASE_W+'px'}
   const ls=document.getElementById('ansLetters');
   if(ls){ls.innerHTML='<span class="caret" id="ansCaret"></span>';ls.style.fontSize='27px'}
+  letterNodes=[];
   hideMark();
   setHint('');
   setKbd('answer');
@@ -1700,6 +1707,7 @@ function typeChar(ch){
   s.className='lt'+(ch==='-'?' lt-dash':'');
   s.textContent=ch;
   wrap.appendChild(s);
+  letterNodes.push(s);
   growBox();
   if(navigator.vibrate){try{navigator.vibrate(7)}catch(e){}}
 }
@@ -1708,8 +1716,7 @@ function delChar(){
   ss.typed=ss.typed.slice(0,-1);
   const wrap=document.getElementById('ansLetters');
   if(!wrap)return;
-  const items=wrap.querySelectorAll('.lt');
-  const last=items[items.length-1];
+  const last=letterNodes.pop();
   if(last){
     last.classList.add('lt-out');
     setTimeout(function(){if(last.parentNode)last.parentNode.removeChild(last)},330);
@@ -1726,10 +1733,11 @@ function flyLetters(){
   if(!wrap)return;
   const caret=document.getElementById('ansCaret');
   if(caret)caret.remove();
-  wrap.querySelectorAll('.lt').forEach(function(el){
+  letterNodes.forEach(function(el){
     el.classList.add('lt-out');
     setTimeout(function(){if(el.parentNode)el.parentNode.removeChild(el)},340);
   });
+  letterNodes=[];
 }
 function showMark(ok){
   const m=document.getElementById('ansMark');
@@ -1813,6 +1821,7 @@ function advance(){
   if(box){box.classList.remove('ok','err');box.style.width=BASE_W+'px'}
   const ls=document.getElementById('ansLetters');
   if(ls){ls.innerHTML='<span class="caret" id="ansCaret"></span>';ls.style.fontSize='27px'}
+  letterNodes=[];
   hideMark();
   setHint('');
   setKbd('answer');
@@ -1846,6 +1855,7 @@ function finishS(){
   if(box){box.classList.remove('ok','err');box.style.width=BASE_W+'px'}
   const ls=document.getElementById('ansLetters');
   if(ls)ls.innerHTML='';
+  letterNodes=[];
   hideMark();setHint('');
   setKbd('done');
   const stg=document.getElementById('qStage');
@@ -1893,10 +1903,12 @@ function bindKbd(){
   const rows=document.getElementById('kbdRows');
   if(!rows||rows.dataset.built)return;
   rows.dataset.built='1';
-  rows.innerHTML=KB_ROWS.map(function(r,i){
+  rows.innerHTML=KB_ROWS.map(function(r){
     return '<div class="kbd-row">'+r.map(function(k){
+      if(k==='blank')return '<span class="kbd-blank"></span>';
+      if(k==='del')return '<button type="button" class="kbd-key kbd-del" data-k="del">'+DEL_SVG+'</button>';
       return '<button type="button" class="kbd-key" data-k="'+k+'">'+k+'</button>';
-    }).join('')+(i===2?'<button type="button" class="kbd-key kbd-del" data-k="del">'+DEL_SVG+'</button>':'')+'</div>';
+    }).join('')+'</div>';
   }).join('');
   rows.addEventListener('click',function(e){
     const b=e.target.closest('.kbd-key');
