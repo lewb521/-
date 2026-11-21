@@ -804,8 +804,8 @@ img{max-width:100%;display:block}
     <div class="about-hero">
       <img src="appIcon.png" alt="不白背" onerror="this.style.display='none'">
       <div class="about-name">不白背</div>
-      <div class="about-ver">BuBaiBei v2.4</div>
-      <p class="about-slogan">免费开源的英语词汇学习 PWA<br>分阶段词库 × 虚拟键盘拼写复习 × 查漏补缺，无广告、无注册，打开即用。</p>
+      <div class="about-ver">BuBaiBei v2.5</div>
+      <p class="about-slogan">免费开源的英语词汇学习 PWA<br>分阶段词库（19,327 词）× 虚拟键盘拼写复习 × 查漏补缺，无广告、无注册，打开即用。</p>
     </div>
     <div class="set-group">
       <h3>开发</h3>
@@ -815,10 +815,10 @@ img{max-width:100%;display:block}
       </div>
     </div>
     <div class="set-group">
-      <h3>参考仓库</h3>
+      <h3>数据来源</h3>
       <div class="set-card">
-        <a class="set-row about-link" href="https://github.com/KyleBing/english-vocabulary" target="_blank" rel="noopener"><span class="sl">KyleBing/english-vocabulary</span><span class="sv"><span class="arrow">›</span></span></a>
-        <a class="set-row about-link" href="https://github.com/kajweb/dict" target="_blank" rel="noopener"><span class="sl">kajweb/dict</span><span class="sv"><span class="arrow">›</span></span></a>
+        <div class="set-row"><span class="sl">词汇大纲</span><span class="sv">中考 / 高考 / 四级 / 六级 / 考研</span></div>
+        <a class="set-row about-link" href="https://github.com/skywind3000/ECDICT" target="_blank" rel="noopener"><span class="sl">ECDICT</span><span class="sv">MIT <span class="arrow">›</span></span></a>
       </div>
     </div>
     <div class="set-group">
@@ -904,8 +904,8 @@ img{max-width:100%;display:block}
         <div class="text">不白背的开发离不开以下优秀项目和资源的支持：
 
 📚 词汇数据
-• KyleBing/english-vocabulary（中考/高考/四级/六级/考研全阶段词汇）
-• kajweb/dict（原始词库来源）
+• 英语词汇大纲（中考 / 高考 / 四级 / 六级 / 考研）
+• ECDICT（原始词条，MIT License）
 
 🔤 字体
 • 阿里巴巴普惠体（键盘字母子集，已内嵌）
@@ -969,7 +969,7 @@ const quotes=[
 function parseInfo(word){
   let raw=(zhTrans[word]||'').trim();
   let pos='',zh=raw;
-  let m=raw.match(/^((?:[a-z]+\.\s*)+)/i);
+  let m=raw.match(/^((?:[a-z]+\.(?:\s*\/\s*|\s+)?)+)/i);
   if(m){pos=m[1].replace(/\s+/g,' ').trim();zh=raw.slice(m[1].length).replace(/^[\s；;]+/,'');}
   zh=(zh||raw||'').replace(/[\s；;，,]+$/,'');
   return{pos:pos||'—',zh:zh||raw||'—',range:S.stage};

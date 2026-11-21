@@ -1,0 +1,2 @@
+# 词库源文件（体积较大，不入库；放到此目录后执行 tools/build_words.py）
+vocabulary/
