@@ -532,7 +532,7 @@ img{max-width:100%;display:block}
 .kbd-key{
   flex:0 0 auto;width:var(--kw);max-width:54px;height:54px;border-radius:11px;
   background:transparent;color:var(--text);
-  font-family:'PuHuiTi KB',var(--font);font-size:clamp(21px,6.7vw,26px);font-weight:500;
+  font-family:'PuHuiTi KB',var(--font);font-size:clamp(18px,5.7vw,22px);font-weight:500;
   display:flex;align-items:center;justify-content:center;
   transition:background 110ms var(--ease-out),transform 110ms var(--ease-out),opacity 160ms var(--ease-out);
   -webkit-tap-highlight-color:transparent;
@@ -804,7 +804,7 @@ img{max-width:100%;display:block}
     <div class="about-hero">
       <img src="appIcon.png" alt="不白背" onerror="this.style.display='none'">
       <div class="about-name">不白背</div>
-      <div class="about-ver">BuBaiBei v2.3</div>
+      <div class="about-ver">BuBaiBei v2.4</div>
       <p class="about-slogan">免费开源的英语词汇学习 PWA<br>分阶段词库 × 虚拟键盘拼写复习 × 查漏补缺，无广告、无注册，打开即用。</p>
     </div>
     <div class="set-group">
@@ -1998,7 +1998,7 @@ function bindKbd(){
     return '<div class="kbd-row">'+r.map(function(k){
       if(k==='blank')return '<span class="kbd-blank"></span>';
       if(k==='del')return '<button type="button" class="kbd-key kbd-del" data-k="del">'+DEL_SVG+'</button>';
-      return '<button type="button" class="kbd-key" data-k="'+k+'">'+k+'</button>';
+      return '<button type="button" class="kbd-key" data-k="'+k+'">'+k.toUpperCase()+'</button>';
     }).join('')+'</div>';
   }).join('');
   rows.addEventListener('click',function(e){
